@@ -1,0 +1,20 @@
+﻿<Properties StartupConfiguration="{ED0E354B-C337-4E38-86C9-34090E447525}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Gauntlets/Core/Entity.cs">
+    <Files>
+      <File FileName="Gauntlets/GauntletsGame.cs" Line="84" Column="93" />
+      <File FileName="Gauntlets/Core/GUIButton.cs" Line="131" Column="63" />
+      <File FileName="Gauntlets/Core/GUIElement.cs" Line="39" Column="52" />
+      <File FileName="Gauntlets/Core/World.cs" Line="87" Column="1" />
+      <File FileName="Gauntlets/Core/Sprite.cs" Line="30" Column="49" />
+      <File FileName="Gauntlets/Core/AnimatedSprite.cs" Line="33" Column="101" />
+      <File FileName="Gauntlets/Core/Entity.cs" Line="83" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.Gauntlets PreferredExecutionTarget="MonoDevelop.Default" />
+  <MultiItemStartupConfigurations />
+</Properties>
