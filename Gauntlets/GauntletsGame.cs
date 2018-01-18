@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using System.IO;
 using Gauntlets.Core;
 
-namespace Gauntlets
+namespace Gauntlets.Simulation
 {
 	/// <summary>
 	/// This is the main type for your game.
@@ -18,7 +18,9 @@ namespace Gauntlets
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
         SpriteBatch guiBatch;
-		World w = new World();
+        GUILabel label;
+
+        World w = new World();
 
 		public Game1()
 		{
@@ -64,6 +66,7 @@ namespace Gauntlets
             ComponentAttribute.RegisterAttribute<AnimatedSprite>("AnimatedSprite");
             ComponentAttribute.RegisterAttribute<Transform>("Transform");
             ComponentAttribute.RegisterAttribute<GUIButton>("GUIButton");
+            ComponentAttribute.RegisterAttribute<GUILabel>("GUILabel");
 
 			Transform.UpdateGraphicsSize(graphics);
 
@@ -82,6 +85,8 @@ namespace Gauntlets
         {
 
             Entity.InitializeEntities(Path.Combine(Content.RootDirectory, "XML", "EntityList.xml"), this);
+            GUILabel.Initialize(this);
+
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch(GraphicsDevice);
             guiBatch = new SpriteBatch(GraphicsDevice);
@@ -91,6 +96,11 @@ namespace Gauntlets
 
             Entity animated = Entity.Instantiate(1);
             Entity button = Entity.Instantiate(2);
+            label = new GUILabel("Single line test!");
+            label.Center = new Vector2(-200, 0);
+            button.AddComponent(label);
+            GUIButton buttonComponent = button.GetComponent<GUIButton>();
+            buttonComponent.Transform.Translate(new Vector2(120, 0));
 
 			//TODO: use this.Content to load your game content here 
 		}
@@ -108,6 +118,10 @@ namespace Gauntlets
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
 				Exit();
 #endif
+
+            if(Keyboard.GetState().IsKeyDown(Keys.E)) {
+                label.Label = (label.Label == "Single line test!") ? label.Label = "Multi line\ntest!" : "Single line test!";
+            }
 
 			float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 

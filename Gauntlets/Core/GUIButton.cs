@@ -55,7 +55,6 @@ namespace Gauntlets.Core
 		{
             Sprite = new Sprite(image, 0, 0, image.Width / 2, image.Height / 2, 0);
             origSize = Extension = new Vector2(image.Width / 2, image.Height / 2);
-            AddComponent(Sprite);
 		}
 
 		public void AddOnClickCallback(ButtonCallback click)
@@ -70,7 +69,6 @@ namespace Gauntlets.Core
 
 		public override void Update(float deltaTime)
 		{
-			base.Update(deltaTime);
 
 			//Math used: I multiply the SpriteCenter by LocalScale because (of course) the more i scale, the more the center moves. 
             //We have to accout for extension differences as well.
@@ -111,6 +109,12 @@ namespace Gauntlets.Core
 			}
 
 		}
+
+        internal override void Draw(SpriteBatch batch, Entity parent)
+        {
+            batch.Draw(Sprite.Texture, parent.Transform.LocalPosition + Transform.PositionInCameraSpace, Sprite.Source, Color, Transform.Rotation,
+                                  Sprite.SpriteCenter, Transform.LocalScale, SpriteEffects.None, Sprite.RenderingOrder);
+        }
 
         public override void SetupFromXmlNode(XmlNode node, Game game)
         {

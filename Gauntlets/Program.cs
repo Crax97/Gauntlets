@@ -1,5 +1,6 @@
 ﻿#region Using Statements
 using System;
+using Gauntlets.Simulation;
 using System.Collections.Generic;
 using System.Linq;
 #if MONOMAC

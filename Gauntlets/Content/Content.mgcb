@@ -49,3 +49,13 @@
 /processorParam:TextureFormat=Color
 /build:touch.png
 
+#begin Fonts/DefaultFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/DefaultFont.spritefont
+
+#begin Fonts/Oswald.ttf
+/copy:Fonts/Oswald.ttf
+

@@ -82,8 +82,7 @@ namespace Gauntlets.Core
             {
                 List<GUIElement> elements = e.GetComponents<GUIElement>();
                 foreach(GUIElement element in elements) {
-                    batch.Draw(element.Sprite.Texture, element.Transform.PositionInCameraSpace, element.Sprite.Source, Color.White, element.Transform.Rotation, 
-                               element.Sprite.SpriteCenter, element.Transform.LocalScale, SpriteEffects.None, element.Sprite.RenderingOrder);
+                    element.Draw(batch, e);
                 }
             }
         }

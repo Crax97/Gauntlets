@@ -28,7 +28,6 @@ namespace Gauntlets.Core
 
     public class Entity : ICloneable
 	{
-        private int instanceCount = 0;
 		private Transform transform;
 		private bool isEnabled = true;
         public int InstanceId { get; private set; }
@@ -42,12 +41,12 @@ namespace Gauntlets.Core
 		{
 		}
 
-        private Entity(Transform t) {
+        private Entity(Transform t, string name = "Entity", int id = 0) {
             components = new List<IComponent>();
             transform = t;
             InstanceId = 0;
-            Id = 0;
-            Name = "";
+            Id = id;
+            Name = name;
         }
 
         /// <summary>
@@ -145,12 +144,12 @@ namespace Gauntlets.Core
         /// If T.getComponent() == Component.TRANSFORM, the method returns
         /// a list with the entity's single transform.
         /// </summary>
-        /// <returns>The requested components.</returns>
+        /// <returns>The requested components of type T, an empty list if there's none.</returns>
         /// <typeparam name="T">The type requested.</typeparam>
         public List<T> GetComponents<T>() where T : class, IComponent, new()
-		{
-			T comparator = new T();
-			List<T> elems = new List<T>();
+        {
+            T comparator = new T();
+            List<T> elems = new List<T>();
 
             //Transform shouldn't be inside the component list, but if the users requests it
             //through the GetComponents<T> method, we just create a dummy list with the
@@ -161,21 +160,44 @@ namespace Gauntlets.Core
                 return elems;
             }
 
-			foreach (IComponent c in components)
-			{
-				if (c.getComponent() == comparator.getComponent())
-					elems.Add((T)c);
-			}
+            foreach (IComponent c in components)
+            {
+                if (c.getComponent() == comparator.getComponent())
+                    elems.Add((T)c);
+            }
 
-			return elems;
-		}
+            return elems;
+        }
+
+        /// <summary>
+        /// Searches for the first component of type T in the Entity's components list.
+        /// </summary>
+        /// <typeparam name="T">The component to search for.</typeparam>
+        /// <returns>The first component of type T, null if there's none</returns>
+        public T GetComponent<T>() where T : class, IComponent, new()
+        {
+            T comparator = new T();
+            //Transform shouldn't be inside the components list, but if the users requests it
+            //through the GetComponent<T> method, we just return it.
+            if (comparator.getComponent() == Component.TRANSFORM)
+            {
+                return Transform as T;
+            }
+
+            foreach (IComponent c in components)
+            {
+                if (c.getComponent() == comparator.getComponent())
+                    return (T)c;
+            }
+            return null;
+        }
 
         public static Entity Instantiate(int id) {
             int i = 0;
             while(i < knownEntities.Count ) {
                 if(knownEntities[i].Id == id) {
                     Entity e = (Entity)knownEntities[i].Clone();
-                    e.Name = e.Name + " " + e.InstanceId;
+                    e.Name += e.InstanceId;
                     World.Current.AddEntity(e);
                     i = knownEntities.Count + 1;
                     return e;
@@ -240,9 +262,7 @@ namespace Gauntlets.Core
         public object Clone()
         {
             Transform t = (Transform)transform.Clone();
-            Entity e = new Entity(t);   
-            e.Id = this.Id;
-            e.Name = this.Name;
+            Entity e = new Entity(t, this.Name, this.Id);   
             e.InstanceId = ++this.InstanceId;
 
             foreach(ICloneable cloneable in components) {
