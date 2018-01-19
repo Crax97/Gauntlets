@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using System.Xml;
 
 namespace Gauntlets.Core
 {
@@ -10,7 +11,6 @@ namespace Gauntlets.Core
     /// </summary>
     class GUILabel : GUIElement, ICloneable
     {
-        // TODO: Implement SetupFromXMLNode(..)
 
         private static bool hasBeenInitialized = false;
         private static SpriteFont defaultSpriteFont = null;
@@ -61,9 +61,32 @@ namespace Gauntlets.Core
 
         }
 
+        public override void SetupFromXmlNode(XmlNode node, Game game) {
+            
+            XmlAttributeCollection attributes = node.Attributes;
+            _label = (attributes["label"] != null) ? attributes["label"].Value.Replace("\\n", "\n") : "";
+            Font = (attributes["font"] != null && attributes["font"].Value != "default") ? game.Content.Load<SpriteFont>(attributes["font"].Value) : defaultSpriteFont;
+            Depth = (attributes["rendering_depth"] != null) ? float.Parse(attributes["rendering_depth"].Value) : 0.0f;
+            Color.SetupFromXmlNode(attributes["color"]);
+            Center.SetupFromXmlNode(attributes["center"]);
+
+            XmlNode possibleTransform = node.ChildNodes[0];
+            if (possibleTransform != null)
+                Transform.SetupFromXmlNode(possibleTransform, game);
+
+        }
+
+        public override object Clone() {
+            GUILabel cpy = new GUILabel(Label, Depth, Font);
+            cpy.Center = this.Center;
+            cpy.Transform = this.Transform.Clone() as Transform;
+            return cpy;
+        }
+
         internal override void Draw(SpriteBatch batch, Entity parent)
         {
-            batch.DrawString(Font, Label, parent.Transform.LocalPosition + this.Transform.PositionInCameraSpace - offset + Center, Color);
+            Vector2 position = parent.Transform.LocalPosition + this.Transform.PositionInCameraSpace - offset;
+            batch.DrawString(Font, Label, position, Color, Transform.Rotation, Center, Transform.LocalScale, SpriteEffects.None, Depth);
         }
 
     }

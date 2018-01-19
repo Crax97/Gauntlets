@@ -83,9 +83,11 @@ namespace Gauntlets.Simulation
 		/// </summary>
 		protected override void LoadContent()
         {
-
-            Entity.InitializeEntities(Path.Combine(Content.RootDirectory, "XML", "EntityList.xml"), this);
+            //Initialize components first!
             GUILabel.Initialize(this);
+
+            //Then initialize entities
+            Entity.InitializeEntities(Path.Combine(Content.RootDirectory, "XML", "EntityList.xml"), this);
 
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -96,9 +98,9 @@ namespace Gauntlets.Simulation
 
             Entity animated = Entity.Instantiate(1);
             Entity button = Entity.Instantiate(2);
-            label = new GUILabel("Single line test!");
-            label.Center = new Vector2(-200, 0);
-            button.AddComponent(label);
+            //label = new GUILabel("Single line test!");
+            //label.Center = new Vector2(-200, 0);
+            //button.AddComponent(label);
             GUIButton buttonComponent = button.GetComponent<GUIButton>();
             buttonComponent.Transform.Translate(new Vector2(120, 0));
 

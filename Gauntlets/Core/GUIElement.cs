@@ -34,7 +34,7 @@ namespace Gauntlets.Core
 
         public virtual object Clone()
         {
-            throw new NotSupportedException("GUIElements cannot be cloned directly");
+            throw new NotSupportedException("GUIElements cannot be cloned directly! You forgot to override GUIElement.Clone() maybe?");
         }
 
         public virtual void Update(float deltaTime)

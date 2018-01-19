@@ -20,14 +20,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
-    <CustomCommands>
-      <CustomCommands>
-        <Command>
-          <type>AfterBuild</type>
-          <command>cp "${ProjectDir}/Content/XML/EntityList.xml" "${TargetDir}/Content/XML/EntityList.xml"</command>
-        </Command>
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <Optimize>true</Optimize>
@@ -58,10 +50,11 @@
     <Compile Include="Core\GUIButton.cs" />
     <Compile Include="Core\GUIElement.cs" />
     <Compile Include="Core\ComponentAttribute.cs" />
+    <Compile Include="Core\Extensors.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
-    <None Include="Content\XML\EntitiesList.xml" />
+    <None Include="Content\XML\EntityList.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icon.ico" />
@@ -105,9 +98,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Content\XML\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(ProjectDir)Content\XML\EntityList.xml" "$(TargetDir)Content\XML\EntityList.xml"</PostBuildEvent>
   </PropertyGroup>
 </Project>

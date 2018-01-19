@@ -4,9 +4,9 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/gsoli/Source/Repos/GauntletsSharp/Gauntlets/Content/test_1.png</File>
-    <File>C:/Users/gsoli/Source/Repos/GauntletsSharp/Gauntlets/Content/test_animated.png</File>
-    <File>C:/Users/gsoli/Source/Repos/GauntletsSharp/Gauntlets/Content/touch.png</File>
-    <File>C:/Users/gsoli/Source/Repos/GauntletsSharp/Gauntlets/Content/Fonts/DefaultFont.spritefont</File>
+    <File>/Users/crax/Documents/Projects/Gauntlets/Gauntlets/Content/Fonts/DefaultFont.spritefont</File>
+    <File>/Users/crax/Documents/Projects/Gauntlets/Gauntlets/Content/test_1.png</File>
+    <File>/Users/crax/Documents/Projects/Gauntlets/Gauntlets/Content/test_animated.png</File>
+    <File>/Users/crax/Documents/Projects/Gauntlets/Gauntlets/Content/touch.png</File>
   </SourceFiles>
 </SourceFileCollection>
