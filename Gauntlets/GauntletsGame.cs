@@ -18,7 +18,6 @@ namespace Gauntlets.Simulation
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
         SpriteBatch guiBatch;
-        GUILabel label;
 
         World w = new World();
 
@@ -98,11 +97,22 @@ namespace Gauntlets.Simulation
 
             Entity animated = Entity.Instantiate(1);
             Entity button = Entity.Instantiate(2);
+           
             //label = new GUILabel("Single line test!");
             //label.Center = new Vector2(-200, 0);
             //button.AddComponent(label);
             GUIButton buttonComponent = button.GetComponent<GUIButton>();
+            buttonComponent.AddOnReleaseCallback(HandleButtonCallback2);
             buttonComponent.Transform.Translate(new Vector2(120, 0));
+
+            string veryLongString = "VeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongString";
+
+            Texture2D tex = Content.Load<Texture2D>("TextBoxTest");
+
+            GUITextBox textBox = new GUITextBox(tex, veryLongString);
+            textBox.Offset = new Vector2(10, 10);
+            textBox.Transform.LocalPosition += new Vector2(0, graphics.PreferredBackBufferHeight - textBox.Sprite.Height) * 0.5f;
+            animated.AddComponent(textBox);
 
 			//TODO: use this.Content to load your game content here 
 		}
@@ -122,7 +132,7 @@ namespace Gauntlets.Simulation
 #endif
 
             if(Keyboard.GetState().IsKeyDown(Keys.E)) {
-                label.Label = (label.Label == "Single line test!") ? label.Label = "Multi line\ntest!" : "Single line test!";
+                //label.Label = (label.Label == "Single line test!") ? label.Label = "Multi line\ntest!" : "Single line test!";
             }
 
 			float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;

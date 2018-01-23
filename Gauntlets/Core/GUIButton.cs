@@ -55,7 +55,8 @@ namespace Gauntlets.Core
 		{
             Sprite = new Sprite(image, 0, 0, image.Width / 2, image.Height / 2, 0);
             origSize = Extension = new Vector2(image.Width / 2, image.Height / 2);
-		}
+
+        }
 
 		public void AddOnClickCallback(ButtonCallback click)
 		{
@@ -108,7 +109,9 @@ namespace Gauntlets.Core
                 Sprite.SetSource(0, 0, Sprite.Width, Sprite.Height);
 			}
 
-		}
+        }
+
+       
 
         internal override void Draw(SpriteBatch batch, Entity parent)
         {
