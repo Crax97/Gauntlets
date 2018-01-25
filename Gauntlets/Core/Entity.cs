@@ -5,7 +5,7 @@ using System.IO;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace Gauntlets.Core
+namespace CraxEngine.Core
 {
 
     public class Entity : ICloneable
@@ -96,8 +96,7 @@ namespace Gauntlets.Core
                         //Transform doesn't count, as every entity has one
                         if (componentType != "Transform")
                         {
-                            IComponent component = ComponentRecord.GetInstanceOfType(componentType);
-                            component.SetupFromXmlNode(componentNode, game);
+                            IComponent component = ComponentRecord.CreateInstance(componentType, componentNode, game);
                             e.AddComponent(component);
                         } else 
                         {

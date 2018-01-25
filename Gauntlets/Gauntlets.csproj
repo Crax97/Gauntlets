@@ -38,8 +38,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\ComponentRecord.cs" />
-    <Compile Include="Core\GUILabel.cs" />
-    <Compile Include="Core\GUITextBox.cs" />
+    <Compile Include="Core\GUI\GUIImage.cs" />
+    <Compile Include="Core\GUI\GUILabel.cs" />
+    <Compile Include="Core\GUI\GUITextBox.cs" />
+    <Compile Include="Core\XMLHandler.cs" />
     <Compile Include="GauntletsGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -49,8 +51,8 @@
     <Compile Include="Core\AnimatedSprite.cs" />
     <Compile Include="Core\Entity.cs" />
     <Compile Include="Core\World.cs" />
-    <Compile Include="Core\GUIButton.cs" />
-    <Compile Include="Core\GUIElement.cs" />
+    <Compile Include="Core\GUI\GUIButton.cs" />
+    <Compile Include="Core\GUI\GUIElement.cs" />
     <Compile Include="Core\Extensors.cs" />
   </ItemGroup>
   <ItemGroup>

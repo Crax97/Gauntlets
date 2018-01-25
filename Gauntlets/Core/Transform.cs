@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Xml;
-namespace Gauntlets.Core
+namespace CraxEngine.Core
 {
     
     public class Transform : IComponent
@@ -135,27 +135,6 @@ namespace Gauntlets.Core
 		public void Initialize() { }
 		public void Destroy() { }
 
-        public void SetupFromXmlNode(XmlNode node, Game game)
-        {
-            if (node != null)
-            {
-                XmlAttributeCollection attributes = node.Attributes;
-                string[] positionCoords = (attributes["position"] != null) ? attributes["position"].Value.Split(' ') : null;
-                string[] scaleCoords = (attributes["scale"] != null) ? attributes["scale"].Value.Split(' ') : null;
-                string rotationStr = (attributes["rotation"] != null) ? attributes["rotation"].Value : null;
-
-                rotation = (rotationStr != null) ? (float.Parse(rotationStr)) : 0.0f;
-                if (positionCoords != null)
-                {
-                    float X, Y;
-                    X = (positionCoords[0] != "half") ? float.Parse(positionCoords[0]) : WindowHalfSize.X;
-                    Y = (positionCoords[1] != "half") ? float.Parse(positionCoords[1]) : WindowHalfSize.Y;
-                    position = new Vector2(X, Y);
-                }
-                scale = (scaleCoords != null) ? new Vector2(float.Parse(scaleCoords[0]), float.Parse(scaleCoords[1])) : Vector2.One;
-            }
-        }
-
         public object Clone()
         {
             Transform t = new Transform();
@@ -172,5 +151,20 @@ namespace Gauntlets.Core
             return t;
 
         }
+
+        public void SetupFromXmlNode(XmlNode node, Game game)
+        {
+            if (node != null)
+            {
+                XmlAttributeCollection attributes = node.Attributes;
+
+                string rotationStr = (attributes["rotation"] != null) ? attributes["rotation"].Value : null;
+                rotation = (rotationStr != null) ? (float.Parse(rotationStr)) : 0.0f;
+
+                position = XmlComponentsReaders.Vector2FromXmlAttribute(attributes["position"], Vector2.Zero);
+                scale = XmlComponentsReaders.Vector2FromXmlAttribute(attributes["position"], Vector2.One);
+            }
+        }
+        
     }
 }

@@ -2,9 +2,10 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Linq;
-using Gauntlets.Core;
-namespace Gauntlets.Core
-{
+using CraxEngine.Core.GUI;
+
+namespace CraxEngine.Core { 
+
 	public class World
 	{
 

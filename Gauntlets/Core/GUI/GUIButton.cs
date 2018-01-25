@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Xml;
-using Gauntlets.Core;
+using CraxEngine.Core;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Gauntlets.Core
-{
+namespace CraxEngine.Core.GUI { 
     /// <summary>
     /// Abstracts a GUI button with two callbacks:
     /// On Click and On Release.
     /// </summary>
     /// 
-    
-    public class GUIButton : GUIElement, ICloneable
+
+public class GUIButton : GUIElement, ICloneable
 	{
 
 		public delegate void ButtonCallback();
@@ -41,11 +40,6 @@ namespace Gauntlets.Core
                 extension = value;
                 offset = (origSize - extension) * 0.5f;
             }
-        }
-
-        /*Never call the empty costructor!*/
-        public GUIButton() {
-            
         }
 
 		///<summary>
@@ -122,22 +116,13 @@ namespace Gauntlets.Core
                                   Sprite.SpriteCenter, Transform.LocalScale, SpriteEffects.None, Sprite.RenderingOrder);
         }
 
-        public override void SetupFromXmlNode(XmlNode node, Game game)
-        {
-            XmlAttributeCollection attributes = node.Attributes;
-            string textureName = attributes["texture"].Value;
-            if (textureName == null) throw new ArgumentException("<GUIButton ...></GUIButton> must have at least a texture name!");
-            Texture2D theTexture = game.Content.Load<Texture2D>(textureName);
-            Sprite = new Sprite(theTexture, 0, 0, theTexture.Width / 2, theTexture.Height / 2, 0);
-            Sprite.RenderingOrder = (attributes["rendering_order"] != null ) ? float.Parse(attributes["rendering_order"].Value) : 0;
-            Extension = Sprite.Size;
-        }
-
         public override object Clone() {
 
             Texture2D texture = Sprite.Texture;
-            GUIButton btn = new GUIButton(texture);
-            btn.Extension = this.Extension;
+            GUIButton btn = new GUIButton(texture)
+            {
+                Extension = this.Extension
+            };
             btn.Sprite.RenderingOrder = Sprite.RenderingOrder;
             return btn;
 

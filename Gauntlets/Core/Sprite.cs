@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Xml;
 
-namespace Gauntlets.Core
+namespace CraxEngine.Core
 {
 	public static partial class SpriteBatchExtensor
 	{
@@ -36,9 +36,6 @@ namespace Gauntlets.Core
                 return new Vector2(Width, Height);
             }
         }
-
-		/*You should NEVER call the empty constructor!*/
-		public Sprite() {}
 
 		public Sprite(Texture2D texture, int row, int column, int width, int height, float renderingOrder)
 		{
@@ -78,86 +75,6 @@ namespace Gauntlets.Core
 		public void Initialize() { }
 		public void Destroy() { }
 
-        public virtual void SetupFromXmlNode(XmlNode node, Game game)
-        {
-            XmlAttributeCollection attrib = node.Attributes;
-
-            string textureName = attrib["texture"].Value;
-            if (textureName == null) throw new ArgumentNullException("<Sprite ...></Sprite> must have at least a texture name!");
-
-            this.Texture = game.Content.Load<Texture2D>(textureName);
-
-            string widthStr = (attrib["width"] != null) ? attrib["width"].Value : null;
-            string heightStr = (attrib["height"] != null) ? attrib["height"].Value : null;
-            int width, height;
-
-            //Schema: width [height] =
-            //"full" => Texture.Width [Height]
-            //"half" => Texture.Width/2 [Height]/2
-            //"/n" => Texture.Width / n [Height / n]
-            //"n" => n
-            //nothing => full
-
-
-            if (widthStr != null)
-            {
-                if (widthStr == "full")
-                    width = Texture.Width;
-                else if (widthStr == "half")
-                    width = Texture.Width / 2;
-                else if (widthStr[0] == '/')
-                    width = Texture.Width / int.Parse(widthStr.Substring(1));
-                else 
-                    width = int.Parse(widthStr);
-            }
-            else
-            {
-                width = Texture.Width;
-            }
-
-            if (heightStr != null)
-            {
-                if (heightStr == "full")
-                    height = Texture.Height;
-                else if (heightStr == "half")
-                    height = Texture.Height / 2;
-                else if (heightStr[0] == '/')
-                    height = Texture.Height / int.Parse(heightStr.Substring(1));
-                else
-                    height = int.Parse(heightStr);
-            }
-            else
-            {
-                height = Texture.Height;
-            }
-            int row = 0, column = 0;
-            string rowStr = (attrib["row"] != null) ? attrib["row"].Value : null;
-            if (rowStr != null)
-            {
-                row = int.Parse(rowStr);
-            }
-            else
-            {
-                row = 0;
-            }
-
-            string colStr = (attrib["column"] != null) ? attrib["column"].Value : null;
-            if (colStr != null)
-            {
-                column = int.Parse(colStr);
-            }
-
-            renderingOrder = 0.0f;
-            string roStr = (attrib["renderng_order"] != null) ? attrib["renderng_order"].Value : null;
-            if (roStr != null)
-            {
-                renderingOrder = float.Parse(roStr);
-            }
-
-            SetSource(row, column, width, height);
-            RenderingOrder = renderingOrder;
-
-        }
 
         public object Clone()
         {

@@ -2,9 +2,9 @@
 using System.Xml;
 
 using Microsoft.Xna.Framework;
-using Gauntlets.Core;
+using CraxEngine.Core;
 
-namespace Gauntlets
+namespace CraxEngine
 {
 
     public interface IComponent : ICloneable
@@ -12,8 +12,6 @@ namespace Gauntlets
 		void Initialize();
 		void Update(float deltaTime, Entity parent);
 		void Destroy();
-
-        void SetupFromXmlNode(XmlNode node, Game game);
 	}
 
 }

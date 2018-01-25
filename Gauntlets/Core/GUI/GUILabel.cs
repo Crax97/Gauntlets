@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using System.Xml;
 using System.IO;
 
-namespace Gauntlets.Core
+namespace CraxEngine.Core.GUI
 {
     /// <summary>
     /// Abstracts a GUI Label, with settable SpriteFont, 
@@ -35,7 +35,7 @@ namespace Gauntlets.Core
         /// <param name="label">The label text.</param>
         /// <param name="depth">The layer depth.</param>
         /// <param name="font">The rendering font.</param>
-        public GUILabel(string label, float depth = 0.0f, SpriteFont font = null) :base() {
+        public GUILabel(string label, float depth = 0.0f, SpriteFont font = null, Transform transform = null) :base(transform) {
             Font = (font != null) ? font : DefaultSpriteFont;
             Sprite = new Sprite(Font.Texture, 0, 0, Font.Texture.Width, Font.Texture.Height, 1.0f);
             Label = label;
@@ -47,21 +47,6 @@ namespace Gauntlets.Core
                 throw new NotSupportedException("GUILabel has already been initialized!");
 
             DefaultSpriteFont = game.Content.Load<SpriteFont>(Path.Combine("Fonts", "DefaultFont"));
-
-        }
-
-        public override void SetupFromXmlNode(XmlNode node, Game game) {
-            
-            XmlAttributeCollection attributes = node.Attributes;
-            Label = (attributes["label"] != null) ? attributes["label"].Value.Replace("\\n", "\n") : "";
-            Font = (attributes["font"] != null && attributes["font"].Value != "default") ? game.Content.Load<SpriteFont>(attributes["font"].Value) : DefaultSpriteFont;
-            Depth = (attributes["rendering_depth"] != null) ? float.Parse(attributes["rendering_depth"].Value) : 0.0f;
-            Color.SetupFromXmlNode(attributes["color"]);
-            Center.SetupFromXmlNode(attributes["center"]);
-
-            XmlNode possibleTransform = node.ChildNodes[0];
-            if (possibleTransform != null)
-                Transform.SetupFromXmlNode(possibleTransform, game);
 
         }
 

@@ -4,22 +4,18 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using System.Xml;
 
-namespace Gauntlets.Core
+namespace CraxEngine.Core.GUI
 {
     public class GUIElement : IComponent
     {
 
-        public GUIElement() {
-            Transform = new Transform();
-            Color = Color.White;
+        public GUIElement(Transform transform = null, Color? color = null) {
+            Transform = (transform != null) ? transform : new Transform();
+            Color = (color != null) ? (Color)color : Color.White;
         }
 
         public void Initialize()
         {
-        }
-
-        public virtual void SetupFromXmlNode(XmlNode node, Game game) {
-            return;
         }
 
         public virtual object Clone()

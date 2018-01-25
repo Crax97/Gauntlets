@@ -6,7 +6,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.IO;
-using Gauntlets.Core;
+using CraxEngine.Core;
+using CraxEngine.Core;
+using CraxEngine.Core.GUI;
 
 /// <summary>
 /// TODO: Add GUIImage class.
@@ -68,12 +70,12 @@ namespace Gauntlets.Simulation
 			graphics.PreferredBackBufferHeight = 600;
 			graphics.ApplyChanges();
 
-            ComponentRecord.RegisterAttribute<Sprite>("Sprite");
-            ComponentRecord.RegisterAttribute<AnimatedSprite>("AnimatedSprite");
-            ComponentRecord.RegisterAttribute<Transform>("Transform");
-            ComponentRecord.RegisterAttribute<GUIButton>("GUIButton");
-            ComponentRecord.RegisterAttribute<GUILabel>("GUILabel");
-            ComponentRecord.RegisterAttribute<GUITextBox>("GUITextBox");
+            ComponentRecord.RegisterAttribute<Sprite>("Sprite", XmlComponentsReaders.SpriteFromXmlNode);
+            ComponentRecord.RegisterAttribute<AnimatedSprite>("AnimatedSprite", XmlComponentsReaders.AnimatedSpriteFromXmlNode);
+            ComponentRecord.RegisterAttribute<Transform>("Transform", XmlComponentsReaders.TransformFromXmlNode);
+            ComponentRecord.RegisterAttribute<GUIButton>("GUIButton", XmlComponentsReaders.GUIButtonFromXmlNode);
+            ComponentRecord.RegisterAttribute<GUILabel>("GUILabel", XmlComponentsReaders.GUILabelFromXmlNode);
+            ComponentRecord.RegisterAttribute<GUITextBox>("GUITextBox", XmlComponentsReaders.GUITextBoxFromXmlNode);
 
 			Transform.UpdateGraphicsSize(graphics);
 
@@ -101,7 +103,8 @@ namespace Gauntlets.Simulation
             guiBatch = new SpriteBatch(GraphicsDevice);
 
             test = Entity.Instantiate(0);
-             
+            test.Transform.Translate(Transform.WindowHalfSize);
+
             GUIButton buttonComponent = test.GetComponent<GUIButton>();
             buttonComponent.AddOnReleaseCallback(HandleButtonCallback2);
             buttonComponent.Transform.Translate(new Vector2(150, 0));

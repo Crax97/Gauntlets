@@ -1,29 +1,39 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
-namespace Gauntlets.Core
+using System.Xml;
+
+namespace CraxEngine.Core
 {
-    public class ComponentRecord : System.Attribute
+    /// <summary>
+    /// Static class that holds informations regarding the various IComponents
+    /// </summary>
+    public class ComponentRecord
     {
 
-        private static Dictionary<string, Type> knownTypes = new Dictionary<string, Type>();
+        private struct ComponentTypeAndInitializer
+        {
+            public Type t { get; internal set; }
+            public Func<XmlNode, Game, object> initializer { get; internal set; }
+        }
+
+        private static Dictionary<string, ComponentTypeAndInitializer> knownTypes = new Dictionary<string, ComponentTypeAndInitializer>();
 
         public static Type GetAssociatedType(string type)
         {
-            return knownTypes[type];
+            return knownTypes[type].t;
         }
 
-        //(IComponent) cast is always true because we only add IComponent types 
-        //in the knowTypes dictionary.
-        public static IComponent GetInstanceOfType(string type)
-        {
-
-            return (IComponent)Activator.CreateInstance(knownTypes[type]);
-
+        public static IComponent CreateInstance(string which, XmlNode node, Game game) {
+            return (IComponent)knownTypes[which].initializer(node, game);
         }
 
-        public static void RegisterAttribute<T>(string name) where T: IComponent
+        public static void RegisterAttribute<T>(string name, Func<XmlNode, Game, object> initializerFunction) where T: IComponent
         {
-            knownTypes.Add(name, typeof(T));
+            ComponentTypeAndInitializer typeAndInitializer = new ComponentTypeAndInitializer();
+            typeAndInitializer.t = typeof(T);
+            typeAndInitializer.initializer = initializerFunction;
+            knownTypes.Add(name, typeAndInitializer);
         }
     }
 }
