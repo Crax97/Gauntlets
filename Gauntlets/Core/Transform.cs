@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Xml;
 namespace Gauntlets.Core
 {
-	public class Transform : IComponent
+    
+    public class Transform : IComponent
 	{
 
         public static Vector2 WindowHalfSize { get; private set; } = Vector2.Zero;
@@ -129,33 +130,30 @@ namespace Gauntlets.Core
 			childs.Add(otherChild);
 
 		}
-		public Component getComponent() {
-			return Component.TRANSFORM;
-		}
 
-		public string getComponentName() {
-			return "Transform";
-		}
-
-        public void setupFromXmlNode(XmlNode node) {
-            
-        }
-
-		public void Update(float delta) { }
+        public void Update(float deltaTime, Entity parent) { }
 		public void Initialize() { }
 		public void Destroy() { }
 
         public void SetupFromXmlNode(XmlNode node, Game game)
         {
+            if (node != null)
+            {
+                XmlAttributeCollection attributes = node.Attributes;
+                string[] positionCoords = (attributes["position"] != null) ? attributes["position"].Value.Split(' ') : null;
+                string[] scaleCoords = (attributes["scale"] != null) ? attributes["scale"].Value.Split(' ') : null;
+                string rotationStr = (attributes["rotation"] != null) ? attributes["rotation"].Value : null;
 
-            XmlAttributeCollection attributes = node.Attributes;
-            string[] positionCoords = (attributes["position"] != null) ? attributes["position"].Value.Split(' ') : null;
-            string[] scaleCoords = (attributes["scale"] != null) ? attributes["scale"].Value.Split(' ') : null;
-            string rotationStr = (attributes["rotation"] != null) ? attributes["rotation"].Value : null;
-
-            rotation = (rotationStr != null) ? (float.Parse(rotationStr)) : 0.0f;
-            position = (positionCoords != null) ? new Vector2(float.Parse(positionCoords[0]), float.Parse(positionCoords[1])) + WindowHalfSize : WindowHalfSize;
-            scale = (scaleCoords != null) ? new Vector2(float.Parse(scaleCoords[0]), float.Parse(scaleCoords[1])) : Vector2.One;
+                rotation = (rotationStr != null) ? (float.Parse(rotationStr)) : 0.0f;
+                if (positionCoords != null)
+                {
+                    float X, Y;
+                    X = (positionCoords[0] != "half") ? float.Parse(positionCoords[0]) : WindowHalfSize.X;
+                    Y = (positionCoords[1] != "half") ? float.Parse(positionCoords[1]) : WindowHalfSize.Y;
+                    position = new Vector2(X, Y);
+                }
+                scale = (scaleCoords != null) ? new Vector2(float.Parse(scaleCoords[0]), float.Parse(scaleCoords[1])) : Vector2.One;
+            }
         }
 
         public object Clone()

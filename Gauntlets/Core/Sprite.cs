@@ -16,8 +16,8 @@ namespace Gauntlets.Core
 			}
 		}
 	}
-
-	public class Sprite : IComponent
+    
+    public class Sprite : IComponent
 	{
 		private SpriteEffect renderingEffect;
         private float renderingOrder;
@@ -72,21 +72,11 @@ namespace Gauntlets.Core
             Height = height;
 		}
 
-		public virtual void Update(float delta) {
+		public virtual void Update(float delta, Entity e) {
 
         }
 		public void Initialize() { }
 		public void Destroy() { }
-
-		public Component getComponent()
-		{
-			return Component.SPRITE;
-		}
-
-		public string getComponentName()
-		{
-			return "Sprite";
-		}
 
         public virtual void SetupFromXmlNode(XmlNode node, Game game)
         {

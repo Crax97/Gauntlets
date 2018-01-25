@@ -10,11 +10,13 @@ namespace Gauntlets.Core
     /// Abstracts a GUI Label, with settable SpriteFont, 
     /// a center and a rendering depth.
     /// </summary>
+    /// 
+    
     public class GUILabel : GUIElement, ICloneable
     {
 
         private static bool hasBeenInitialized = false;
-        private static SpriteFont defaultSpriteFont = null;
+        public static SpriteFont DefaultSpriteFont { get; private set; } = null;
         
         public string Label { get; set; }
         public SpriteFont Font { get; set; }
@@ -34,7 +36,7 @@ namespace Gauntlets.Core
         /// <param name="depth">The layer depth.</param>
         /// <param name="font">The rendering font.</param>
         public GUILabel(string label, float depth = 0.0f, SpriteFont font = null) :base() {
-            Font = (font != null) ? font : defaultSpriteFont;
+            Font = (font != null) ? font : DefaultSpriteFont;
             Sprite = new Sprite(Font.Texture, 0, 0, Font.Texture.Width, Font.Texture.Height, 1.0f);
             Label = label;
             Depth = depth;
@@ -44,7 +46,7 @@ namespace Gauntlets.Core
             if (hasBeenInitialized)
                 throw new NotSupportedException("GUILabel has already been initialized!");
 
-            defaultSpriteFont = game.Content.Load<SpriteFont>(Path.Combine("Fonts", "DefaultFont"));
+            DefaultSpriteFont = game.Content.Load<SpriteFont>(Path.Combine("Fonts", "DefaultFont"));
 
         }
 
@@ -52,7 +54,7 @@ namespace Gauntlets.Core
             
             XmlAttributeCollection attributes = node.Attributes;
             Label = (attributes["label"] != null) ? attributes["label"].Value.Replace("\\n", "\n") : "";
-            Font = (attributes["font"] != null && attributes["font"].Value != "default") ? game.Content.Load<SpriteFont>(attributes["font"].Value) : defaultSpriteFont;
+            Font = (attributes["font"] != null && attributes["font"].Value != "default") ? game.Content.Load<SpriteFont>(attributes["font"].Value) : DefaultSpriteFont;
             Depth = (attributes["rendering_depth"] != null) ? float.Parse(attributes["rendering_depth"].Value) : 0.0f;
             Color.SetupFromXmlNode(attributes["color"]);
             Center.SetupFromXmlNode(attributes["center"]);

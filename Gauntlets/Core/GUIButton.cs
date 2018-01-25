@@ -12,6 +12,8 @@ namespace Gauntlets.Core
     /// Abstracts a GUI button with two callbacks:
     /// On Click and On Release.
     /// </summary>
+    /// 
+    
     public class GUIButton : GUIElement, ICloneable
 	{
 
@@ -68,13 +70,14 @@ namespace Gauntlets.Core
 			onRelease += release;
 		}
 
-		public override void Update(float deltaTime)
+		public override void Update(float deltaTime, Entity parent)
 		{
 
-			//Math used: I multiply the SpriteCenter by LocalScale because (of course) the more i scale, the more the center moves. 
+            //Math used: I multiply the SpriteCenter by LocalScale because (of course) the more i scale, the more the center moves. 
             //We have to accout for extension differences as well.
             //Same goes for the buttonSprize's size, and that's more obvious 
-            Rectangle rect = new Rectangle((Transform.PositionInCameraSpace  - ( Sprite.SpriteCenter   * Transform.LocalScale) + (offset * Transform.LocalScale)).ToPoint() , (Extension * Transform.LocalScale).ToPoint());
+            Vector2 rectPosition = (parent.Transform.LocalPosition + Transform.PositionInCameraSpace - (Sprite.SpriteCenter * Transform.LocalScale) + (offset * Transform.LocalScale));
+            Rectangle rect = new Rectangle(rectPosition.ToPoint(), (Extension * Transform.LocalScale).ToPoint());
 			MouseState mouseState = Mouse.GetState();
 
 			//Pretty explanatory i hope. But i already know i will forget this stuff in one day
@@ -98,11 +101,11 @@ namespace Gauntlets.Core
 				}
 			}
 			else
-			{
-				//Reset the button without calling the onRelease callback.
-				//Users tend to move the cursor outside the button if they clicked by mistake
-				//or they don't want the onRelease action
-				if (hadPrevClicked)
+            {
+                //Reset the button without calling the onRelease callback.
+                //Users tend to move the cursor outside the button if they clicked by mistake
+                //or they don't want the onRelease action
+                if (hadPrevClicked)
 				{
 					hadPrevClicked = false;
 				}

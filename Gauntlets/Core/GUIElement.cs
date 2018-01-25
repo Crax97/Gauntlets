@@ -14,16 +14,6 @@ namespace Gauntlets.Core
             Color = Color.White;
         }
 
-        public Component getComponent()
-        {
-            return Component.GUI_ELEMENT;
-        }
-
-        public string getComponentName()
-        {
-            return "GUI Element";
-        }
-
         public void Initialize()
         {
         }
@@ -36,8 +26,8 @@ namespace Gauntlets.Core
         {
             throw new NotSupportedException("GUIElements cannot be cloned directly! You forgot to override GUIElement.Clone() maybe?");
         }
-
-        public virtual void Update(float deltaTime)
+        
+        public virtual void Update(float deltaTime, Entity parent)
         {
             return;
         }

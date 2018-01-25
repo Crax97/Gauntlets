@@ -31,6 +31,11 @@ namespace Gauntlets.Core
             Name = name;
         }
 
+        private bool IsSubClassOrSame(Type baseClass, Type derivedClass)
+        {
+            return (derivedClass.IsSubclassOf(baseClass) || baseClass == derivedClass);
+        }
+
         /// <summary>
         /// Determines whether the specified <see cref="object"/> is equal to the current <see cref="T:Gauntlets.Core.Entity"/>,
         /// comparing them by Id.
@@ -91,7 +96,7 @@ namespace Gauntlets.Core
                         //Transform doesn't count, as every entity has one
                         if (componentType != "Transform")
                         {
-                            IComponent component = ComponentAttribute.GetInstanceOfType(componentType);
+                            IComponent component = ComponentRecord.GetInstanceOfType(componentType);
                             component.SetupFromXmlNode(componentNode, game);
                             e.AddComponent(component);
                         } else 
@@ -116,7 +121,7 @@ namespace Gauntlets.Core
 		public void AddComponent(IComponent c)
 		{
             //Only one transform can be attached to an Entity!
-            if (c.getComponent() == Component.TRANSFORM) 
+            if (c.GetType() == typeof(Transform)) 
                 throw new ArgumentException("Entites can only have one transform!");
 			components.Add(c);
 		}
@@ -128,24 +133,20 @@ namespace Gauntlets.Core
         /// </summary>
         /// <returns>The requested components of type T, an empty list if there's none.</returns>
         /// <typeparam name="T">The type requested.</typeparam>
-        public List<T> GetComponents<T>() where T : class, IComponent, new()
+        public List<T> GetComponents<T>() where T : class, IComponent
         {
-            T comparator = new T();
             List<T> elems = new List<T>();
-
-            //Transform shouldn't be inside the component list, but if the users requests it
-            //through the GetComponents<T> method, we just create a dummy list with the
-            //(single)Transform and return it back.
-            if (comparator.getComponent() == Component.TRANSFORM)
+            //If we're looking for a Transform
+            if (typeof(T) == typeof(Transform))
             {
                 elems.Add(Transform as T);
                 return elems;
             }
-
-            foreach (IComponent c in components)
+            foreach (IComponent component in components)
             {
-                if (c.getComponent() == comparator.getComponent())
-                    elems.Add((T)c);
+                
+                if (typeof(T) == component.GetType() || component is T) elems.Add(component as T);
+                
             }
 
             return elems;
@@ -156,20 +157,18 @@ namespace Gauntlets.Core
         /// </summary>
         /// <typeparam name="T">The component to search for.</typeparam>
         /// <returns>The first component of type T, null if there's none</returns>
-        public T GetComponent<T>() where T : class, IComponent, new()
+        public T GetComponent<T>() where T : class, IComponent
         {
-            T comparator = new T();
-            //Transform shouldn't be inside the components list, but if the users requests it
-            //through the GetComponent<T> method, we just return it.
-            if (comparator.getComponent() == Component.TRANSFORM)
-            {
-                return Transform as T;
-            }
 
-            foreach (IComponent c in components)
+            //If we're looking for a Transform
+            if (typeof(T) == typeof(Transform))
+                return Transform as T;
+
+            foreach (IComponent component in components)
             {
-                if (c.getComponent() == comparator.getComponent())
-                    return (T)c;
+                
+                if (typeof(T) == component.GetType() || component is T) return component as T;
+                    
             }
             return null;
         }
@@ -204,7 +203,7 @@ namespace Gauntlets.Core
             {
                 foreach (IComponent c in components)
                 {
-                    c.Update(deltaTime);
+                    c.Update(deltaTime, this);
                 }
             }
 		}

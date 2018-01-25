@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <SourceFile>C:/Users/gsoli/Source/Repos/GauntletsSharp/Gauntlets/Content/touch.png</SourceFile>
+  <SourceFile>C:/Users/gsoli/source/repos/GauntletsSharp/Gauntlets/Content/touch.png</SourceFile>
   <SourceTime>2018-01-18T19:15:59.9482474+01:00</SourceTime>
-  <DestFile>C:/Users/gsoli/Source/Repos/GauntletsSharp/Gauntlets/Content/bin/DesktopGL/touch.xnb</DestFile>
-  <DestTime>2018-01-19T18:26:56.8490716+01:00</DestTime>
+  <DestFile>C:/Users/gsoli/source/repos/GauntletsSharp/Gauntlets/Content/bin/DesktopGL/touch.xnb</DestFile>
+  <DestTime>2018-01-25T11:54:05.4209217+01:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2017-03-01T16:05:36+01:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

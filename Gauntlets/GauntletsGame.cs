@@ -8,6 +8,12 @@ using Microsoft.Xna.Framework.Input;
 using System.IO;
 using Gauntlets.Core;
 
+/// <summary>
+/// TODO: Add GUIImage class.
+/// After it's done, start working on Collider class.
+/// Then, start developing a base platformer character
+/// </summary>
+
 namespace Gauntlets.Simulation
 {
 	/// <summary>
@@ -20,8 +26,9 @@ namespace Gauntlets.Simulation
         SpriteBatch guiBatch;
 
         World w = new World();
+        Entity test = null;
 
-		public Game1()
+        public Game1()
 		{
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
@@ -61,11 +68,12 @@ namespace Gauntlets.Simulation
 			graphics.PreferredBackBufferHeight = 600;
 			graphics.ApplyChanges();
 
-            ComponentAttribute.RegisterAttribute<Sprite>("Sprite");
-            ComponentAttribute.RegisterAttribute<AnimatedSprite>("AnimatedSprite");
-            ComponentAttribute.RegisterAttribute<Transform>("Transform");
-            ComponentAttribute.RegisterAttribute<GUIButton>("GUIButton");
-            ComponentAttribute.RegisterAttribute<GUILabel>("GUILabel");
+            ComponentRecord.RegisterAttribute<Sprite>("Sprite");
+            ComponentRecord.RegisterAttribute<AnimatedSprite>("AnimatedSprite");
+            ComponentRecord.RegisterAttribute<Transform>("Transform");
+            ComponentRecord.RegisterAttribute<GUIButton>("GUIButton");
+            ComponentRecord.RegisterAttribute<GUILabel>("GUILabel");
+            ComponentRecord.RegisterAttribute<GUITextBox>("GUITextBox");
 
 			Transform.UpdateGraphicsSize(graphics);
 
@@ -92,28 +100,20 @@ namespace Gauntlets.Simulation
 			spriteBatch = new SpriteBatch(GraphicsDevice);
             guiBatch = new SpriteBatch(GraphicsDevice);
 
-            Entity test = Entity.Instantiate(0);
-            test.Transform.LocalPosition = new Vector2(-100, -200);
-
-            Entity animated = Entity.Instantiate(1);
-            Entity button = Entity.Instantiate(2);
-           
-            //label = new GUILabel("Single line test!");
-            //label.Center = new Vector2(-200, 0);
-            //button.AddComponent(label);
-            GUIButton buttonComponent = button.GetComponent<GUIButton>();
+            test = Entity.Instantiate(0);
+             
+            GUIButton buttonComponent = test.GetComponent<GUIButton>();
             buttonComponent.AddOnReleaseCallback(HandleButtonCallback2);
-            buttonComponent.Transform.Translate(new Vector2(120, 0));
+            buttonComponent.Transform.Translate(new Vector2(150, 0));
 
-            string veryLongString = "VeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongString";
-
-            Texture2D tex = Content.Load<Texture2D>("TextBoxTest");
-
-            GUITextBox textBox = new GUITextBox(tex, veryLongString);
+            GUITextBox textBox = test.GetComponent<GUITextBox>();
             textBox.Offset = new Vector2(10, 10);
             textBox.Transform.LocalPosition += new Vector2(0, graphics.PreferredBackBufferHeight - textBox.Sprite.Height) * 0.5f;
-            animated.AddComponent(textBox);
 
+            GUILabel label = test.GetComponent<GUILabel>();
+            label.Transform.Translate (new Vector2(400, 0));
+            label.Label = "There are some\nGUI Elements under me!";
+            label.Center = label.Font.MeasureString("There are some\nGUI Elements under me!") * new Vector2(0.5f, 0);
 			//TODO: use this.Content to load your game content here 
 		}
 
@@ -131,11 +131,17 @@ namespace Gauntlets.Simulation
 				Exit();
 #endif
 
-            if(Keyboard.GetState().IsKeyDown(Keys.E)) {
-                //label.Label = (label.Label == "Single line test!") ? label.Label = "Multi line\ntest!" : "Single line test!";
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            {
+                test.Transform.LocalPosition += new Vector2(10, 0);
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            {
+
+                test.Transform.LocalPosition += new Vector2(-10, 0);
             }
 
-			float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
 			World.Current.Update(delta);
 

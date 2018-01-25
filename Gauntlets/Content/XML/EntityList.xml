@@ -5,23 +5,20 @@
             <Transform scale = "1 1" rotation="0"></Transform>
             <Sprite texture="test_1" row="0" column="0" width="full" height="full"></Sprite>
             <GUILabel label="The one on my upper side\nis a Sprite!" color="255 255 255 255" font="default" Center="0 0">
-                <Transform position="0 128" rotation="0"></Transform>
+                <Transform position="0 0" rotation="0"></Transform>
             </GUILabel>
-        </Components>
-    </Entity>
-    <Entity Id="1" Name="Test_Animated">
-        <Components>
+
+          <GUIButton texture="touch"></GUIButton>
+          <GUITextBox texture="TextBoxTest" label="VeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongString" offset="10 10">
+            <Transform position="0 0" ></Transform>
+          </GUITextBox>
+          
             <AnimatedSprite texture="test_animated" width="half" height="half" rendering_order="1">
                 <Frame row="0" column="0" time="0.5"></Frame>
                 <Frame row="0" column="1" time="0.5"></Frame>
                 <Frame row="1" column="0" time="0.5"></Frame>
                 <Frame row="1" column="1" time="0.5"></Frame>
             </AnimatedSprite>
-        </Components>
-    </Entity> 
-    <Entity Id="2" Name="Button_Test">
-        <Components>
-            <GUIButton texture="touch"></GUIButton>
         </Components>
     </Entity>
 </Entities>

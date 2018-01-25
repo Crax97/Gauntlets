@@ -37,6 +37,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\ComponentRecord.cs" />
     <Compile Include="Core\GUILabel.cs" />
     <Compile Include="Core\GUITextBox.cs" />
     <Compile Include="GauntletsGame.cs" />
@@ -50,7 +51,6 @@
     <Compile Include="Core\World.cs" />
     <Compile Include="Core\GUIButton.cs" />
     <Compile Include="Core\GUIElement.cs" />
-    <Compile Include="Core\ComponentAttribute.cs" />
     <Compile Include="Core\Extensors.cs" />
   </ItemGroup>
   <ItemGroup>

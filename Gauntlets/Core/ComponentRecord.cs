@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 namespace Gauntlets.Core
 {
-    public class ComponentAttribute : System.Attribute
+    public class ComponentRecord : System.Attribute
     {
 
         private static Dictionary<string, Type> knownTypes = new Dictionary<string, Type>();

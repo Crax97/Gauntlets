@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 namespace Gauntlets.Core
 {
-	public class AnimatedSprite : Sprite, IComponent
+    public class AnimatedSprite : Sprite, IComponent
 	{
 
 		public struct AnimationFrame
@@ -37,16 +37,7 @@ namespace Gauntlets.Core
 			currentFrame = frames[0];
 		}
 
-        public new Component getComponent() {
-            return Component.SPRITE;
-        }
-
-		public new string getComponentName()
-		{
-			return "Animated Sprite";
-		}
-
-        public override void Update(float delta)
+        public override void Update(float delta, Entity e)
 		{
 			currentTime += delta;
 			if (currentTime > currentFrame.timeToNextFrame)

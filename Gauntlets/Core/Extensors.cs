@@ -10,7 +10,13 @@ namespace Gauntlets.Core
     {
 
         public static void SetupFromXmlNode(this Vector2 self, XmlAttribute attribute) {
-            if(attribute != null) {
+
+            if(attribute != null)
+            {
+
+                if (self == null)
+                    self = new Vector2();
+
                 string[] vals = attribute.Value.Split(' ');
                 self.X = float.Parse(vals[0]);
                 self.Y = float.Parse(vals[1]);
