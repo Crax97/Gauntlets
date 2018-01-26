@@ -30,8 +30,8 @@ namespace Gauntlets.Simulation
         World w = new World();
         Entity test = null;
         Entity fakePlayer = null;
-        Collider collider = null;
-        Collider testCollider = null;
+        Collider fakePlayerCollider = null;
+        Collider testObjectCollider = null;
         public Game1()
 		{
 			graphics = new GraphicsDeviceManager(this);
@@ -69,7 +69,7 @@ namespace Gauntlets.Simulation
 			// TODO: Add your initialization logic here
 
 			graphics.PreferredBackBufferWidth = 800;
-			graphics.PreferredBackBufferHeight = 600;
+            graphics.PreferredBackBufferHeight = 600;
 			graphics.ApplyChanges();
 
             ComponentRecord.RegisterAttribute<Sprite>("Sprite", XmlComponentsReaders.SpriteFromXmlNode);
@@ -124,12 +124,12 @@ namespace Gauntlets.Simulation
             GUIImage img = test.GetComponent<GUIImage>();
             img.Transform.Translate(new Vector2(-300, 0));
 
-            testCollider = new Collider(img.Sprite.Size);
-            test.AddComponent(testCollider);
+            testObjectCollider = new Collider(img.Sprite.Size);
+            test.AddComponent(testObjectCollider);
             fakePlayer = Entity.Instantiate(1);
             fakePlayer.Transform.LocalPosition = -Transform.WindowHalfSize;
-            collider = new Collider(fakePlayer.GetComponent<Sprite>().Size);
-            fakePlayer.AddComponent(collider);
+            fakePlayerCollider = new Collider(fakePlayer.GetComponent<Sprite>().Size);
+            fakePlayer.AddComponent(fakePlayerCollider);
 
 		}
 
@@ -148,43 +148,34 @@ namespace Gauntlets.Simulation
 #endif
 
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            float speed = 100.0f * delta;
-            Vector2 mult = Vector2.Zero;
+            float speed = 5000.0f * delta;
+            Vector2 translation = Vector2.Zero;
 
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
-                mult.X = 1;
+                translation.X = speed * delta;
+                if (fakePlayerCollider.IsRightColliding(testObjectCollider, new Vector2(translation.X, 0))) translation.X = 0;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
 
-                mult.X = -1;
+                translation.X = speed * delta * -1;
+                if (fakePlayerCollider.IsLeftColliding(testObjectCollider, new Vector2(translation.X, 0))) translation.X = 0;
             }
 
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
-                mult.Y = -1;
+                translation.Y = -1 * speed * delta;
+                if (fakePlayerCollider.IsUpColliding(testObjectCollider, new Vector2(0, translation.Y))) translation.Y = 0;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
 
-                mult.Y = 1;
+                translation.Y = speed * delta;
+                if (fakePlayerCollider.IsDownColliding(testObjectCollider, new Vector2(0, translation.Y))) translation.Y = 0;
             }
-
-            //Console.WriteLine(mult.ToString());
-
-            Vector2 translation = mult * speed;
-
-            Sprite sprite = fakePlayer.GetComponent<Sprite>();
-            if(!testCollider.HasPointInside(fakePlayer.Transform.PositionInCameraSpace + sprite.Size * 0.5f * mult + translation))
-            {
-                fakePlayer.Transform.Translate(translation);
-                Console.Clear();
-            }
-            else
-            {
-                Console.WriteLine("Yay! It's colliding!");
-            }
+            fakePlayer.Transform.Translate(translation);
+            this.Window.Title = "Gauntlets - FPS " + 1.0f / delta;
 
             World.Current.Update(delta);
 

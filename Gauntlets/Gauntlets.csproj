@@ -42,6 +42,7 @@
     <Compile Include="Core\GUI\GUIImage.cs" />
     <Compile Include="Core\GUI\GUILabel.cs" />
     <Compile Include="Core\GUI\GUITextBox.cs" />
+    <Compile Include="Core\ICollider.cs" />
     <Compile Include="Core\XMLHandler.cs" />
     <Compile Include="GauntletsGame.cs" />
     <Compile Include="Program.cs" />
@@ -58,7 +59,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />
-    <None Include="Content\XML\EntityList.xml" />
+    <None Include="Content\XML\EntityList.xml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icon.ico" />

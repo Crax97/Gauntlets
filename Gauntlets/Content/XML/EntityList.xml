@@ -19,13 +19,13 @@
           <GUITextBox texture="TextBoxTest" label="VeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongStringVeryLongString" offset="10 10">
             <Transform position="0 0" ></Transform>
           </GUITextBox>
-          
-            <AnimatedSprite texture="test_animated" width="half" height="half" rendering_order="1">
+
+          <!-- <AnimatedSprite texture="test_animated" width="half" height="half" rendering_order="1">
                 <Frame row="0" column="0" time="0.5"></Frame>
                 <Frame row="0" column="1" time="0.5"></Frame>
                 <Frame row="1" column="0" time="0.5"></Frame>
                 <Frame row="1" column="1" time="0.5"></Frame>
-            </AnimatedSprite>
+            </AnimatedSprite> -->
 
           <GUIImage texture="test_1"></GUIImage>
         </Components>
