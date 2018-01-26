@@ -37,6 +37,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Collider.cs" />
     <Compile Include="Core\ComponentRecord.cs" />
     <Compile Include="Core\GUI\GUIImage.cs" />
     <Compile Include="Core\GUI\GUILabel.cs" />

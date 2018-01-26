@@ -1,6 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Entities>
-    <Entity Id="0" Name="Test">
+  <Entity id ="1" name="test">
+    <Components>
+      <Sprite texture="test_1" row="0" width="full" height="full">
+        
+      </Sprite>
+    </Components>
+  </Entity>
+    <Entity id="0" name="Test">
         <Components>
             <Transform scale = "1 1" rotation="0"></Transform>
             <Sprite texture="test_1" row="0" column="0" width="full" height="full"></Sprite>
@@ -19,6 +26,8 @@
                 <Frame row="1" column="0" time="0.5"></Frame>
                 <Frame row="1" column="1" time="0.5"></Frame>
             </AnimatedSprite>
+
+          <GUIImage texture="test_1"></GUIImage>
         </Components>
     </Entity>
 </Entities>

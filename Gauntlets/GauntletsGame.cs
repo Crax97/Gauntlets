@@ -11,7 +11,7 @@ using CraxEngine.Core;
 using CraxEngine.Core.GUI;
 
 /// <summary>
-/// TODO: Add GUIImage class.
+/// TODO: 
 /// After it's done, start working on Collider class.
 /// Then, start developing a base platformer character
 /// </summary>
@@ -29,7 +29,9 @@ namespace Gauntlets.Simulation
 
         World w = new World();
         Entity test = null;
-
+        Entity fakePlayer = null;
+        Collider collider = null;
+        Collider testCollider = null;
         public Game1()
 		{
 			graphics = new GraphicsDeviceManager(this);
@@ -76,8 +78,9 @@ namespace Gauntlets.Simulation
             ComponentRecord.RegisterAttribute<GUIButton>("GUIButton", XmlComponentsReaders.GUIButtonFromXmlNode);
             ComponentRecord.RegisterAttribute<GUILabel>("GUILabel", XmlComponentsReaders.GUILabelFromXmlNode);
             ComponentRecord.RegisterAttribute<GUITextBox>("GUITextBox", XmlComponentsReaders.GUITextBoxFromXmlNode);
+            ComponentRecord.RegisterAttribute<GUIImage>("GUIImage", XmlComponentsReaders.GUIImageFromXmlNode);
 
-			Transform.UpdateGraphicsSize(graphics);
+            Transform.UpdateGraphicsSize(graphics);
 
 			this.IsMouseVisible = true;
 
@@ -117,41 +120,76 @@ namespace Gauntlets.Simulation
             label.Transform.Translate (new Vector2(400, 0));
             label.Label = "There are some\nGUI Elements under me!";
             label.Center = label.Font.MeasureString("There are some\nGUI Elements under me!") * new Vector2(0.5f, 0);
-			//TODO: use this.Content to load your game content here 
+
+            GUIImage img = test.GetComponent<GUIImage>();
+            img.Transform.Translate(new Vector2(-300, 0));
+
+            testCollider = new Collider(img.Sprite.Size);
+            test.AddComponent(testCollider);
+            fakePlayer = Entity.Instantiate(1);
+            fakePlayer.Transform.LocalPosition = -Transform.WindowHalfSize;
+            collider = new Collider(fakePlayer.GetComponent<Sprite>().Size);
+            fakePlayer.AddComponent(collider);
+
 		}
 
-		/// <summary>
-		/// Allows the game to run logic such as updating the world,
-		/// checking for collisions, gathering input, and playing audio.
-		/// </summary>
-		/// <param name="gameTime">Provides a snapshot of timing values.</param>
-		protected override void Update(GameTime gameTime)
-		{
-			// For Mobile devices, this logic will close the Game when the Back button is pressed
-			// Exit() is obsolete on iOS
+        /// <summary>
+        /// Allows the game to run logic such as updating the world,
+        /// checking for collisions, gathering input, and playing audio.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        protected override void Update(GameTime gameTime)
+        {
+            // For Mobile devices, this logic will close the Game when the Back button is pressed
+            // Exit() is obsolete on iOS
 #if !__IOS__ && !__TVOS__
-			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-				Exit();
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                Exit();
 #endif
+
+            float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float speed = 100.0f * delta;
+            Vector2 mult = Vector2.Zero;
 
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
-                test.Transform.LocalPosition += new Vector2(10, 0);
+                mult.X = 1;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
 
-                test.Transform.LocalPosition += new Vector2(-10, 0);
+                mult.X = -1;
             }
 
-            float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                mult.Y = -1;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            {
 
-			World.Current.Update(delta);
+                mult.Y = 1;
+            }
 
-			// TODO: Add your update logic here
+            //Console.WriteLine(mult.ToString());
 
-			base.Update(gameTime);
-		}
+            Vector2 translation = mult * speed;
+
+            Sprite sprite = fakePlayer.GetComponent<Sprite>();
+            if(!testCollider.HasPointInside(fakePlayer.Transform.PositionInCameraSpace + sprite.Size * 0.5f * mult + translation))
+            {
+                fakePlayer.Transform.Translate(translation);
+                Console.Clear();
+            }
+            else
+            {
+                Console.WriteLine("Yay! It's colliding!");
+            }
+
+            World.Current.Update(delta);
+
+            base.Update(gameTime);
+        }
 
 		/// <summary>
 		/// This is called when the game should draw itself.

@@ -81,8 +81,8 @@ namespace CraxEngine.Core
                 knownEntities = new List<Entity>(entities.Count);
 
                 foreach(XmlNode entity in entities){
-                    int id = int.Parse(entity.Attributes["Id"].Value);
-                    string name = entity.Attributes["Name"].Value;
+                    int id = int.Parse(entity.Attributes["id"].Value);
+                    string name = entity.Attributes["name"].Value;
 
                     Entity e = new Entity();
                     e.Id = id;
