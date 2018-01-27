@@ -123,7 +123,7 @@ namespace CraxEngine.Core
             if (c.GetType() == typeof(Transform)) 
                 throw new ArgumentException("Entites can only have one transform!");
 			components.Add(c);
-            c.Initialize();
+            c.Initialize(this);
 		}
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace CraxEngine.Core
 		{
 			foreach (IComponent c in components)
 			{
-				c.Initialize();
+				c.Initialize(this);
 			}
 		}
 		public virtual void Update(float deltaTime)

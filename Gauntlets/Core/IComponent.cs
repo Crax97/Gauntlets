@@ -9,7 +9,7 @@ namespace CraxEngine
 
     public interface IComponent : ICloneable
 	{
-		void Initialize();
+		void Initialize(Entity owner);
 		void Update(float deltaTime, Entity parent);
 		void Destroy();
 	}

@@ -72,7 +72,7 @@ namespace CraxEngine.Core
 		public virtual void Update(float delta, Entity e) {
 
         }
-		public void Initialize() { }
+		public void Initialize(Entity owner) { }
 		public void Destroy() { }
 
 

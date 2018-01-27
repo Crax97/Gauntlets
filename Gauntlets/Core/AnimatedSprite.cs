@@ -48,7 +48,7 @@ namespace CraxEngine.Core
 
         }
 
-		public new void Initialize() { }
+		public new void Initialize(Entity owner) { }
 		public new void Destroy() { }
 
         public new object Clone() {

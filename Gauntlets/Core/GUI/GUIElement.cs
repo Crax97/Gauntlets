@@ -14,7 +14,7 @@ namespace CraxEngine.Core.GUI
             Color = (color != null) ? (Color)color : Color.White;
         }
 
-        public void Initialize()
+        public void Initialize(Entity owner)
         {
         }
 

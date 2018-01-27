@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.IO;
 using CraxEngine.Core;
-using CraxEngine.Core;
+using CraxEngine.Core.Physics;
 using CraxEngine.Core.GUI;
 
 /// <summary>
@@ -30,8 +30,8 @@ namespace Gauntlets.Simulation
         World w = new World();
         Entity test = null;
         Entity fakePlayer = null;
-        Collider fakePlayerCollider = null;
-        Collider testObjectCollider = null;
+        AABBCollider fakePlayerCollider = null;
+        AABBCollider testObjectCollider = null;
         public Game1()
 		{
 			graphics = new GraphicsDeviceManager(this);
@@ -106,20 +106,27 @@ namespace Gauntlets.Simulation
             guiBatch = new SpriteBatch(GraphicsDevice);
 
             test = Entity.Instantiate(0);
-            test.Transform.Translate(new Vector2(400, 300));
 
 
             Sprite sprite = test.GetComponent<Sprite>();
 
-            testObjectCollider = new Collider(sprite.Size);
+            testObjectCollider = new AABBCollider(sprite.Size);
             test.AddComponent(testObjectCollider);
 
             fakePlayer = Entity.Instantiate(1);
-            fakePlayer.Transform.LocalPosition = -Transform.WindowHalfSize;
-            fakePlayerCollider = new Collider(fakePlayer.GetComponent<Sprite>().Size);
+            fakePlayerCollider = new AABBCollider(fakePlayer.GetComponent<Sprite>().Size);
             fakePlayer.AddComponent(fakePlayerCollider);
+            reset();
 
-		}
+
+        }
+
+        private void reset()
+        {
+
+            test.Transform.Position = Transform.WindowHalfSize;
+            fakePlayer.Transform.Position = Vector2.Zero;
+        }
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -130,8 +137,10 @@ namespace Gauntlets.Simulation
         {
 
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            float speed = 1000.0f;
+            float speed = 500.0f;
             Vector2 translation = Vector2.Zero;
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Space)) reset();
 
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
@@ -152,6 +161,7 @@ namespace Gauntlets.Simulation
 
                 translation.Y = speed * delta;
             }
+
             fakePlayer.Transform.Translate(translation);
 
             World.Current.Update(delta);

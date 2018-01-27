@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Entities>
-  <Entity id ="1" name="test">
+  <Entity id ="1" name="fakePlayer">
     <Components>
-      <Sprite texture="test_1" row="0" width="full" height="full">
+      <Sprite texture="player" row="0" width="full" height="full">
         
       </Sprite>
     </Components>

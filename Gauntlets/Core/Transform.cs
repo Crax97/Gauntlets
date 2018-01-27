@@ -72,6 +72,10 @@ namespace CraxEngine.Core
 			{
 				return position;
 			}
+            set
+            {
+                position = value;
+            }
 		}
 
 		public Vector2 LocalScale
@@ -132,7 +136,7 @@ namespace CraxEngine.Core
 		}
 
         public void Update(float deltaTime, Entity parent) { }
-		public void Initialize() { }
+		public void Initialize(Entity owner) { }
 		public void Destroy() { }
 
         public object Clone()
