@@ -111,6 +111,7 @@ namespace Gauntlets.Simulation
             Sprite sprite = test.GetComponent<Sprite>();
 
             testObjectCollider = new AABBCollider(sprite.Size);
+            testObjectCollider.IsStatic = true;
             test.AddComponent(testObjectCollider);
 
             fakePlayer = Entity.Instantiate(1);
@@ -165,6 +166,8 @@ namespace Gauntlets.Simulation
             fakePlayer.Transform.Translate(translation);
 
             World.Current.Update(delta);
+
+            Collider.CalculateCollisions();
 
             base.Update(gameTime);
             this.Window.Title = "Gauntlets - FPS " + 1.0f / delta;

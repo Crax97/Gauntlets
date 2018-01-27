@@ -20,7 +20,8 @@ namespace CraxEngine.Core.Physics
 
         private static List<Collider> colliders = new List<Collider>();
         private Vector2 positionPreviousFrame;
-        private Entity owner = null;
+        public Entity Owner { get; private set; } = null;
+        public bool IsStatic { get; set; } = false;
         /// <summary>
         /// Gets the axis of the edges of two shapes
         /// </summary>
@@ -128,38 +129,50 @@ namespace CraxEngine.Core.Physics
                 }
 
             }
+
+            Vector2 distance = (this.Owner.Transform.Position - other.Owner.Transform.Position);
+            float collidersDot = Vector2.Dot(distance, overlapAxis);
             MTV = overlapAxis * minOverlap;
+
+            if (collidersDot < 0)
+            {
+                MTV = MTV * -1;
+            }
+
             return true;
         }
-
-        //bool IsCollidingWith(ICollider other);
+        
         protected abstract List<Vector2> GetColliderVertices();
         public abstract ColliderType GetColliderType();
 
         public void Initialize(Entity owner)
         {
             colliders.Add(this);
-            this.owner = owner;
+            this.Owner = owner;
         }
        
 
         public virtual void Update(float deltaTime, Entity parent)
         {
-            Vector2 delta = parent.Transform.Position - positionPreviousFrame;
-            foreach (Collider other in colliders)
-            {
-                if(other != this)
+            positionPreviousFrame = parent.Transform.Position;
+        }
+
+        public static void CalculateCollisions()
+        {
+            foreach (Collider collider in colliders) {
+                foreach (Collider other in colliders)
                 {
-                    Vector2? pushback;
-                    CheckForCollisionSAT(other, out pushback);
-                    if(pushback != null)
+                    if (other != collider)
                     {
-                        parent.Transform.Translate(pushback.Value);
+                        Vector2? pushback;
+                        collider.CheckForCollisionSAT(other, out pushback);
+                        if (pushback != null && !collider.IsStatic) 
+                        {
+                            collider.Owner.Transform.Translate(pushback.Value);
+                        }
                     }
                 }
             }
-
-            positionPreviousFrame = parent.Transform.Position;
         }
 
         public void Destroy()
