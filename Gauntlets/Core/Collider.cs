@@ -7,15 +7,18 @@ using System.Threading.Tasks;
 
 namespace CraxEngine.Core
 {
+
+    /// <summary>
+    /// A Collider based on <see cref="Microsoft.Xna.Framework.Rectangle"/>
+    /// </summary>
     public class Collider : IComponent
     {
-        private Rectangle collisionRectangle;
-        public Vector2 Extension {get; set;}
 
-        private Vector2 topLeft;
-        private Vector2 topRight;
-        private Vector2 bottomLeft;
-        private Vector2 bottomRight;
+        private static List<Collider> activeColliders = new List<Collider>();
+
+        public Vector2 Extension { get; set; }
+        private Vector2 positionLastFrame;
+        private Rectangle collisionRectangle;
 
         public Collider(Vector2 extension)
         {
@@ -29,61 +32,58 @@ namespace CraxEngine.Core
 
         public void Destroy()
         {
+            activeColliders.Remove(this);
         }
 
         public void Initialize()
         {
+            activeColliders.Add(this);
         }
 
         public void Update(float deltaTime, Entity parent)
         {
-            Vector2 parentPosition = parent.Transform.PositionInCameraSpace;
+            Vector2 parentPosition = parent.Transform.Position;
             Vector2 halfExtension = Extension * 0.5f;
 
-            topLeft = parentPosition + new Vector2(-halfExtension.X, -halfExtension.Y);
-            topRight = parentPosition + new Vector2(halfExtension.X, -halfExtension.Y);
-            bottomLeft = parentPosition + new Vector2(-halfExtension.X, halfExtension.Y);
-            bottomRight = parentPosition + new Vector2(halfExtension.X, halfExtension.Y);
+            collisionRectangle = new Rectangle((parent.Transform.Position - Extension * 0.5f).ToPoint(), Extension.ToPoint());
 
-            collisionRectangle = new Rectangle((parent.Transform.PositionInCameraSpace - Extension * 0.5f).ToPoint(), Extension.ToPoint());
-        }
+            Vector2 deltaPosition = parent.Transform.Position - positionLastFrame;
 
-        public bool IsCollidingWith(Collider other, Vector2 offset)
-        {
-            return (other.HasPointInside(topLeft + offset) ||
-                other.HasPointInside(topRight + offset) ||
-                other.HasPointInside(bottomLeft + offset) ||
-                other.HasPointInside(bottomRight + offset)); 
+            Vector2 pushBack = Vector2.Zero;
+            CheckForCollisions(deltaPosition, out pushBack);
+            parent.Transform.Translate(-pushBack);
+            positionLastFrame = parent.Transform.Position;
         }
 
-        private bool lineColliding(Collider other, Vector2 begin, Vector2 end, Vector2 offset)
+        public void CheckForCollisions(Vector2 deltaPosition, out Vector2 pushBack)
         {
-            return (other.HasPointInside(begin + offset) || other.HasPointInside(end + offset));
-        }
+            pushBack = Vector2.Zero;
+            foreach (Collider other in activeColliders)
+            {
+                if (other != this && collisionRectangle.Intersects(other.collisionRectangle))
+                {
+                    //Are we moving right or left?
+                    if (deltaPosition.X > 0)
+                    {
+                        pushBack.X = collisionRectangle.Right - other.collisionRectangle.Left;
+                    }
+                    else if (deltaPosition.X < 0)
+                    {
+                        pushBack.X = collisionRectangle.Left - other.collisionRectangle.Right;
+                    }
 
-        public bool IsRightColliding(Collider other, Vector2 offset)
-        {
-            return lineColliding(other, topRight, bottomRight, offset);
-        }
+                    //Are we moving up or down?
+                    if (deltaPosition.Y < 0)
+                    {
+                        pushBack.Y = collisionRectangle.Top - other.collisionRectangle.Bottom;
+                    }
+                    else if (deltaPosition.Y > 0)
+                    {
+                        pushBack.Y = collisionRectangle.Bottom - other.collisionRectangle.Top;
+                    }
 
-        public bool IsLeftColliding(Collider other, Vector2 offset)
-        {
-            return lineColliding(other, topLeft, bottomLeft, offset);
+                }
+            }
         }
-        public bool IsUpColliding(Collider other, Vector2 offset)
-        {
-            return lineColliding(other, topLeft, topRight, offset);
-        }
-        public bool IsDownColliding(Collider other, Vector2 offset)
-        {
-            return lineColliding(other, bottomLeft, bottomRight, offset);
-        }
-
-        public bool HasPointInside(Vector2 point)
-        {
-            return (collisionRectangle.Contains(point));
-        }
-        
     }
-        
 }

@@ -123,6 +123,7 @@ namespace CraxEngine.Core
             if (c.GetType() == typeof(Transform)) 
                 throw new ArgumentException("Entites can only have one transform!");
 			components.Add(c);
+            c.Initialize();
 		}
 
         /// <summary>

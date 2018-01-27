@@ -22,7 +22,7 @@ namespace CraxEngine.Core.GUI
 
         internal override void Draw(SpriteBatch batch, Entity parent)
         {
-            Vector2 position = parent.Transform.getWorldPosition() + Transform.PositionInCameraSpace;
+            Vector2 position = parent.Transform.getWorldPosition() + Transform.Position;
             batch.Draw(Sprite.Texture, position, Sprite.Source, Color.White, Transform.Rotation, Sprite.SpriteCenter, Transform.LocalScale, SpriteEffects.None, Sprite.RenderingOrder);
         }
 

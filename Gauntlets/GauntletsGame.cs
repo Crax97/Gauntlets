@@ -106,26 +106,14 @@ namespace Gauntlets.Simulation
             guiBatch = new SpriteBatch(GraphicsDevice);
 
             test = Entity.Instantiate(0);
-            test.Transform.Translate(Transform.WindowHalfSize);
+            test.Transform.Translate(new Vector2(400, 300));
 
-            GUIButton buttonComponent = test.GetComponent<GUIButton>();
-            buttonComponent.AddOnReleaseCallback(HandleButtonCallback2);
-            buttonComponent.Transform.Translate(new Vector2(150, 0));
 
-            GUITextBox textBox = test.GetComponent<GUITextBox>();
-            textBox.Offset = new Vector2(10, 10);
-            textBox.Transform.LocalPosition += new Vector2(0, graphics.PreferredBackBufferHeight - textBox.Sprite.Height) * 0.5f;
+            Sprite sprite = test.GetComponent<Sprite>();
 
-            GUILabel label = test.GetComponent<GUILabel>();
-            label.Transform.Translate (new Vector2(400, 0));
-            label.Label = "There are some\nGUI Elements under me!";
-            label.Center = label.Font.MeasureString("There are some\nGUI Elements under me!") * new Vector2(0.5f, 0);
-
-            GUIImage img = test.GetComponent<GUIImage>();
-            img.Transform.Translate(new Vector2(-300, 0));
-
-            testObjectCollider = new Collider(img.Sprite.Size);
+            testObjectCollider = new Collider(sprite.Size);
             test.AddComponent(testObjectCollider);
+
             fakePlayer = Entity.Instantiate(1);
             fakePlayer.Transform.LocalPosition = -Transform.WindowHalfSize;
             fakePlayerCollider = new Collider(fakePlayer.GetComponent<Sprite>().Size);
@@ -140,46 +128,36 @@ namespace Gauntlets.Simulation
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // For Mobile devices, this logic will close the Game when the Back button is pressed
-            // Exit() is obsolete on iOS
-#if !__IOS__ && !__TVOS__
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-#endif
 
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            float speed = 5000.0f * delta;
+            float speed = 1000.0f;
             Vector2 translation = Vector2.Zero;
 
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
                 translation.X = speed * delta;
-                if (fakePlayerCollider.IsRightColliding(testObjectCollider, new Vector2(translation.X, 0))) translation.X = 0;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
 
-                translation.X = speed * delta * -1;
-                if (fakePlayerCollider.IsLeftColliding(testObjectCollider, new Vector2(translation.X, 0))) translation.X = 0;
+                translation.X = -1 * speed * delta;
             }
 
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
                 translation.Y = -1 * speed * delta;
-                if (fakePlayerCollider.IsUpColliding(testObjectCollider, new Vector2(0, translation.Y))) translation.Y = 0;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
 
                 translation.Y = speed * delta;
-                if (fakePlayerCollider.IsDownColliding(testObjectCollider, new Vector2(0, translation.Y))) translation.Y = 0;
             }
             fakePlayer.Transform.Translate(translation);
-            this.Window.Title = "Gauntlets - FPS " + 1.0f / delta;
 
             World.Current.Update(delta);
 
             base.Update(gameTime);
+            this.Window.Title = "Gauntlets - FPS " + 1.0f / delta;
         }
 
 		/// <summary>

@@ -59,7 +59,7 @@ namespace CraxEngine.Core.GUI
 
         internal override void Draw(SpriteBatch batch, Entity parent)
         {
-            Vector2 position = parent.Transform.LocalPosition + this.Transform.PositionInCameraSpace;
+            Vector2 position = parent.Transform.LocalPosition + this.Transform.Position;
             batch.DrawString(Font, Label, position, Color, Transform.Rotation, Center, Transform.LocalScale, SpriteEffects.None, Depth);
         }
 

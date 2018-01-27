@@ -17,7 +17,7 @@ namespace CraxEngine.Core
                 foreach (Sprite sprite in sprites)
                 {
                     if (sprite.IsVisible)
-                        batch.Draw(sprite.Texture, entity.Transform.PositionInCameraSpace,
+                        batch.Draw(sprite.Texture, entity.Transform.Position,
                                    sprite.Source, Color.White, entity.Transform.Rotation, sprite.SpriteCenter,
                                     entity.Transform.LocalScale, SpriteEffects.None, sprite.RenderingOrder);
                 }

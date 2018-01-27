@@ -70,7 +70,7 @@ public class GUIButton : GUIElement, ICloneable
             //Math used: I multiply the SpriteCenter by LocalScale because (of course) the more i scale, the more the center moves. 
             //We have to accout for extension differences as well.
             //Same goes for the buttonSprize's size, and that's more obvious 
-            Vector2 rectPosition = (parent.Transform.LocalPosition + Transform.PositionInCameraSpace - (Sprite.SpriteCenter * Transform.LocalScale) + (offset * Transform.LocalScale));
+            Vector2 rectPosition = (parent.Transform.LocalPosition + Transform.Position - (Sprite.SpriteCenter * Transform.LocalScale) + (offset * Transform.LocalScale));
             Rectangle rect = new Rectangle(rectPosition.ToPoint(), (Extension * Transform.LocalScale).ToPoint());
 			MouseState mouseState = Mouse.GetState();
 
@@ -112,7 +112,7 @@ public class GUIButton : GUIElement, ICloneable
 
         internal override void Draw(SpriteBatch batch, Entity parent)
         {
-            batch.Draw(Sprite.Texture, parent.Transform.LocalPosition + Transform.PositionInCameraSpace, Sprite.Source, Color, Transform.Rotation,
+            batch.Draw(Sprite.Texture, parent.Transform.LocalPosition + Transform.Position, Sprite.Source, Color, Transform.Rotation,
                                   Sprite.SpriteCenter, Transform.LocalScale, SpriteEffects.None, Sprite.RenderingOrder);
         }
 

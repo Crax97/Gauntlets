@@ -66,7 +66,7 @@ namespace CraxEngine.Core
 			return pos;
 		}
 
-		public Vector2 PositionInCameraSpace
+		public Vector2 Position
 		{
 			get
 			{

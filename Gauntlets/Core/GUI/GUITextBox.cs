@@ -66,7 +66,7 @@ namespace CraxEngine.Core.GUI
         }
 
         internal override void Draw(SpriteBatch batch, Entity parent) {
-            Vector2 textBoxPosition = parent.Transform.getWorldPosition() + Transform.PositionInCameraSpace;
+            Vector2 textBoxPosition = parent.Transform.getWorldPosition() + Transform.Position;
             Vector2 labelPosition = textBoxPosition + Offset - Sprite.Size * 0.5f;
             if( Sprite != null ) batch.Draw(Sprite.Texture, textBoxPosition, Sprite.Source, Color.White, Transform.Rotation, Sprite.SpriteCenter, Transform.LocalScale, SpriteEffects.None, Sprite.RenderingOrder );
             batch.DrawString(label.Font, label.Label, labelPosition, label.Color, Transform.Rotation, label.Center, Transform.LocalScale, SpriteEffects.None, Sprite.RenderingOrder + 0.1f);
