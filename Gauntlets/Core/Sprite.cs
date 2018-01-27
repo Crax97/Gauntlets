@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Xml;
 
-namespace CraxEngine.Core
+namespace CraxAwesomeEngine.Core
 {
 	public static partial class SpriteBatchExtensor
 	{

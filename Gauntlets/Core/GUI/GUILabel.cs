@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using System.Xml;
 using System.IO;
 
-namespace CraxEngine.Core.GUI
+namespace CraxAwesomeEngine.Core.GUI
 {
     /// <summary>
     /// Abstracts a GUI Label, with settable SpriteFont, 

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Xml;
-using CraxEngine.Core;
+using CraxAwesomeEngine.Core;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace CraxEngine.Core.GUI { 
+namespace CraxAwesomeEngine.Core.GUI { 
     /// <summary>
     /// Abstracts a GUI button with two callbacks:
     /// On Click and On Release.

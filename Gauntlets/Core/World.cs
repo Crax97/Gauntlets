@@ -2,9 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Linq;
-using CraxEngine.Core.GUI;
+using CraxAwesomeEngine.Core.GUI;
 
-namespace CraxEngine.Core { 
+namespace CraxAwesomeEngine.Core { 
 
 	public class World
 	{

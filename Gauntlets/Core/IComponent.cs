@@ -2,9 +2,9 @@
 using System.Xml;
 
 using Microsoft.Xna.Framework;
-using CraxEngine.Core;
+using CraxAwesomeEngine.Core;
 
-namespace CraxEngine
+namespace CraxAwesomeEngine
 {
 
     public interface IComponent : ICloneable

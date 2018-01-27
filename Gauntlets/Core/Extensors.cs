@@ -4,7 +4,7 @@ using System.Xml;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace CraxEngine.Core
+namespace CraxAwesomeEngine.Core
 {
     public static class Extensors
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Graphics;
-using CraxEngine.Core;
+using CraxAwesomeEngine.Core;
 using Microsoft.Xna.Framework;
 using System.Xml;
 
-namespace CraxEngine.Core.GUI
+namespace CraxAwesomeEngine.Core.GUI
 {
     class GUIImage : GUIElement, ICloneable
     {

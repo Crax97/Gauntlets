@@ -3,7 +3,7 @@ using System.Xml;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-namespace CraxEngine.Core
+namespace CraxAwesomeEngine.Core
 {
     public class AnimatedSprite : Sprite, IComponent
 	{

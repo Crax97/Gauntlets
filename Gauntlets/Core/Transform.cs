@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Xml;
-namespace CraxEngine.Core
+namespace CraxAwesomeEngine.Core
 {
     
     public class Transform : IComponent

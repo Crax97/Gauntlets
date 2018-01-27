@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 
-namespace CraxEngine.Core
+namespace CraxAwesomeEngine.Core
 {
     /// <summary>
     /// Static class that holds informations regarding the various IComponents

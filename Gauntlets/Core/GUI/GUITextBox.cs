@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace CraxEngine.Core.GUI
+namespace CraxAwesomeEngine.Core.GUI
 {
     class GUITextBox : GUIElement
     {

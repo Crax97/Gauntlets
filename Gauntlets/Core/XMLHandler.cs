@@ -7,11 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using CraxEngine.Core;
-using CraxEngine.Core.GUI;
-using static CraxEngine.Core.AnimatedSprite;
+using CraxAwesomeEngine.Core;
+using CraxAwesomeEngine.Core.GUI;
+using static CraxAwesomeEngine.Core.AnimatedSprite;
 
-namespace CraxEngine.Core
+namespace CraxAwesomeEngine.Core
 {
     static class XmlComponentsReaders
     {

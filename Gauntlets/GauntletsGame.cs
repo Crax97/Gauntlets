@@ -6,9 +6,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.IO;
-using CraxEngine.Core;
-using CraxEngine.Core.Physics;
-using CraxEngine.Core.GUI;
+using CraxAwesomeEngine.Core;
+using CraxAwesomeEngine.Core.Physics;
+using CraxAwesomeEngine.Core.GUI;
 
 /// <summary>
 /// TODO: 
@@ -28,10 +28,6 @@ namespace Gauntlets.Simulation
         SpriteBatch guiBatch;
 
         World w = new World();
-        Entity test = null;
-        Entity fakePlayer = null;
-        AABBCollider fakePlayerCollider = null;
-        AABBCollider testObjectCollider = null;
         public Game1()
 		{
 			graphics = new GraphicsDeviceManager(this);
@@ -80,8 +76,9 @@ namespace Gauntlets.Simulation
             ComponentRecord.RegisterAttribute<GUITextBox>("GUITextBox", XmlComponentsReaders.GUITextBoxFromXmlNode);
             ComponentRecord.RegisterAttribute<GUIImage>("GUIImage", XmlComponentsReaders.GUIImageFromXmlNode);
 
+            //Initialize components first!
             Transform.UpdateGraphicsSize(graphics);
-
+            GUILabel.Initialize(this);
 			this.IsMouseVisible = true;
 
 			World.Current.BeginSimulation();
@@ -95,8 +92,6 @@ namespace Gauntlets.Simulation
 		/// </summary>
 		protected override void LoadContent()
         {
-            //Initialize components first!
-            GUILabel.Initialize(this);
 
             //Then initialize entities
             Entity.InitializeEntities(Path.Combine(Content.RootDirectory, "XML", "EntityList.xml"), this);
@@ -104,29 +99,8 @@ namespace Gauntlets.Simulation
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch(GraphicsDevice);
             guiBatch = new SpriteBatch(GraphicsDevice);
+            Debug.InitializeDebug(guiBatch, GraphicsDevice);
 
-            test = Entity.Instantiate(0);
-
-
-            Sprite sprite = test.GetComponent<Sprite>();
-
-            testObjectCollider = new AABBCollider(sprite.Size);
-            testObjectCollider.IsStatic = true;
-            test.AddComponent(testObjectCollider);
-
-            fakePlayer = Entity.Instantiate(1);
-            fakePlayerCollider = new AABBCollider(fakePlayer.GetComponent<Sprite>().Size);
-            fakePlayer.AddComponent(fakePlayerCollider);
-            reset();
-
-
-        }
-
-        private void reset()
-        {
-
-            test.Transform.Position = Transform.WindowHalfSize;
-            fakePlayer.Transform.Position = Vector2.Zero;
         }
 
         /// <summary>
@@ -138,35 +112,15 @@ namespace Gauntlets.Simulation
         {
 
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            float speed = 500.0f;
-            Vector2 translation = Vector2.Zero;
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space)) reset();
+            Vector2 position = new Vector2((float)Math.Sin(gameTime.TotalGameTime.TotalSeconds) * Transform.WindowHalfSize.X + Transform.WindowHalfSize.X , 10); 
 
-            if (Keyboard.GetState().IsKeyDown(Keys.D))
-            {
-                translation.X = speed * delta;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.A))
-            {
-
-                translation.X = -1 * speed * delta;
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.W))
-            {
-                translation.Y = -1 * speed * delta;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.S))
-            {
-
-                translation.Y = speed * delta;
-            }
-
-            fakePlayer.Transform.Translate(translation);
-
+            Debug.DrawLine(position, Transform.WindowHalfSize, Color.Violet);
+            Debug.DrawPoint(new Vector2(200, 100), null, 100.0f);
+            Rectangle filledRect = new Rectangle(Transform.WindowHalfSize.ToPoint(), (Transform.WindowHalfSize * 0.5f).ToPoint());
+            Debug.DrawRectangleFilled(filledRect, Color.LightSalmon, (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds));
+            Debug.DrawRectangleBounds(new Rectangle(new Vector2(400, 30).ToPoint(), (Transform.WindowHalfSize * 0.5f).ToPoint()), Color.LightGray);
             World.Current.Update(delta);
-
             Collider.CalculateCollisions();
 
             base.Update(gameTime);
@@ -182,13 +136,14 @@ namespace Gauntlets.Simulation
 			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 
 			spriteBatch.Begin();
-            guiBatch.Begin();
-
 			World.Current.DrawSprites(spriteBatch, gameTime);
 			spriteBatch.End();
 
+            guiBatch.Begin();
             World.Current.DrawGUI(guiBatch);               
             guiBatch.End();
+
+            Debug.DebugDraw();
 
 			base.Draw(gameTime);
 		}

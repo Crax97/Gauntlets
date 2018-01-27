@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CraxEngine.Core.Physics
+namespace CraxAwesomeEngine.Core.Physics
 {
 
     public enum ColliderType

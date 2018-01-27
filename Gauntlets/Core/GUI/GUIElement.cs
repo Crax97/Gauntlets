@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using System.Xml;
 
-namespace CraxEngine.Core.GUI
+namespace CraxAwesomeEngine.Core.GUI
 {
     public class GUIElement : IComponent
     {

@@ -5,7 +5,7 @@ using System.IO;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-namespace CraxEngine.Core
+namespace CraxAwesomeEngine.Core
 {
 
     public class Entity : ICloneable
