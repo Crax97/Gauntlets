@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Collections.Generic;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -18,55 +17,63 @@ using CraxAwesomeEngine.Core.GUI;
 
 namespace Gauntlets.Simulation
 {
-	/// <summary>
-	/// This is the main type for your game.
-	/// </summary>
-	public class Game1 : Game
-	{
-		GraphicsDeviceManager graphics;
-		SpriteBatch spriteBatch;
+    /// <summary>
+    /// This is the main type for your game.
+    /// </summary>
+    public class Game1 : Game
+    {
+        GraphicsDeviceManager graphics;
+        SpriteBatch spriteBatch;
         SpriteBatch guiBatch;
 
         World w = new World();
+        Entity test = null;
+        Entity fakePlayer = null;
+        AABBCollider fakePlayerCollider = null;
+        AABBCollider testObjectCollider = null;
+
+        Sprite testObjectSprite = null;
+        Sprite fakePlayerSprite = null;
+
         public Game1()
-		{
-			graphics = new GraphicsDeviceManager(this);
-			Content.RootDirectory = "Content";
+        {
+            graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
 
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
 
-		}
+        }
 
-		void HandleButtonCallback()
-		{
+        void HandleButtonCallback()
+        {
 
-			Console.WriteLine("Click!");
+            Console.WriteLine("Click!");
 
-		}
+        }
 
-		void HandleButtonCallback1()
-		{
-			Console.WriteLine("Release!");
-		}
+        void HandleButtonCallback1()
+        {
+            Console.WriteLine("Release!");
+        }
 
-		void HandleButtonCallback2()
-		{
-			Console.WriteLine("Double click!");
-		}
+        void HandleButtonCallback2()
+        {
+            Console.WriteLine("Double click!");
+        }
 
-		/// <summary>
-		/// Allows the game to perform any initialization it needs to before starting to run.
-		/// This is where it can query for any required services and load any non-graphic
-		/// related content.  Calling base.Initialize will enumerate through any components
-		/// and initialize them as well.
-		/// </summary>
-		protected override void Initialize()
-		{
-			// TODO: Add your initialization logic here
+        /// <summary>
+        /// Allows the game to perform any initialization it needs to before starting to run.
+        /// This is where it can query for any required services and load any non-graphic
+        /// related content.  Calling base.Initialize will enumerate through any components
+        /// and initialize them as well.
+        /// </summary>
+        protected override void Initialize()
+        {
+            // TODO: Add your initialization logic here
 
-			graphics.PreferredBackBufferWidth = 800;
+            graphics.PreferredBackBufferWidth = 800;
             graphics.PreferredBackBufferHeight = 600;
-			graphics.ApplyChanges();
+            graphics.ApplyChanges();
 
             ComponentRecord.RegisterAttribute<Sprite>("Sprite", XmlComponentsReaders.SpriteFromXmlNode);
             ComponentRecord.RegisterAttribute<AnimatedSprite>("AnimatedSprite", XmlComponentsReaders.AnimatedSpriteFromXmlNode);
@@ -76,31 +83,54 @@ namespace Gauntlets.Simulation
             ComponentRecord.RegisterAttribute<GUITextBox>("GUITextBox", XmlComponentsReaders.GUITextBoxFromXmlNode);
             ComponentRecord.RegisterAttribute<GUIImage>("GUIImage", XmlComponentsReaders.GUIImageFromXmlNode);
 
-            //Initialize components first!
             Transform.UpdateGraphicsSize(graphics);
-            GUILabel.Initialize(this);
-			this.IsMouseVisible = true;
 
-			World.Current.BeginSimulation();
+            this.IsMouseVisible = true;
 
-			base.Initialize();
-		}
+            World.Current.BeginSimulation();
 
-		/// <summary>
-		/// LoadContent will be called once per game and is the place to load
-		/// all of your content.
-		/// </summary>
-		protected override void LoadContent()
+            base.Initialize();
+        }
+
+        /// <summary>
+        /// LoadContent will be called once per game and is the place to load
+        /// all of your content.
+        /// </summary>
+        protected override void LoadContent()
         {
+            //Initialize components first!
+            GUILabel.Initialize(this);
 
             //Then initialize entities
             Entity.InitializeEntities(Path.Combine(Content.RootDirectory, "XML", "EntityList.xml"), this);
 
-			// Create a new SpriteBatch, which can be used to draw textures.
-			spriteBatch = new SpriteBatch(GraphicsDevice);
+            // Create a new SpriteBatch, which can be used to draw textures.
+            spriteBatch = new SpriteBatch(GraphicsDevice);
             guiBatch = new SpriteBatch(GraphicsDevice);
-            Debug.InitializeDebug(guiBatch, GraphicsDevice);
+            Debug.InitializeDebug(null, GraphicsDevice);
 
+            test = Entity.Instantiate(0);
+            testObjectSprite = test.GetComponent<Sprite>();
+
+            testObjectCollider = new AABBCollider(testObjectSprite.Size);
+            testObjectCollider.IsStatic = true;
+            test.AddComponent(testObjectCollider);
+            
+            fakePlayer = Entity.Instantiate(1);
+            fakePlayerCollider = new AABBCollider(fakePlayer.GetComponent<Sprite>().Size);
+            fakePlayer.AddComponent(fakePlayerCollider);
+
+            fakePlayerSprite = fakePlayer.GetComponent<Sprite>();
+            reset();
+
+
+        }
+
+        private void reset()
+        {
+
+            test.Transform.Position = Transform.WindowHalfSize;
+            fakePlayer.Transform.Position = Vector2.Zero;
         }
 
         /// <summary>
@@ -112,40 +142,64 @@ namespace Gauntlets.Simulation
         {
 
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float speed = 500.0f;
+            Vector2 translation = Vector2.Zero;
 
-            Vector2 position = new Vector2((float)Math.Sin(gameTime.TotalGameTime.TotalSeconds) * Transform.WindowHalfSize.X + Transform.WindowHalfSize.X , 10); 
+            if (Keyboard.GetState().IsKeyDown(Keys.Space)) reset();
 
-            Debug.DrawLine(position, Transform.WindowHalfSize, Color.Violet);
-            Debug.DrawPoint(new Vector2(200, 100), null, 100.0f);
-            Rectangle filledRect = new Rectangle(Transform.WindowHalfSize.ToPoint(), (Transform.WindowHalfSize * 0.5f).ToPoint());
-            Debug.DrawRectangleFilled(filledRect, Color.LightSalmon, (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds));
-            Debug.DrawRectangleBounds(new Rectangle(new Vector2(400, 30).ToPoint(), (Transform.WindowHalfSize * 0.5f).ToPoint()), Color.LightGray);
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            {
+                translation.X = speed * delta;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            {
+
+                translation.X = -1 * speed * delta;
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                translation.Y = -1 * speed * delta;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+
+                translation.Y = speed * delta;
+            }
+
+            fakePlayer.Transform.Translate(translation);
+
+            Debug.DrawRectangleBounds(new Rectangle((fakePlayer.Transform.Position - fakePlayerSprite.Size * 0.5f).ToPoint(), fakePlayerSprite.Size.ToPoint()), Color.Yellow);
+            Debug.DrawRectangleBounds(new Rectangle((test.Transform.Position - testObjectSprite.Size * 0.5f).ToPoint(), testObjectSprite.Size.ToPoint()), Color.Red);
+
             World.Current.Update(delta);
+
             Collider.CalculateCollisions();
 
             base.Update(gameTime);
             this.Window.Title = "Gauntlets - FPS " + 1.0f / delta;
         }
 
-		/// <summary>
-		/// This is called when the game should draw itself.
-		/// </summary>
-		/// <param name="gameTime">Provides a snapshot of timing values.</param>
-		protected override void Draw(GameTime gameTime)
-		{
-			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+        /// <summary>
+        /// This is called when the game should draw itself.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        protected override void Draw(GameTime gameTime)
+        {
+            graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-			spriteBatch.Begin();
-			World.Current.DrawSprites(spriteBatch, gameTime);
-			spriteBatch.End();
-
+            spriteBatch.Begin();
             guiBatch.Begin();
-            World.Current.DrawGUI(guiBatch);               
+
+            World.Current.DrawSprites(spriteBatch, gameTime);
+            spriteBatch.End();
+
+            World.Current.DrawGUI(guiBatch);
             guiBatch.End();
 
             Debug.DebugDraw();
 
-			base.Draw(gameTime);
-		}
-	}
+            base.Draw(gameTime);
+        }
+    }
 }
