@@ -121,6 +121,16 @@ namespace CraxAwesomeEngine.Core
 
         }
 
+        public static void DrawShape(List<Vector2> shape, Color? color)
+        {
+            for (int i = 0; i < shape.Count; i++)
+            {
+                Vector2 begin = shape[i];
+                Vector2 end = (i < shape.Count - 1) ? shape[i + 1] : shape[0];
+                Debug.DrawLine(begin, end, (color.HasValue ? color.Value : Color.LightYellow));
+            }
+        }
+
         /// <summary>
         /// Draws all the enqueued shapes.
         /// Call this at the bottom of the Game.Draw() call

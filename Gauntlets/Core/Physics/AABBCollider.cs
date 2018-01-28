@@ -35,7 +35,7 @@ namespace CraxAwesomeEngine.Core.Physics
             base.Update(deltaTime, parent);
         }
 
-        protected override List<Vector2> GetColliderVertices()
+        public override List<Vector2> GetColliderVertices()
         {
             return new List<Vector2> { topLeft, topRight, bottomLeft, bottomRight };
         }

@@ -22,38 +22,7 @@ namespace CraxAwesomeEngine.Core.Physics
         private Vector2 positionPreviousFrame;
         public Entity Owner { get; private set; } = null;
         public bool IsStatic { get; set; } = false;
-        /// <summary>
-        /// Gets the axis of the edges of two shapes
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        /*private List<Vector2> GetAxis(Collider other)
-        {
-            List<Vector2> normals = new List<Vector2>();
-            List<Vector2> myVertices = GetColliderVertices();
-            List<Vector2> otherVertices = other.GetColliderVertices();
-
-            for (int i = 0; i < myVertices.Count; i++)
-            {
-                Vector2 a = myVertices[i];
-                Vector2 b = (i < myVertices.Count - 1) ? myVertices[i + 1] : myVertices[0];
-
-                Vector2 diff = (b - a);
-                normals.Add(new Vector2(diff.Y, -diff.X));
-            }
-
-            
-            for (int i = 0; i < otherVertices.Count; i++)
-            {
-                Vector2 a = otherVertices[i];
-                Vector2 b = (i < otherVertices.Count - 1) ? otherVertices[i + 1] : otherVertices[0];
-
-                Vector2 diff = (b - a);
-                normals.Add(new Vector2(diff.Y, -diff.X));
-            }
-
-            return normals;
-        }*/
+        
 
         public abstract List<Vector2> GetNormals();
 
@@ -67,8 +36,8 @@ namespace CraxAwesomeEngine.Core.Physics
             }
             else
             {
-                axes.Concat<Vector2>(this.GetNormals());
-                axes.Concat<Vector2>(other.GetNormals());
+                axes.AddRange(this.GetNormals());
+                axes.AddRange(other.GetNormals());
             }
             return axes;
         }
@@ -88,7 +57,6 @@ namespace CraxAwesomeEngine.Core.Physics
 
             foreach(Vector2 axis in Axes)
             {
-
                 List<Vector2> myVertices = GetColliderVertices();
                 List<Vector2> otherVertices = other.GetColliderVertices();
 
@@ -129,20 +97,20 @@ namespace CraxAwesomeEngine.Core.Physics
                 }
 
             }
-
-            Vector2 distance = (this.Owner.Transform.Position - other.Owner.Transform.Position);
-            float collidersDot = Vector2.Dot(distance, overlapAxis);
+            
+             Vector2 direction = (this.Owner.Transform.Position - other.Owner.Transform.Position);
+             float collidersDot = Vector2.Dot(direction, overlapAxis);
             MTV = overlapAxis * minOverlap;
 
             if (collidersDot < 0)
-            {
-                MTV = MTV * -1;
-            }
+             {
+                 MTV = MTV * -1;
+             }
 
             return true;
         }
         
-        protected abstract List<Vector2> GetColliderVertices();
+        public abstract List<Vector2> GetColliderVertices();
         public abstract ColliderType GetColliderType();
 
         public void Initialize(Entity owner)

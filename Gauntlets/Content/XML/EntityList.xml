@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Entities>
+  <Entity id="-1" name="Empty">
+    <Components>
+      
+    </Components>
+  </Entity>
   <Entity id ="1" name="fakePlayer">
     <Components>
       <Sprite texture="player" row="0" width="full" height="full">

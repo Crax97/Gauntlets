@@ -44,6 +44,7 @@
     <Compile Include="Core\GUI\GUILabel.cs" />
     <Compile Include="Core\GUI\GUITextBox.cs" />
     <Compile Include="Core\Physics\Collider.cs" />
+    <Compile Include="Core\Physics\SATCollider.cs" />
     <Compile Include="Core\XMLHandler.cs" />
     <Compile Include="GauntletsGame.cs" />
     <Compile Include="Program.cs" />

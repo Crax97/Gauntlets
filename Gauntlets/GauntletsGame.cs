@@ -28,9 +28,12 @@ namespace Gauntlets.Simulation
 
         World w = new World();
         Entity test = null;
+        Entity testCollider2 = null;
         Entity fakePlayer = null;
         AABBCollider fakePlayerCollider = null;
         AABBCollider testObjectCollider = null;
+
+        SATCollider secondCollider = null;
 
         Sprite testObjectSprite = null;
         Sprite fakePlayerSprite = null;
@@ -110,6 +113,23 @@ namespace Gauntlets.Simulation
             Debug.InitializeDebug(null, GraphicsDevice);
 
             test = Entity.Instantiate(0);
+            testCollider2 = Entity.Instantiate(-1);
+
+            Texture2D satTexture = Content.Load<Texture2D>("sattest");
+            Sprite sprite2 = new Sprite(satTexture, 0, 0, satTexture.Width, satTexture.Height, 1.0f);
+            sprite2.SpriteCenter = Vector2.Zero;
+            testCollider2.AddComponent(sprite2);
+            List<Vector2> vertices = new List<Vector2>(4);
+
+            vertices.Add(new Vector2(10, 0));
+            vertices.Add(new Vector2(sprite2.Width - 12, 0));
+            vertices.Add(new Vector2(sprite2.Width, sprite2.Height));
+            vertices.Add(new Vector2(0, sprite2.Height));
+
+            secondCollider = new SATCollider(vertices);
+            secondCollider.IsStatic = true;
+            testCollider2.AddComponent(secondCollider);
+
             testObjectSprite = test.GetComponent<Sprite>();
 
             testObjectCollider = new AABBCollider(testObjectSprite.Size);
@@ -128,7 +148,8 @@ namespace Gauntlets.Simulation
 
         private void reset()
         {
-
+            
+            testCollider2.Transform.Position = new Vector2(100, 100);
             test.Transform.Position = Transform.WindowHalfSize;
             fakePlayer.Transform.Position = Vector2.Zero;
         }
@@ -169,10 +190,11 @@ namespace Gauntlets.Simulation
 
             fakePlayer.Transform.Translate(translation);
 
+            World.Current.Update(delta);
+
             Debug.DrawRectangleBounds(new Rectangle((fakePlayer.Transform.Position - fakePlayerSprite.Size * 0.5f).ToPoint(), fakePlayerSprite.Size.ToPoint()), Color.Yellow);
             Debug.DrawRectangleBounds(new Rectangle((test.Transform.Position - testObjectSprite.Size * 0.5f).ToPoint(), testObjectSprite.Size.ToPoint()), Color.Red);
-
-            World.Current.Update(delta);
+            Debug.DrawShape(secondCollider.GetColliderVertices(), Color.White);
 
             Collider.CalculateCollisions();
 
