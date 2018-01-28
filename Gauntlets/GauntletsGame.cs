@@ -128,6 +128,13 @@ namespace Gauntlets.Simulation
 
             secondCollider = new SATCollider(vertices);
             secondCollider.IsStatic = true;
+            secondCollider.OnCollision = (Collider collider) =>
+            {
+                Vector2 diffNormalized = (fakePlayer.Transform.Position - secondCollider.Owner.Transform.Position);
+                diffNormalized.Normalize();
+                float dot = Vector2.Dot(diffNormalized, new Vector2(0, -1));
+                Console.WriteLine(secondCollider.Owner.Name + " colliding with " + collider.Owner.Name + " dot = " + dot);
+            };
             testCollider2.AddComponent(secondCollider);
 
             testObjectSprite = test.GetComponent<Sprite>();
@@ -141,6 +148,13 @@ namespace Gauntlets.Simulation
             fakePlayer.AddComponent(fakePlayerCollider);
 
             fakePlayerSprite = fakePlayer.GetComponent<Sprite>();
+            testObjectCollider.OnCollision = (Collider collider) =>
+            {
+                Vector2 diffNormalized = (fakePlayer.Transform.Position - testObjectCollider.Owner.Transform.Position);
+                diffNormalized.Normalize();
+                float dot = Vector2.Dot(diffNormalized, new Vector2(0, -1));
+                Console.WriteLine(testObjectCollider.Owner.Name + " colliding with " + collider.Owner.Name + " dot = " + dot);
+            };
             reset();
 
 
@@ -152,6 +166,7 @@ namespace Gauntlets.Simulation
             testCollider2.Transform.Position = new Vector2(100, 100);
             test.Transform.Position = Transform.WindowHalfSize;
             fakePlayer.Transform.Position = Vector2.Zero;
+            Console.Clear();
         }
 
         /// <summary>

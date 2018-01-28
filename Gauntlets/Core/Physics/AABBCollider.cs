@@ -52,6 +52,12 @@ namespace CraxAwesomeEngine.Core.Physics
             axes.Add(new Vector2(1, 0));
             return axes;
         }
-        
+
+        public override object Clone()
+        {
+            AABBCollider clone = new AABBCollider(Extension);
+            clone.Initialize(Owner);
+            return clone;
+        }
     }
 }

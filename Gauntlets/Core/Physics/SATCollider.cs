@@ -44,6 +44,11 @@ namespace CraxAwesomeEngine.Core.Physics
             return normals;
         }
 
+        /// <summary>
+        /// Returns the collider vertices translated
+        /// by the Entity position
+        /// </summary>
+        /// <returns></returns>
         public override List<Vector2> GetColliderVertices()
         {
             List<Vector2> translatedVertices = new List<Vector2>();
@@ -54,6 +59,13 @@ namespace CraxAwesomeEngine.Core.Physics
             }
 
             return translatedVertices;
+        }
+
+        public override object Clone()
+        {
+            SATCollider clone = new SATCollider(vertices);
+            clone.Initialize(Owner);
+            return clone;
         }
     }
 }

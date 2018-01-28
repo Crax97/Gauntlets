@@ -17,12 +17,13 @@ namespace CraxAwesomeEngine.Core.Physics
 
     public abstract class Collider : IComponent
     {
-
         private static List<Collider> colliders = new List<Collider>();
+
         private Vector2 positionPreviousFrame;
         public Entity Owner { get; private set; } = null;
         public bool IsStatic { get; set; } = false;
         
+        public Action<Collider> OnCollision { get; set; } = null;
 
         public abstract List<Vector2> GetNormals();
 
@@ -98,8 +99,12 @@ namespace CraxAwesomeEngine.Core.Physics
 
             }
             
-             Vector2 direction = (this.Owner.Transform.Position - other.Owner.Transform.Position);
-             float collidersDot = Vector2.Dot(direction, overlapAxis);
+            Vector2 direction = (this.Owner.Transform.Position - other.Owner.Transform.Position);
+            float collidersDot = Vector2.Dot(direction, overlapAxis);
+
+            //Adding a small offset so the two colliders don't keep on colliding after the pushback
+            //minOverlap += 0.1f;
+
             MTV = overlapAxis * minOverlap;
 
             if (collidersDot < 0)
@@ -133,10 +138,10 @@ namespace CraxAwesomeEngine.Core.Physics
                     if (other != collider)
                     {
                         Vector2? pushback;
-                        collider.CheckForCollisionSAT(other, out pushback);
-                        if (pushback != null && !collider.IsStatic) 
+                        if (collider.CheckForCollisionSAT(other, out pushback))
                         {
-                            collider.Owner.Transform.Translate(pushback.Value);
+                            if (!collider.IsStatic) collider.Owner.Transform.Translate(pushback.Value);
+                            collider.OnCollision?.Invoke(other);
                         }
                     }
                 }
@@ -148,9 +153,6 @@ namespace CraxAwesomeEngine.Core.Physics
             colliders.Remove(this);
         }
 
-        public object Clone()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract object Clone();
     }
 }
