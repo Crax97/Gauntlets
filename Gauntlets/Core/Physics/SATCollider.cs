@@ -1,32 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using CraxAwesomeEngine.Content.Scripts.Proxies;
 
 namespace CraxAwesomeEngine.Core.Physics
 {
     class SATCollider : Collider
     {
 
-        private List<Vector2> vertices = null;
-        private List<Vector2> normals = null;
+        private List<Vector2Proxy> vertices = null;
+        private List<Vector2Proxy> normals = null;
 
-        public SATCollider(List<Vector2> vertices)
+        public SATCollider(List<Vector2Proxy> vertices)
         {
             this.vertices = vertices;
         }
 
         private void CalculateNormals()
         {
-            normals = new List<Vector2>();
-            List<Vector2> myVertices = GetColliderVertices();
+            normals = new List<Vector2Proxy>();
+            List<Vector2Proxy> myVertices = GetColliderVertices();
 
             for (int i = 0; i < myVertices.Count; i++)
             {
-                Vector2 a = myVertices[i];
-                Vector2 b = (i < myVertices.Count - 1) ? myVertices[i + 1] : myVertices[0];
+                Vector2Proxy a = myVertices[i];
+                Vector2Proxy b = (i < myVertices.Count - 1) ? myVertices[i + 1] : myVertices[0];
 
-                Vector2 diff = (b - a);
-                Vector2 axis = new Vector2(diff.Y, -diff.X);
+                Vector2Proxy diff = (b - a);
+                Vector2Proxy axis = new Vector2Proxy(diff.Y, -diff.X);
                 normals.Add(axis / axis.Length());
             }
             
@@ -37,7 +38,7 @@ namespace CraxAwesomeEngine.Core.Physics
             return ColliderType.SAT;
         }
 
-        public override List<Vector2> GetNormals()
+        public override List<Vector2Proxy> GetNormals()
         {
             if(normals == null)
                 CalculateNormals();
@@ -49,11 +50,11 @@ namespace CraxAwesomeEngine.Core.Physics
         /// by the Entity position
         /// </summary>
         /// <returns></returns>
-        public override List<Vector2> GetColliderVertices()
+        public override List<Vector2Proxy> GetColliderVertices()
         {
-            List<Vector2> translatedVertices = new List<Vector2>();
+            List<Vector2Proxy> translatedVertices = new List<Vector2Proxy>();
 
-            foreach(Vector2 vertex in vertices)
+            foreach(Vector2Proxy vertex in vertices)
             {
                 translatedVertices.Add(Owner.Transform.Position + vertex);
             }

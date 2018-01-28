@@ -1,16 +1,19 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CraxAwesomeEngine.Content.Scripts.Proxies;
+using Microsoft.Xna.Framework;
+using MoonSharp.Interpreter;
 using System.Collections.Generic;
 using System.Xml;
 namespace CraxAwesomeEngine.Core
 {
     
+    [MoonSharpUserData]
     public class Transform : IComponent
 	{
 
-        public static Vector2 WindowHalfSize { get; private set; } = Vector2.Zero;
+        public static Vector2Proxy WindowHalfSize { get; private set; } = Vector2Proxy.Zero;
 
-		private Vector2 position;
-		private Vector2 scale;
+		private Vector2Proxy position;
+		private Vector2Proxy scale;
 		private float rotation;
 
 		private Transform parent = null;
@@ -19,20 +22,20 @@ namespace CraxAwesomeEngine.Core
         public Transform() {
             position = WindowHalfSize;
             rotation = 0.0f;
-            scale = Vector2.One;
+            scale = Vector2Proxy.One;
             childs = new List<Transform>();
         }
 
 		public static void UpdateGraphicsSize(GraphicsDeviceManager manager)
 		{
-			WindowHalfSize = new Vector2(manager.PreferredBackBufferWidth / 2, manager.PreferredBackBufferHeight / 2);
+			WindowHalfSize = new Vector2Proxy(manager.PreferredBackBufferWidth / 2, manager.PreferredBackBufferHeight / 2);
 
 		}
 
-		public Transform(Vector2? position = null, Vector2? scale = null, float angle = 0.0f)
+		public Transform(Vector2Proxy position = null, Vector2Proxy scale = null, float angle = 0.0f)
 		{
-			this.position = (position == null ? WindowHalfSize : (Vector2)position);
-			this.scale = (scale == null ? Vector2.One : (Vector2)scale);
+			this.position = (position == null ? WindowHalfSize : (Vector2Proxy)position);
+			this.scale = (scale == null ? Vector2Proxy.One : (Vector2Proxy)scale);
 			rotation = angle;
 
 			childs = new List<Transform>(0);
@@ -43,7 +46,7 @@ namespace CraxAwesomeEngine.Core
 			return Matrix.CreateScale(scale.X, scale.Y, 1) * Matrix.CreateRotationX(rotation) * Matrix.CreateTranslation(position.X, position.Y, 1);
 		}
 
-		public Vector2 LocalPosition 
+		public Vector2Proxy LocalPosition 
 		{
 			get{
 				return position - WindowHalfSize;
@@ -66,7 +69,7 @@ namespace CraxAwesomeEngine.Core
 			return pos;
 		}
 
-		public Vector2 Position
+		public Vector2Proxy Position
 		{
 			get
 			{
@@ -78,7 +81,7 @@ namespace CraxAwesomeEngine.Core
             }
 		}
 
-		public Vector2 LocalScale
+		public Vector2Proxy LocalScale
 		{ 
 			get
 			{
@@ -96,9 +99,13 @@ namespace CraxAwesomeEngine.Core
 			{
 				return rotation;
 			}
+            set
+            {
+                rotation = value;
+            }
 		}
 
-		public void Translate(Vector2 translation)
+		public void Translate(Vector2Proxy translation)
 		{
 			position += ( translation ) ;
 
@@ -109,7 +116,12 @@ namespace CraxAwesomeEngine.Core
 
 		}
 
-		public void Scale(Vector2 scale)
+        public void Translate(float X, float Y)
+        {
+            position += new Vector2Proxy(X, Y);
+        }
+
+		public void Scale(Vector2Proxy scale)
 		{
 			this.scale += scale;
 		}
@@ -165,8 +177,8 @@ namespace CraxAwesomeEngine.Core
                 string rotationStr = (attributes["rotation"] != null) ? attributes["rotation"].Value : null;
                 rotation = (rotationStr != null) ? (float.Parse(rotationStr)) : 0.0f;
 
-                position = XmlComponentsReaders.Vector2FromXmlAttribute(attributes["position"], Vector2.Zero);
-                scale = XmlComponentsReaders.Vector2FromXmlAttribute(attributes["position"], Vector2.One);
+                position = XmlComponentsReaders.Vector2FromXmlAttribute(attributes["position"], Vector2Proxy.Zero);
+                scale = XmlComponentsReaders.Vector2FromXmlAttribute(attributes["position"], Vector2Proxy.One);
             }
         }
         

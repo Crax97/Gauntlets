@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CraxAwesomeEngine.Content.Scripts.Proxies;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,11 @@ namespace CraxAwesomeEngine.Core.Physics
     public class AABBCollider : Collider
     {
 
-        public Vector2 Extension { get; set; }
-        private Vector2 topLeft, topRight;
-        private Vector2 bottomLeft, bottomRight;
+        public Vector2Proxy Extension { get; set; }
+        private Vector2Proxy topLeft, topRight;
+        private Vector2Proxy bottomLeft, bottomRight;
 
-        public AABBCollider(Vector2 extension)
+        public AABBCollider(Vector2Proxy extension)
         {
             this.Extension = extension;
         }
@@ -27,17 +28,17 @@ namespace CraxAwesomeEngine.Core.Physics
         {
             Vector2 halfExtension = Extension * 0.5f;
 
-            topLeft = parent.Transform.Position + new Vector2(-halfExtension.X, -halfExtension.Y);
-            topRight = parent.Transform.Position + new Vector2(halfExtension.X, -halfExtension.Y);
-            bottomLeft = parent.Transform.Position + new Vector2(-halfExtension.X, halfExtension.Y);
-            bottomRight = parent.Transform.Position + new Vector2(halfExtension.X, halfExtension.Y);
+            topLeft = parent.Transform.Position + new Vector2Proxy(-halfExtension.X, -halfExtension.Y);
+            topRight = parent.Transform.Position + new Vector2Proxy(halfExtension.X, -halfExtension.Y);
+            bottomLeft = parent.Transform.Position + new Vector2Proxy(-halfExtension.X, halfExtension.Y);
+            bottomRight = parent.Transform.Position + new Vector2Proxy(halfExtension.X, halfExtension.Y);
 
             base.Update(deltaTime, parent);
         }
 
-        public override List<Vector2> GetColliderVertices()
+        public override List<Vector2Proxy> GetColliderVertices()
         {
-            return new List<Vector2> { topLeft, topRight, bottomLeft, bottomRight };
+            return new List<Vector2Proxy> { topLeft, topRight, bottomLeft, bottomRight };
         }
 
         public override ColliderType GetColliderType()
@@ -45,11 +46,11 @@ namespace CraxAwesomeEngine.Core.Physics
             return ColliderType.AABB;
         }
 
-        public override List<Vector2> GetNormals()
+        public override List<Vector2Proxy> GetNormals()
         {
-            List<Vector2> axes = new List<Vector2>();
-            axes.Add(new Vector2(1, 0));
-            axes.Add(new Vector2(1, 0));
+            List<Vector2Proxy> axes = new List<Vector2Proxy>();
+            axes.Add(new Vector2Proxy(1, 0));
+            axes.Add(new Vector2Proxy(1, 0));
             return axes;
         }
 

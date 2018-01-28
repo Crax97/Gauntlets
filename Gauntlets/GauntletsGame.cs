@@ -8,6 +8,8 @@ using System.IO;
 using CraxAwesomeEngine.Core;
 using CraxAwesomeEngine.Core.Physics;
 using CraxAwesomeEngine.Core.GUI;
+using CraxAwesomeEngine.Core.Scripting;
+using CraxAwesomeEngine.Content.Scripts.Proxies;
 
 /// <summary>
 /// TODO: 
@@ -27,16 +29,7 @@ namespace Gauntlets.Simulation
         SpriteBatch guiBatch;
 
         World w = new World();
-        Entity test = null;
-        Entity testCollider2 = null;
         Entity fakePlayer = null;
-        AABBCollider fakePlayerCollider = null;
-        AABBCollider testObjectCollider = null;
-
-        SATCollider secondCollider = null;
-
-        Sprite testObjectSprite = null;
-        Sprite fakePlayerSprite = null;
 
         public Game1()
         {
@@ -86,6 +79,8 @@ namespace Gauntlets.Simulation
             ComponentRecord.RegisterAttribute<GUITextBox>("GUITextBox", XmlComponentsReaders.GUITextBoxFromXmlNode);
             ComponentRecord.RegisterAttribute<GUIImage>("GUIImage", XmlComponentsReaders.GUIImageFromXmlNode);
 
+            GameScript.InitGameScript();
+
             Transform.UpdateGraphicsSize(graphics);
 
             this.IsMouseVisible = true;
@@ -112,61 +107,22 @@ namespace Gauntlets.Simulation
             guiBatch = new SpriteBatch(GraphicsDevice);
             Debug.InitializeDebug(null, GraphicsDevice);
 
-            test = Entity.Instantiate(0);
-            testCollider2 = Entity.Instantiate(-1);
-
-            Texture2D satTexture = Content.Load<Texture2D>("sattest");
-            Sprite sprite2 = new Sprite(satTexture, 0, 0, satTexture.Width, satTexture.Height, 1.0f);
-            sprite2.SpriteCenter = Vector2.Zero;
-            testCollider2.AddComponent(sprite2);
-            List<Vector2> vertices = new List<Vector2>(4);
-
-            vertices.Add(new Vector2(10, 0));
-            vertices.Add(new Vector2(sprite2.Width - 12, 0));
-            vertices.Add(new Vector2(sprite2.Width, sprite2.Height));
-            vertices.Add(new Vector2(0, sprite2.Height));
-
-            secondCollider = new SATCollider(vertices);
-            secondCollider.IsStatic = true;
-            secondCollider.OnCollision = (Collider collider) =>
-            {
-                Vector2 diffNormalized = (fakePlayer.Transform.Position - secondCollider.Owner.Transform.Position);
-                diffNormalized.Normalize();
-                float dot = Vector2.Dot(diffNormalized, new Vector2(0, -1));
-                Console.WriteLine(secondCollider.Owner.Name + " colliding with " + collider.Owner.Name + " dot = " + dot);
-            };
-            testCollider2.AddComponent(secondCollider);
-
-            testObjectSprite = test.GetComponent<Sprite>();
-
-            testObjectCollider = new AABBCollider(testObjectSprite.Size);
-            testObjectCollider.IsStatic = true;
-            test.AddComponent(testObjectCollider);
             
             fakePlayer = Entity.Instantiate(1);
-            fakePlayerCollider = new AABBCollider(fakePlayer.GetComponent<Sprite>().Size);
-            fakePlayer.AddComponent(fakePlayerCollider);
+            GameScript script = new GameScript("test.lua");
+            fakePlayer.AddComponent(script);
 
-            fakePlayerSprite = fakePlayer.GetComponent<Sprite>();
-            testObjectCollider.OnCollision = (Collider collider) =>
-            {
-                Vector2 diffNormalized = (fakePlayer.Transform.Position - testObjectCollider.Owner.Transform.Position);
-                diffNormalized.Normalize();
-                float dot = Vector2.Dot(diffNormalized, new Vector2(0, -1));
-                Console.WriteLine(testObjectCollider.Owner.Name + " colliding with " + collider.Owner.Name + " dot = " + dot);
-            };
             reset();
-
 
         }
 
         private void reset()
         {
             
-            testCollider2.Transform.Position = new Vector2(100, 100);
-            test.Transform.Position = Transform.WindowHalfSize;
-            fakePlayer.Transform.Position = Vector2.Zero;
-            Console.Clear();
+            fakePlayer.Transform.Position = Vector2Proxy.Zero;
+            GameScript.ResetScripts();
+
+            //Console.Clear();
         }
 
         /// <summary>
@@ -179,9 +135,12 @@ namespace Gauntlets.Simulation
 
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
             float speed = 500.0f;
-            Vector2 translation = Vector2.Zero;
+            Vector2Proxy translation = Vector2Proxy.Zero;
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space)) reset();
+            if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            {
+                reset();
+            }
 
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
@@ -206,10 +165,6 @@ namespace Gauntlets.Simulation
             fakePlayer.Transform.Translate(translation);
 
             World.Current.Update(delta);
-
-            Debug.DrawRectangleBounds(new Rectangle((fakePlayer.Transform.Position - fakePlayerSprite.Size * 0.5f).ToPoint(), fakePlayerSprite.Size.ToPoint()), Color.Yellow);
-            Debug.DrawRectangleBounds(new Rectangle((test.Transform.Position - testObjectSprite.Size * 0.5f).ToPoint(), testObjectSprite.Size.ToPoint()), Color.Red);
-            Debug.DrawShape(secondCollider.GetColliderVertices(), Color.White);
 
             Collider.CalculateCollisions();
 

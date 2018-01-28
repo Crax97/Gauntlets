@@ -150,5 +150,14 @@ namespace CraxAwesomeEngine.Core
                 debugBatch.End();
             }
         }
+
+        public static void Log(string message, params object[] args )
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(message, args);
+
+            //Add more stuff later
+            Console.WriteLine(builder.ToString());
+        }
     }
 }

@@ -29,6 +29,12 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MoonSharp.Interpreter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=921e73ce94aa17f8, processorArchitecture=MSIL">
+      <HintPath>..\packages\MoonSharp.2.0.0.0\lib\net40-client\MoonSharp.Interpreter.dll</HintPath>
+    </Reference>
+    <Reference Include="MoonSharp.RemoteDebugger, Version=2.0.0.0, Culture=neutral, PublicKeyToken=921e73ce94aa17f8, processorArchitecture=MSIL">
+      <HintPath>..\packages\MoonSharp.Debugger.2.0.0.0\lib\net40-client\MoonSharp.RemoteDebugger.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -37,6 +43,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Proxies\Vector2Proxy.cs" />
     <Compile Include="Core\Debug\Debug.cs" />
     <Compile Include="Core\Physics\AABBCollider.cs" />
     <Compile Include="Core\ComponentRecord.cs" />
@@ -45,6 +52,7 @@
     <Compile Include="Core\GUI\GUITextBox.cs" />
     <Compile Include="Core\Physics\Collider.cs" />
     <Compile Include="Core\Physics\SATCollider.cs" />
+    <Compile Include="Core\Scripting\GameScript.cs" />
     <Compile Include="Core\XMLHandler.cs" />
     <Compile Include="GauntletsGame.cs" />
     <Compile Include="Program.cs" />
@@ -60,10 +68,12 @@
     <Compile Include="Core\Extensors.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\Scripts\test.lua" />
     <None Include="Icon.png" />
     <None Include="Content\XML\EntityList.xml">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icon.ico" />

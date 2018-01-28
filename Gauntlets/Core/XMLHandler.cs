@@ -10,6 +10,7 @@ using System.Xml;
 using CraxAwesomeEngine.Core;
 using CraxAwesomeEngine.Core.GUI;
 using static CraxAwesomeEngine.Core.AnimatedSprite;
+using CraxAwesomeEngine.Content.Scripts.Proxies;
 
 namespace CraxAwesomeEngine.Core
 {
@@ -28,7 +29,7 @@ namespace CraxAwesomeEngine.Core
             }
             return color;
         }
-        public static Vector2 Vector2FromXmlAttribute(XmlAttribute attribute, Vector2 defaultValue)
+        public static Vector2Proxy Vector2FromXmlAttribute(XmlAttribute attribute, Vector2Proxy defaultValue)
         {
 
             if (attribute != null)
@@ -37,7 +38,7 @@ namespace CraxAwesomeEngine.Core
                 string[] vals = attribute.Value.Split(' ');
                 float X = float.Parse(vals[0]);
                 float Y = float.Parse(vals[1]);
-                return new Vector2(X, Y);
+                return new Vector2Proxy(X, Y);
             }
             else
             {
@@ -54,8 +55,8 @@ namespace CraxAwesomeEngine.Core
                 string rotationStr = (attributes["rotation"] != null) ? attributes["rotation"].Value : null;
                 float rotation = (rotationStr != null) ? (float.Parse(rotationStr)) : 0.0f;
 
-                Vector2 position = Vector2FromXmlAttribute(attributes["position"], Vector2.Zero);
-                Vector2 scale = Vector2FromXmlAttribute(attributes["position"], Vector2.One);
+                Vector2Proxy position = Vector2FromXmlAttribute(attributes["position"], Vector2Proxy.Zero);
+                Vector2Proxy scale = Vector2FromXmlAttribute(attributes["position"], Vector2Proxy.One);
                 return new Transform(position, scale, rotation);
             }
             return new Transform();
@@ -221,7 +222,7 @@ namespace CraxAwesomeEngine.Core
             SpriteFont font = (attributes["font"] != null && attributes["font"].Value != "default") ? game.Content.Load<SpriteFont>(attributes["font"].Value) : GUILabel.DefaultSpriteFont;
             float depth = (attributes["rendering_depth"] != null) ? float.Parse(attributes["rendering_depth"].Value) : 0.0f;
             Color color = (Color)ColorFromXmlAttribute(attributes["color"]);
-            Vector2 Center = Vector2FromXmlAttribute(attributes["center"], Vector2.Zero);
+            Vector2 Center = Vector2FromXmlAttribute(attributes["center"], Vector2Proxy.Zero);
 
             GUILabel Label = new GUILabel(labelText, depth, font, (Transform)TransformFromXmlNode(node.ChildNodes[0], game) );
             return Label;
@@ -246,7 +247,7 @@ namespace CraxAwesomeEngine.Core
             Sprite sprite = new Sprite(texture, 0, 0, texture.Width, texture.Height, 0.0f);
             SpriteFont font = (attributes["font"] != null) ? game.Content.Load<SpriteFont>(Path.Combine("Fonts", attributes["font"].Value)) : GUILabel.DefaultSpriteFont;
 
-            Vector2 Offset = Vector2FromXmlAttribute(attributes["offset"], Vector2.Zero);
+            Vector2 Offset = Vector2FromXmlAttribute(attributes["offset"], Vector2Proxy.Zero);
             Transform transform = (Transform)TransformFromXmlNode(node.ChildNodes[0], game);
             string labelText = (attributes["label"] != null) ? attributes["label"].Value : "Text!";
             GUITextBox result = new GUITextBox(texture, labelText, transform);

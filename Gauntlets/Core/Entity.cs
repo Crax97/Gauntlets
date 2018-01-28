@@ -1,13 +1,13 @@
 ﻿using System.Xml;
 using System;
-using System.Linq;
 using System.IO;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using MoonSharp.Interpreter;
+
 namespace CraxAwesomeEngine.Core
 {
-
+    [MoonSharpUserData]
     public class Entity : ICloneable
 	{
 		private Transform transform;

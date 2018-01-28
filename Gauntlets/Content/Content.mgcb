@@ -98,3 +98,6 @@
 /processorParam:TextureFormat=Color
 /build:SATtest.png
 
+#begin Scripts/test.lua
+/copy:Scripts/test.lua
+

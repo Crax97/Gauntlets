@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CraxAwesomeEngine.Content.Scripts.Proxies;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,15 +26,15 @@ namespace CraxAwesomeEngine.Core.Physics
         
         public Action<Collider> OnCollision { get; set; } = null;
 
-        public abstract List<Vector2> GetNormals();
+        public abstract List<Vector2Proxy> GetNormals();
 
-        private List<Vector2> GetAxes(Collider other)
+        private List<Vector2Proxy> GetAxes(Collider other)
         {
-            List<Vector2> axes = new List<Vector2>();
+            List<Vector2Proxy> axes = new List<Vector2Proxy>();
             if ((GetColliderType() == ColliderType.AABB && other.GetColliderType() == ColliderType.AABB))
             {
-                axes.Add(new Vector2(1, 0));
-                axes.Add(new Vector2(0, 1));
+                axes.Add(new Vector2Proxy(1, 0));
+                axes.Add(new Vector2Proxy(0, 1));
             }
             else
             {
@@ -49,17 +50,17 @@ namespace CraxAwesomeEngine.Core.Physics
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool CheckForCollisionSAT(Collider other, out Vector2? MTV)
+        public bool CheckForCollisionSAT(Collider other, out Vector2Proxy MTV)
         {
-            List<Vector2> Axes = GetAxes(other);
+            List<Vector2Proxy> Axes = GetAxes(other);
 
             float minOverlap = float.MaxValue;
-            Vector2 overlapAxis = Vector2.Zero;
+            Vector2Proxy overlapAxis = Vector2Proxy.Zero;
 
-            foreach(Vector2 axis in Axes)
+            foreach(Vector2Proxy axis in Axes)
             {
-                List<Vector2> myVertices = GetColliderVertices();
-                List<Vector2> otherVertices = other.GetColliderVertices();
+                List<Vector2Proxy> myVertices = GetColliderVertices();
+                List<Vector2Proxy> otherVertices = other.GetColliderVertices();
 
                 float myMax = float.MinValue;
                 float myMin = float.MaxValue;
@@ -67,14 +68,14 @@ namespace CraxAwesomeEngine.Core.Physics
                 float otherMax = float.MinValue;
                 float otherMin = float.MaxValue;
 
-                foreach (Vector2 vertex in myVertices)
+                foreach (Vector2Proxy vertex in myVertices)
                 {
                     float dot = Vector2.Dot(vertex, axis);
                     if (dot > myMax) myMax = dot;
                     if (dot < myMin) myMin = dot;
                 }
 
-                foreach (Vector2 vertex in otherVertices)
+                foreach (Vector2Proxy vertex in otherVertices)
                 {
                     float dot = Vector2.Dot(vertex, axis);
                     if (dot > otherMax) otherMax = dot;
@@ -98,9 +99,9 @@ namespace CraxAwesomeEngine.Core.Physics
                 }
 
             }
-            
-            Vector2 direction = (this.Owner.Transform.Position - other.Owner.Transform.Position);
-            float collidersDot = Vector2.Dot(direction, overlapAxis);
+
+            Vector2Proxy direction = (this.Owner.Transform.Position - other.Owner.Transform.Position);
+            float collidersDot = Vector2Proxy.Dot(direction, overlapAxis);
 
             //Adding a small offset so the two colliders don't keep on colliding after the pushback
             //minOverlap += 0.1f;
@@ -115,7 +116,7 @@ namespace CraxAwesomeEngine.Core.Physics
             return true;
         }
         
-        public abstract List<Vector2> GetColliderVertices();
+        public abstract List<Vector2Proxy> GetColliderVertices();
         public abstract ColliderType GetColliderType();
 
         public void Initialize(Entity owner)
@@ -137,10 +138,10 @@ namespace CraxAwesomeEngine.Core.Physics
                 {
                     if (other != collider)
                     {
-                        Vector2? pushback;
+                        Vector2Proxy pushback;
                         if (collider.CheckForCollisionSAT(other, out pushback))
                         {
-                            if (!collider.IsStatic) collider.Owner.Transform.Translate(pushback.Value);
+                            if (!collider.IsStatic) collider.Owner.Transform.Translate(pushback);
                             collider.OnCollision?.Invoke(other);
                         }
                     }
