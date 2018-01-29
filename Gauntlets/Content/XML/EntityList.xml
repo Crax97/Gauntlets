@@ -7,9 +7,8 @@
   </Entity>
   <Entity id ="1" name="fakePlayer">
     <Components>
-      <Sprite texture="player" row="0" width="full" height="full">
-        
-      </Sprite>
+      <Sprite texture="player" row="0" width="full" height="full"></Sprite>
+      <Script file="test.lua"></Script>
     </Components>
   </Entity>
     <Entity id="0" name="Test">

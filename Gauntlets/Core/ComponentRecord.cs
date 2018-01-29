@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MoonSharp.Interpreter;
 using System;
 using System.Collections.Generic;
 using System.Xml;
@@ -34,6 +35,7 @@ namespace CraxAwesomeEngine.Core
             typeAndInitializer.t = typeof(T);
             typeAndInitializer.initializer = initializerFunction;
             knownTypes.Add(name, typeAndInitializer);
+            UserData.RegisterType<T>();
         }
     }
 }

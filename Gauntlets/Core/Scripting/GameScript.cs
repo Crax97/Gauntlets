@@ -3,13 +3,15 @@ using System;
 using MoonSharp.Interpreter;
 using System.IO;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using CraxAwesomeEngine.Core.GUI;
 
 namespace CraxAwesomeEngine.Core.Scripting
 {
 
     /// <summary>
     /// TODO: Implement InputManager
-    /// Implement Vector2Proxy static functions
+    /// Implement Vector2 static functions
     /// Write documentation
     /// Implement XML reader for this class
     /// </summary>
@@ -30,7 +32,14 @@ namespace CraxAwesomeEngine.Core.Scripting
 
         public static void InitGameScript()
         {
+
+            //Registering the most used MonoGame types.
+            //IComponents are registered in ComponentRecord.RegisterComponent<T>()
+            UserData.RegisterType<Vector2>();
+            UserData.RegisterType<Point>();
+
             UserData.RegisterAssembly();
+
             Script.WarmUp();
             scriptList = new List<GameScript>();
         }
@@ -39,6 +48,11 @@ namespace CraxAwesomeEngine.Core.Scripting
         {
             ScriptFileName = scriptName;
             script = new Script();
+            script.Globals["Vector2"] = typeof(Vector2);
+            script.Globals["Transform"] = typeof(Transform);
+
+            script.Globals["Globals"] = Globals.Instance;
+
             script.DoFile(GetScriptFile(scriptName));
 
             if (script.Globals["update"] != null)
@@ -47,6 +61,7 @@ namespace CraxAwesomeEngine.Core.Scripting
                 scriptInitFunc = script.Globals.Get("init").Function;
             if (script.Globals["destroy"] != null)
                 scriptDestroyFunc = script.Globals.Get("destroy").Function;
+
 
             scriptList.Add(this);
 
@@ -64,7 +79,7 @@ namespace CraxAwesomeEngine.Core.Scripting
 
         public object Clone()
         {
-            return null;
+            return new GameScript(ScriptFileName);
         }
 
         public void Destroy()

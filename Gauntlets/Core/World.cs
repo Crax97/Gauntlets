@@ -19,6 +19,11 @@ namespace CraxAwesomeEngine.Core {
             if (Current == null) Current = this;
 		}
 
+        /// <summary>
+        /// Adds the entity instance and
+        /// calls the entity.OnBegin(...) function
+        /// </summary>
+        /// <param name="e"></param>
 		public void AddEntity(Entity e)
 		{
 			entities.Add(e);

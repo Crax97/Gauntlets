@@ -97,7 +97,9 @@ namespace CraxAwesomeEngine.Core
                         if (componentType != "Transform")
                         {
                             IComponent component = ComponentRecord.CreateInstance(componentType, componentNode, game);
-                            e.AddComponent(component);
+                            //This way the Entity doesn't get initialized when the 
+                            //IComponent is first added to the knownEntities list
+                            e.components.Add(component);
                         } else 
                         {
                             e.Transform.SetupFromXmlNode(componentNode, game);
@@ -247,7 +249,7 @@ namespace CraxAwesomeEngine.Core
             e.InstanceId = ++this.InstanceId;
 
             foreach(ICloneable cloneable in components) {
-                    e.AddComponent((IComponent)cloneable.Clone());
+                    e.components.Add((IComponent)cloneable.Clone());
             }
 
             return e;

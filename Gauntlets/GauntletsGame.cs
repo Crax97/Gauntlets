@@ -9,7 +9,6 @@ using CraxAwesomeEngine.Core;
 using CraxAwesomeEngine.Core.Physics;
 using CraxAwesomeEngine.Core.GUI;
 using CraxAwesomeEngine.Core.Scripting;
-using CraxAwesomeEngine.Content.Scripts.Proxies;
 
 /// <summary>
 /// TODO: 
@@ -78,6 +77,7 @@ namespace Gauntlets.Simulation
             ComponentRecord.RegisterAttribute<GUILabel>("GUILabel", XmlComponentsReaders.GUILabelFromXmlNode);
             ComponentRecord.RegisterAttribute<GUITextBox>("GUITextBox", XmlComponentsReaders.GUITextBoxFromXmlNode);
             ComponentRecord.RegisterAttribute<GUIImage>("GUIImage", XmlComponentsReaders.GUIImageFromXmlNode);
+            ComponentRecord.RegisterAttribute<GameScript>("Script", XmlComponentsReaders.GameScriptFromXmlNode);
 
             GameScript.InitGameScript();
 
@@ -109,17 +109,15 @@ namespace Gauntlets.Simulation
 
             
             fakePlayer = Entity.Instantiate(1);
-            GameScript script = new GameScript("test.lua");
-            fakePlayer.AddComponent(script);
 
-            reset();
+            //reset();
 
         }
 
         private void reset()
         {
             
-            fakePlayer.Transform.Position = Vector2Proxy.Zero;
+            fakePlayer.Transform.Position = Vector2.Zero;
             GameScript.ResetScripts();
 
             //Console.Clear();
@@ -135,12 +133,8 @@ namespace Gauntlets.Simulation
 
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
             float speed = 500.0f;
-            Vector2Proxy translation = Vector2Proxy.Zero;
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space))
-            {
-                reset();
-            }
+            Vector2 translation = Vector2.Zero;
 
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {

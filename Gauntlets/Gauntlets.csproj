@@ -43,7 +43,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Proxies\Vector2Proxy.cs" />
     <Compile Include="Core\Debug\Debug.cs" />
     <Compile Include="Core\Physics\AABBCollider.cs" />
     <Compile Include="Core\ComponentRecord.cs" />
@@ -53,6 +52,7 @@
     <Compile Include="Core\Physics\Collider.cs" />
     <Compile Include="Core\Physics\SATCollider.cs" />
     <Compile Include="Core\Scripting\GameScript.cs" />
+    <Compile Include="Core\Scripting\Globals.cs" />
     <Compile Include="Core\XMLHandler.cs" />
     <Compile Include="GauntletsGame.cs" />
     <Compile Include="Program.cs" />
