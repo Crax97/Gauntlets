@@ -82,6 +82,7 @@ namespace Gauntlets.Simulation
             GameScript.InitGameScript();
 
             Transform.UpdateGraphicsSize(graphics);
+            InputManager.InitInputManager();
 
             this.IsMouseVisible = true;
 
@@ -130,40 +131,18 @@ namespace Gauntlets.Simulation
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            InputManager.UpdateInputBegin();
 
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            float speed = 500.0f;
-
-            Vector2 translation = Vector2.Zero;
-
-            if (Keyboard.GetState().IsKeyDown(Keys.D))
-            {
-                translation.X = speed * delta;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.A))
-            {
-
-                translation.X = -1 * speed * delta;
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.W))
-            {
-                translation.Y = -1 * speed * delta;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.S))
-            {
-
-                translation.Y = speed * delta;
-            }
-
-            fakePlayer.Transform.Translate(translation);
 
             World.Current.Update(delta);
 
             Collider.CalculateCollisions();
 
             base.Update(gameTime);
+            InputManager.UpdateInputEnd();
             this.Window.Title = "Gauntlets - FPS " + 1.0f / delta;
+
         }
 
         /// <summary>

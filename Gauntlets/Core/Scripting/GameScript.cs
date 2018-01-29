@@ -5,6 +5,7 @@ using System.IO;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using CraxAwesomeEngine.Core.GUI;
+using Microsoft.Xna.Framework.Input;
 
 namespace CraxAwesomeEngine.Core.Scripting
 {
@@ -37,6 +38,8 @@ namespace CraxAwesomeEngine.Core.Scripting
             //IComponents are registered in ComponentRecord.RegisterComponent<T>()
             UserData.RegisterType<Vector2>();
             UserData.RegisterType<Point>();
+            UserData.RegisterType<Keys>();
+            UserData.RegisterType<MouseKeys>(); //This should have a [MoonSharpUserData] attribute, but for consistency i register it there
 
             UserData.RegisterAssembly();
 
@@ -50,7 +53,9 @@ namespace CraxAwesomeEngine.Core.Scripting
             script = new Script();
             script.Globals["Vector2"] = typeof(Vector2);
             script.Globals["Transform"] = typeof(Transform);
-
+            script.Globals["Input"] = typeof(InputManager);
+            script.Globals["Keys"] = typeof(Keys);
+            script.Globals["MouseKeys"] = typeof(MouseKeys);
             script.Globals["Globals"] = Globals.Instance;
 
             script.DoFile(GetScriptFile(scriptName));
