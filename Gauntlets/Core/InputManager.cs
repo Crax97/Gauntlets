@@ -40,6 +40,7 @@ namespace CraxAwesomeEngine.Core
 
             public void SetState(MouseState state)
             {
+
                 this.LEFT = state.LeftButton;
                 this.RIGHT = state.RightButton;
                 this.MIDDLE = state.MiddleButton;
@@ -47,6 +48,7 @@ namespace CraxAwesomeEngine.Core
                 this.MOUSE_5 = state.XButton2;
                 this.ScrollWheel = state.ScrollWheelValue;
                 this.MousePosition = new Vector2(state.X, state.Y);
+            
             }
 
             public ButtonState this[MouseKeys index]
@@ -66,12 +68,13 @@ namespace CraxAwesomeEngine.Core
             }
 
         }
-
+        
         private static KeyboardState _lastFrameKeyboardState;
         private static MouseButtonsState _lastFrameMouseState;
 
         private static KeyboardState _actualFrameKeyboardState;
         private static MouseButtonsState _actualFrameMouseState;
+        
 
         internal static void InitInputManager()
         {
@@ -85,6 +88,7 @@ namespace CraxAwesomeEngine.Core
 
             //Updating my custom MouseButtonsState
             _actualFrameMouseState.SetState(Mouse.GetState());
+
 
         }
 

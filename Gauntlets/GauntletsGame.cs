@@ -79,10 +79,15 @@ namespace Gauntlets.Simulation
             ComponentRecord.RegisterAttribute<GUIImage>("GUIImage", XmlComponentsReaders.GUIImageFromXmlNode);
             ComponentRecord.RegisterAttribute<GameScript>("Script", XmlComponentsReaders.GameScriptFromXmlNode);
 
+            Debug.InitializeDebug(GraphicsDevice, this);
             GameScript.InitGameScript();
-
             Transform.UpdateGraphicsSize(graphics);
             InputManager.InitInputManager();
+
+            Exiting += new EventHandler<EventArgs>((object obj, EventArgs args) =>
+            {
+                Debug.CloseDebug();
+            });
 
             this.IsMouseVisible = true;
 
@@ -106,7 +111,6 @@ namespace Gauntlets.Simulation
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             guiBatch = new SpriteBatch(GraphicsDevice);
-            Debug.InitializeDebug(null, GraphicsDevice);
 
             
             fakePlayer = Entity.Instantiate(1);

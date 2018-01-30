@@ -18,7 +18,6 @@ namespace CraxAwesomeEngine.Core.Scripting
     /// </summary>
     class GameScript : IComponent
     {
-
         private static List<GameScript> scriptList = null;
 
         private Script script;
@@ -58,18 +57,26 @@ namespace CraxAwesomeEngine.Core.Scripting
             script.Globals["MouseKeys"] = typeof(MouseKeys);
             script.Globals["Globals"] = Globals.Instance;
 
-            script.DoFile(GetScriptFile(scriptName));
+            try
+            {
+                script.DoFile(GetScriptFile(scriptName));
+                if (script.Globals["update"] != null)
+                    scriptUpdateFunc = script.Globals.Get("update").Function;
+                if (script.Globals["init"] != null)
+                    scriptInitFunc = script.Globals.Get("init").Function;
+                if (script.Globals["destroy"] != null)
+                    scriptDestroyFunc = script.Globals.Get("destroy").Function;
 
-            if (script.Globals["update"] != null)
-                scriptUpdateFunc = script.Globals.Get("update").Function;
-            if (script.Globals["init"] != null)
-                scriptInitFunc = script.Globals.Get("init").Function;
-            if (script.Globals["destroy"] != null)
-                scriptDestroyFunc = script.Globals.Get("destroy").Function;
 
+                scriptList.Add(this);
 
-            scriptList.Add(this);
-
+            }
+            catch (InterpreterException ex)
+            {
+                script = null;
+                Debug.Error(ex.DecoratedMessage);
+            }
+            
         }
 
         public static void ResetScripts()

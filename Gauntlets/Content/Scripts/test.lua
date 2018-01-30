@@ -1,4 +1,5 @@
 ﻿local speed = 300.0
+local rotationSpeed = 10.0
 
 function init( entity )
 	
@@ -6,7 +7,7 @@ end
 
 function update( delta, entity )
 	
-	entity.Transform.Rotation = entity.Transform.Rotation  + 1 * delta
+	entity.Transform.Rotation = entity.Transform.Rotation  + rotationSpeed * delta
 	
 	local translation = Vector2.Zero
 

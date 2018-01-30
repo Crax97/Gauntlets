@@ -2,9 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CraxAwesomeEngine.Core
 {
@@ -14,11 +13,12 @@ namespace CraxAwesomeEngine.Core
     /// </summary>
     static class Debug
     {
+        private static Game runningGame = null;
         private static SpriteBatch debugBatch = null;
         private static GraphicsDevice graphicsDevice = null;
-
         private static Texture2D singlePointTexture = null;
         private static Queue<Action> drawQueue = null;
+        private static StreamWriter logFile = null;
 
         public static bool DebugEnabled { get; set; } = true;
 
@@ -28,13 +28,15 @@ namespace CraxAwesomeEngine.Core
         /// </summary>
         /// <param name="batch"></param>
         /// <param name="device"></param>
-        public static void InitializeDebug(SpriteBatch batch, GraphicsDevice device)
+        public static void InitializeDebug(GraphicsDevice device, Game game)
         {
             debugBatch = new SpriteBatch(device);
             drawQueue = new Queue<Action>();
             graphicsDevice = device;
             singlePointTexture = new Texture2D(device, 1, 1);
             singlePointTexture.SetData<Color>(new Color[] { Color.White });
+            runningGame = game;
+            logFile = new StreamWriter(File.Open("log.txt", FileMode.OpenOrCreate));
 
         }
 
@@ -151,13 +153,50 @@ namespace CraxAwesomeEngine.Core
             }
         }
 
+        /// <summary>
+        /// Prints a message to the console debug
+        /// and to the Standard Output
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="args"></param>
         public static void Log(string message, params object[] args )
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(message, args);
+            builder.AppendFormat("[LOG] " + message, args);
 
             //Add more stuff later
             Console.WriteLine(builder.ToString());
+            logFile.WriteLine(builder);
+        }
+
+        /// <summary>
+        /// Prints a message to the Console Debug
+        /// and to the standard error
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="args"></param>
+        public static void Error(string message, bool isFatal = false, params string[] args)
+        {
+            StringBuilder errorMessage = new StringBuilder();
+            errorMessage.AppendFormat("[ERROR] " + message, args);
+
+            Console.Error.WriteLine(errorMessage);
+            logFile.WriteLine(errorMessage);
+
+            if(isFatal)
+            {
+
+                logFile.WriteLine("[ERROR WAS FATAL]");
+                CloseDebug();
+                runningGame.Exit();
+            }
+
+        }
+
+        public static void CloseDebug()
+        {
+            logFile.Flush();
+            logFile.Dispose();
         }
     }
 }
