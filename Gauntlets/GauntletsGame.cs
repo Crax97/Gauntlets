@@ -9,6 +9,7 @@ using CraxAwesomeEngine.Core;
 using CraxAwesomeEngine.Core.Physics;
 using CraxAwesomeEngine.Core.GUI;
 using CraxAwesomeEngine.Core.Scripting;
+using CraxAwesomeEngine.Core.Debugging;
 
 /// <summary>
 /// TODO: 
@@ -80,13 +81,32 @@ namespace Gauntlets.Simulation
             ComponentRecord.RegisterAttribute<GameScript>("Script", XmlComponentsReaders.GameScriptFromXmlNode);
 
             Debug.InitializeDebug(GraphicsDevice, this);
+            DebugConsole.DebugConsoleInit(this, graphics);
             GameScript.InitGameScript();
             Transform.UpdateGraphicsSize(graphics);
-            InputManager.InitInputManager();
+            InputManager.InitInputManager(this);
 
             Exiting += new EventHandler<EventArgs>((object obj, EventArgs args) =>
             {
                 Debug.CloseDebug();
+            });
+
+            DebugConsole.RegisterCommand("echo", (string[] args) =>
+            {
+                string message = "";
+
+                for(int i = 1; i < args.Length; i++)
+                {
+                    message += " " + args[i];
+                }
+
+                DebugConsole.WriteLine(message);
+
+            });
+
+            DebugConsole.RegisterCommand("reset", (string[] args) =>
+            {
+                reset();
             });
 
             this.IsMouseVisible = true;
@@ -139,10 +159,13 @@ namespace Gauntlets.Simulation
 
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            World.Current.Update(delta);
+            if (!DebugConsole.Enabled)
+            {
 
-            Collider.CalculateCollisions();
+                World.Current.Update(delta);
+                Collider.CalculateCollisions();
 
+            }
             base.Update(gameTime);
             InputManager.UpdateInputEnd();
             this.Window.Title = "Gauntlets - FPS " + 1.0f / delta;

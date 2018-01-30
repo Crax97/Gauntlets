@@ -76,11 +76,14 @@ namespace CraxAwesomeEngine.Core
         private static MouseButtonsState _actualFrameMouseState;
         
 
-        internal static void InitInputManager()
+        internal static void InitInputManager(Game game)
         {
             _lastFrameMouseState = new MouseButtonsState();
             _actualFrameMouseState = new MouseButtonsState();
+
         }
+
+        
 
         internal static void UpdateInputBegin()
         {

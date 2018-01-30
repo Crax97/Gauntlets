@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace CraxAwesomeEngine.Core
+namespace CraxAwesomeEngine.Core.Debugging
 {
 
     /// <summary>
@@ -13,10 +13,10 @@ namespace CraxAwesomeEngine.Core
     /// </summary>
     static class Debug
     {
+        public static Texture2D SinglePointTexture { get; private set; } = null;
         private static Game runningGame = null;
         private static SpriteBatch debugBatch = null;
         private static GraphicsDevice graphicsDevice = null;
-        private static Texture2D singlePointTexture = null;
         private static Queue<Action> drawQueue = null;
         private static StreamWriter logFile = null;
 
@@ -33,8 +33,8 @@ namespace CraxAwesomeEngine.Core
             debugBatch = new SpriteBatch(device);
             drawQueue = new Queue<Action>();
             graphicsDevice = device;
-            singlePointTexture = new Texture2D(device, 1, 1);
-            singlePointTexture.SetData<Color>(new Color[] { Color.White });
+            SinglePointTexture = new Texture2D(device, 1, 1);
+            SinglePointTexture.SetData<Color>(new Color[] { Color.White });
             runningGame = game;
             logFile = new StreamWriter(File.Open("log.txt", FileMode.OpenOrCreate));
 
@@ -52,7 +52,7 @@ namespace CraxAwesomeEngine.Core
             float rotation = (float)Math.Atan2(direction.Y, direction.X);
 
             drawQueue.Enqueue(() => {
-                debugBatch.Draw(singlePointTexture,
+                debugBatch.Draw(SinglePointTexture,
                 new Rectangle((int)begin.X, (int)begin.Y, (int)direction.Length(), 1),
                 null, (color.HasValue ? color.Value : Color.Yellow),
                 rotation, Vector2.Zero, SpriteEffects.None, 1.0f);
@@ -73,7 +73,7 @@ namespace CraxAwesomeEngine.Core
 
             drawQueue.Enqueue(() =>
            {
-               debugBatch.Draw(singlePointTexture, actualPosition, null, (color.HasValue ? color.Value : Color.LightYellow), 0.0f, Vector2.Zero, thickness, SpriteEffects.None, 1.0f);
+               debugBatch.Draw(SinglePointTexture, actualPosition, null, (color.HasValue ? color.Value : Color.LightYellow), 0.0f, Vector2.Zero, thickness, SpriteEffects.None, 1.0f);
            });
         }
 
@@ -89,7 +89,7 @@ namespace CraxAwesomeEngine.Core
 
             drawQueue.Enqueue(() =>
             {
-                debugBatch.Draw(singlePointTexture, rect, null, 
+                debugBatch.Draw(SinglePointTexture, rect, null, 
                     (color.HasValue ? color.Value : Color.LightYellow), 
                     rotation, 
                     (Vector2.Zero),
@@ -139,8 +139,8 @@ namespace CraxAwesomeEngine.Core
         /// </summary>
         public static void DebugDraw()
         {
-            if (drawQueue.Count != 0 && DebugEnabled)
-            {
+            //if (drawQueue.Count != 0 && DebugEnabled)
+            //{
                 debugBatch.Begin();
 
                 while (drawQueue.Count > 0)
@@ -149,8 +149,11 @@ namespace CraxAwesomeEngine.Core
                     currentDraw();
                 }
 
+                DebugConsole.Draw(debugBatch);
                 debugBatch.End();
-            }
+            //}
+
+
         }
 
         /// <summary>
@@ -166,6 +169,7 @@ namespace CraxAwesomeEngine.Core
 
             //Add more stuff later
             Console.WriteLine(builder.ToString());
+            DebugConsole.WriteLine(builder.ToString());
             logFile.WriteLine(builder);
         }
 
@@ -181,6 +185,7 @@ namespace CraxAwesomeEngine.Core
             errorMessage.AppendFormat("[ERROR] " + message, args);
 
             Console.Error.WriteLine(errorMessage);
+            DebugConsole.WriteLine(errorMessage.ToString());
             logFile.WriteLine(errorMessage);
 
             if(isFatal)

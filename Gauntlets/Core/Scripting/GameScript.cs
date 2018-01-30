@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using CraxAwesomeEngine.Core.GUI;
 using Microsoft.Xna.Framework.Input;
+using CraxAwesomeEngine.Core.Debugging;
 
 namespace CraxAwesomeEngine.Core.Scripting
 {

@@ -101,3 +101,16 @@
 #begin Scripts/test.lua
 /copy:Scripts/test.lua
 
+#begin Fonts/DejaVu Fonts License.txt
+/copy:Fonts/DejaVu Fonts License.txt
+
+#begin Fonts/DejaVuSansMono.ttf
+/copy:Fonts/DejaVuSansMono.ttf
+
+#begin Fonts/Console.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Console.spritefont
+

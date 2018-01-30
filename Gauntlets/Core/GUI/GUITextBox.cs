@@ -46,11 +46,12 @@ namespace CraxAwesomeEngine.Core.GUI
 
             foreach(char c in text) {
                 width +=(glyphs.ContainsKey(c)) ? glyphs[c].Width : 0;
-                if ( width + (Offset.X * 1.5f) > Sprite.Width)
+                if ( width + (Offset.X * 1.5f) > Sprite.Width || c == '\n')
                 {
                     parsedString += '\n';
                     width = 0;
-                }
+                } 
+
                 if(!char.IsControl(c))
                     parsedString += c;
             }
@@ -81,6 +82,8 @@ namespace CraxAwesomeEngine.Core.GUI
             return cpy;
 
         }
+
+        //public GUILabel Label { get => label; }
 
     }
 }
