@@ -146,9 +146,9 @@ namespace CraxAwesomeEngine.Core
             }
             foreach (IComponent component in components)
             {
-                
+
                 if (typeof(T) == component.GetType() || component is T) elems.Add(component as T);
-                
+
             }
 
             return elems;

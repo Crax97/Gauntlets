@@ -6,11 +6,10 @@
   <SourceFiles>
     <File>C:/Users/gsoli/source/repos/GauntletsSharp/Gauntlets/Content/Fonts/DefaultFont.spritefont</File>
     <File>C:/Users/gsoli/source/repos/GauntletsSharp/Gauntlets/Content/test_1.png</File>
-    <File>C:/Users/gsoli/source/repos/GauntletsSharp/Gauntlets/Content/test_animated.png</File>
     <File>C:/Users/gsoli/source/repos/GauntletsSharp/Gauntlets/Content/touch.png</File>
     <File>C:/Users/gsoli/source/repos/GauntletsSharp/Gauntlets/Content/TextBoxTest.png</File>
     <File>C:/Users/gsoli/source/repos/GauntletsSharp/Gauntlets/Content/player.png</File>
-    <File>C:/Users/gsoli/source/repos/GauntletsSharp/Gauntlets/Content/SATtest.png</File>
     <File>C:/Users/gsoli/source/repos/GauntletsSharp/Gauntlets/Content/Fonts/Console.spritefont</File>
+    <File>C:/Users/gsoli/source/repos/GauntletsSharp/Gauntlets/Content/spritesheet.png</File>
   </SourceFiles>
 </SourceFileCollection>

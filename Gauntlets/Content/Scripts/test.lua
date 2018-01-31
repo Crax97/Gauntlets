@@ -1,5 +1,5 @@
 ﻿local speed = 300.0
-local rotationSpeed = 10.0
+local rotationSpeed = 0.0
 
 function init( entity )
 	

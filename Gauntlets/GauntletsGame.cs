@@ -165,6 +165,12 @@ namespace Gauntlets.Simulation
                 World.Current.Update(delta);
                 Collider.CalculateCollisions();
 
+                if(InputManager.KeyHasBeenPressed(Keys.E))
+                {
+                    AnimatedSprite sprite = fakePlayer.GetComponent<AnimatedSprite>();
+                    sprite.SetAnimation("jump");
+                }
+
             }
             base.Update(gameTime);
             InputManager.UpdateInputEnd();

@@ -3,8 +3,18 @@ using System.Xml;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using CraxAwesomeEngine.Core.Debugging;
+
+/// <summary>
+/// Part of Crax's Awesome Engine.
+/// </summary>
 namespace CraxAwesomeEngine.Core
 {
+
+    /// <summary>
+    /// An animated sprite, based on <see cref="Sprite"/>,
+    /// it can be attached to an Entity since it's an <see cref="IComponent"></see>
+    /// </summary>
     public class AnimatedSprite : Sprite, IComponent
 	{
 
@@ -12,36 +22,51 @@ namespace CraxAwesomeEngine.Core
 		{
 			public int column;
 			public int row;
-			public float timeToNextFrame;
+			public float duration;
 
 			public AnimationFrame(int c, int r, float f)
 			{
 				row = r;
 				column = c;
-				timeToNextFrame = f;
+				duration = f;
 			}
 		}
 
-		private List<AnimationFrame> frames;
+        public struct Animation
+        {
+            public List<AnimationFrame> frames;
+            public string name;
+            
+            public Animation(string n)
+            {
+                frames = new List<AnimationFrame>();
+                name = n;
+            }
+        }
+
+		private List< Animation > animations;
 		private float currentTime = 0.0f;
-		private AnimationFrame currentFrame;
+		private Animation currentAnimation;
+        private AnimationFrame currentFrame;
 		private int index = 0;
 
-		public AnimatedSprite(Texture2D texture, List<AnimationFrame> frames, int width, int height, float renderingOrder)
-			: base(texture, frames[0].row, frames[0].column, width, height, renderingOrder)
+		public AnimatedSprite(Texture2D texture, List<Animation> animationsList, int width, int height, float renderingOrder)
+			: base(texture, 0, 0, width, height, renderingOrder)
 		{
-			this.frames = frames;
-			currentFrame = frames[0];
+
+            animations = animationsList;
+			currentAnimation = animations[0];
+            currentFrame = currentAnimation.frames[0];
 		}
 
         public override void Update(float delta, Entity e)
 		{
 			currentTime += delta;
-			if (currentTime > currentFrame.timeToNextFrame)
+			if (currentTime > currentFrame.duration)
 			{
 				index++;
-				if (index >= frames.Count) index = 0;
-				currentFrame = frames[index];
+				if (index >= currentAnimation.frames.Count) index = 0;
+				currentFrame = currentAnimation.frames[index];
 				SetSource(currentFrame.row, currentFrame.column, Width, Height);
 				currentTime = 0.0f;
 			}
@@ -51,10 +76,66 @@ namespace CraxAwesomeEngine.Core
 		public new void Initialize(Entity owner) { }
 		public new void Destroy() { }
 
+        /// <summary>
+        /// Sets this current sprite's animation,
+        /// logs to the Debug Console if it can't find the animation
+        /// </summary>
+        /// <param name="animationName">Name of the animation to set</param>
+        public void SetAnimation(string animationName)
+        {
+            foreach(Animation anim in animations)
+            {
+                if(anim.name == animationName)
+                {
+                    currentAnimation = anim;
+                    SetAnimationFrame(0);
+                    return;
+                }
+            }
+
+            Debug.Log("Could not find animation {0} from AnimatedSprite whose texture is {1}!", animationName, Texture.Name);
+        }
+
+        /// <summary>
+        /// Sets the current animation frame,
+        /// logs to the Debug Console if it can't find the frame
+        /// </summary>
+        /// <param name="frame">Index of the frame to set, starts from 0</param>
+        public void SetAnimationFrame(int frame)
+        {
+            if(frame >= currentAnimation.frames.Count)
+            {
+                Debug.Log("Can't use frame index {0} there are less frames in the current animation!", frame);
+                return;
+            }
+
+            currentFrame = currentAnimation.frames[frame];
+            currentTime = 0.0f;
+            index = frame;
+        }
+
+        /// <summary>
+        /// Returns the current running frame
+        /// </summary>
+        /// <returns></returns>
+        public int GetCurrentFrame()
+        {
+            return index;
+        }
+
+        /// <summary>
+        /// Returns the current playing animation
+        /// </summary>
+        /// <returns></returns>
+        public string GetCurrentAnimationName()
+        {
+            return currentAnimation.name;
+        }
+
         public new object Clone() {
 
-            List<AnimationFrame> copiedFrames = new List<AnimationFrame>(frames);
-            return new AnimatedSprite(Texture, copiedFrames, Width, Height, RenderingOrder);
+            List<Animation> copiedAnimations = new List<Animation>(animations);
+            return new AnimatedSprite(Texture, copiedAnimations, Width, Height, RenderingOrder);
 
         }
 

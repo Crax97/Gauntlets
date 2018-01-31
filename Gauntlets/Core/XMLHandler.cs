@@ -142,6 +142,25 @@ namespace CraxAwesomeEngine.Core
             return new Sprite(Texture, row, column, width, height, renderingOrder);
         }
 
+        public static List<AnimationFrame> ReadFramesFromXMLNode(XmlNode node)
+        {
+            List<AnimationFrame> animationFrames = new List<AnimationFrame>();
+            XmlNodeList frameNodes = node.ChildNodes;
+            foreach(XmlNode frame in frameNodes)
+            {
+                XmlAttributeCollection collection = frame.Attributes;
+
+                //All these three attributes MUST be present!
+                int row = int.Parse(collection["row"].Value);
+                int column = int.Parse(collection["column"].Value);
+                float timeBetween = float.Parse(collection["time"].Value);
+
+                animationFrames.Add(new AnimationFrame(column, row, timeBetween));
+            }
+
+            return animationFrames;
+        }
+
         public static object AnimatedSpriteFromXmlNode(XmlNode node, Game game)
         {
 
@@ -195,23 +214,19 @@ namespace CraxAwesomeEngine.Core
             }
 
             //Parsing frames
-            XmlNodeList framesNodes = node.ChildNodes;
-            if (framesNodes.Count == 0) throw new ArgumentException("An animated frame must have at least one <Frame...></Frame> element!");
+            XmlNodeList animationNodes = node.ChildNodes;
+            if (animationNodes.Count == 0) throw new ArgumentException("An animated frame must have at least one <Frame...></Frame> element!");
 
-            List<AnimationFrame> frames = new List<AnimationFrame>(framesNodes.Count);
-            foreach (XmlNode frameNode in framesNodes)
+            List<Animation> animations = new List<Animation>(animationNodes.Count);
+            foreach(XmlNode animationNode in animationNodes)
             {
-                XmlAttributeCollection collection = frameNode.Attributes;
-
-                //All these three attributes MUST be present!
-                int row = int.Parse(collection["row"].Value);
-                int column = int.Parse(collection["column"].Value);
-                float timeBetween = float.Parse(collection["time"].Value);
-
-                frames.Add(new AnimationFrame(column, row, timeBetween));
+                string animationName = animationNode.Attributes["name"].Value;
+                Animation anim = new Animation(animationName);
+                anim.frames = ReadFramesFromXMLNode(animationNode);
+                animations.Add(anim);
             }
 
-            return new AnimatedSprite(Texture, frames, width, height, renderingOrder);
+            return new AnimatedSprite(Texture, animations, width, height, renderingOrder);
         }
 
         public static object GUILabelFromXmlNode(XmlNode node, Game game)
