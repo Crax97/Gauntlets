@@ -22,11 +22,12 @@ namespace CraxAwesomeEngine.Core.Physics
         public Entity Owner { get; private set; } = null;
         public bool IsStatic { get; set; } = false;
         public Action<Collider> OnCollision { get; set; } = null;
-        public bool IsColliding { get; private set; }
+        public bool isColliding = false;
         public abstract List<Vector2> GetNormals();
+        public abstract List<Vector2> GetColliderVertices();
+        public abstract ColliderType GetColliderType();
 
         private Vector2 positionPreviousFrame;
-
         private List<Vector2> GetAxes(Collider other)
         {
             List<Vector2> axes = new List<Vector2>();
@@ -43,13 +44,37 @@ namespace CraxAwesomeEngine.Core.Physics
             return axes;
         }
 
+        public static void CalculateCollisions()
+        {
+            foreach (Collider collider in colliders)
+            {
+
+                collider.isColliding = false;
+
+                foreach (Collider other in colliders)
+                {
+                    if (other != collider)
+                    {
+                        Vector2? pushback;
+                        collider.SATIsCollidingWith(other, out pushback);
+                        if (pushback != null)
+                        {
+                            if (!collider.IsStatic) collider.Owner.Transform.Translate(pushback.Value);
+                            collider.OnCollision?.Invoke(other);
+                            collider.isColliding = true;
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Checks if two Colliders are colliding using
         /// the Separating Axis Theorem
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool CheckForCollisionSAT(Collider other, out Vector2? MTV)
+        public bool SATIsCollidingWith(Collider other, out Vector2? MTV)
         {
             List<Vector2> Axes = GetAxes(other);
 
@@ -114,9 +139,7 @@ namespace CraxAwesomeEngine.Core.Physics
 
             return true;
         }
-        
-        public abstract List<Vector2> GetColliderVertices();
-        public abstract ColliderType GetColliderType();
+
 
         public void Initialize(Entity owner)
         {
@@ -130,31 +153,15 @@ namespace CraxAwesomeEngine.Core.Physics
             positionPreviousFrame = parent.Transform.Position;
         }
 
-        public static void CalculateCollisions()
-        {
-            foreach (Collider collider in colliders) {
-
-                collider.IsColliding = false;
-
-                foreach (Collider other in colliders)
-                {
-                    if (other != collider)
-                    {
-                        Vector2? pushback;
-                        if (collider.CheckForCollisionSAT(other, out pushback))
-                        {
-                            if (!collider.IsStatic) collider.Owner.Transform.Translate(pushback.Value);
-                            collider.OnCollision?.Invoke(other);
-                            collider.IsColliding = true;
-                        }
-                    }
-                }
-            }
-        }
 
         public void Destroy()
         {
             colliders.Remove(this);
+        }
+
+        public bool IsColliding()
+        {
+            return isColliding;
         }
 
         public abstract object Clone();

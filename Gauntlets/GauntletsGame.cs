@@ -30,6 +30,10 @@ namespace Gauntlets.Simulation
 
         World w = new World();
         Entity fakePlayer = null;
+        Entity testCollider = null;
+
+        AABBCollider aa;
+        AABBCollider bb;
 
         public Game1()
         {
@@ -79,6 +83,7 @@ namespace Gauntlets.Simulation
             ComponentRecord.RegisterAttribute<GUITextBox>("GUITextBox", XmlComponentsReaders.GUITextBoxFromXmlNode);
             ComponentRecord.RegisterAttribute<GUIImage>("GUIImage", XmlComponentsReaders.GUIImageFromXmlNode);
             ComponentRecord.RegisterAttribute<GameScript>("Script", XmlComponentsReaders.GameScriptFromXmlNode);
+            ComponentRecord.RegisterAttribute<AABBCollider>("AABBCollider", null);
 
             Debug.InitializeDebug(GraphicsDevice, this);
             DebugConsole.DebugConsoleInit(this, graphics);
@@ -89,19 +94,6 @@ namespace Gauntlets.Simulation
             Exiting += new EventHandler<EventArgs>((object obj, EventArgs args) =>
             {
                 Debug.CloseDebug();
-            });
-
-            DebugConsole.RegisterCommand("echo", (string[] args) =>
-            {
-                string message = "";
-
-                for(int i = 1; i < args.Length; i++)
-                {
-                    message += " " + args[i];
-                }
-
-                DebugConsole.WriteLine(message);
-
             });
 
             DebugConsole.RegisterCommand("reset", (string[] args) =>
@@ -131,7 +123,19 @@ namespace Gauntlets.Simulation
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             guiBatch = new SpriteBatch(GraphicsDevice);
+
             fakePlayer = Entity.Instantiate(1);
+            testCollider = Entity.Instantiate(0);
+
+            aa = new AABBCollider(fakePlayer.GetComponent<Sprite>().Size * new Vector2(0.5f, 1.0f));
+            bb = new AABBCollider(testCollider.GetComponent<Sprite>().Size);
+
+            bb.IsStatic = true;
+
+            fakePlayer.AddComponent(aa);
+            testCollider.AddComponent(bb);
+
+            testCollider.Transform.Position = Transform.WindowHalfSize;
 
             //reset();
 

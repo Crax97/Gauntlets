@@ -16,7 +16,7 @@ namespace CraxAwesomeEngine.Core.Debugging
 
         public static bool Enabled { get; private set; } = false;
 
-        private const int commandDistanceFromOutput = 35;
+        private const int commandDistanceFromOutput = 20;
         private static Rectangle consoleOutputRectangle;
         private static Rectangle commandOutputRectangle;
         private static SpriteFont consoleFont = null;
@@ -33,6 +33,24 @@ namespace CraxAwesomeEngine.Core.Debugging
             consoleFont = game.Content.Load<SpriteFont>(Path.Combine("Fonts", "Console"));
 
             game.Window.TextInput += KeyCharCallback;
+
+            RegisterCommand("clear", (string[] args) =>
+            {
+                Clear();
+            });
+
+            RegisterCommand("echo", (string[] args) =>
+            {
+                string message = "";
+
+                for (int i = 1; i < args.Length; i++)
+                {
+                    message += " " + args[i];
+                }
+
+                DebugConsole.WriteLine(message);
+
+            });
 
         }
 
@@ -123,6 +141,11 @@ namespace CraxAwesomeEngine.Core.Debugging
         {
             Write(text);
             debugConsoleContent += "\n$";
+        }
+
+        public static void Clear()
+        {
+            debugConsoleContent = "$";
         }
 
 

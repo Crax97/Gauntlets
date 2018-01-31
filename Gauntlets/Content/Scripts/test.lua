@@ -1,8 +1,14 @@
 ﻿local speed = 300.0
 local rotationSpeed = 0.0
 
+local collider
+local sprite
+
 function init( entity )
 	
+	collider = entity.GetComponent("AABBCollider")
+	sprite = entity.GetComponent("AnimatedSprite")
+	print(collider)
 end
 
 function update( delta, entity )
@@ -26,8 +32,11 @@ function update( delta, entity )
 	end
 
 	if(Input.KeyHasBeenPressed(Keys.E)) then
-		local sprite = entity.GetComponent("AnimatedSprite")
 		sprite.SetAnimation("jump")
+	end
+	
+	if(collider.IsColliding()) then
+		print("Colliding from lua!")
 	end
 
 	entity.Transform.Translate(translation)
