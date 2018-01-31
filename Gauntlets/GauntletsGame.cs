@@ -131,8 +131,6 @@ namespace Gauntlets.Simulation
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             guiBatch = new SpriteBatch(GraphicsDevice);
-
-            
             fakePlayer = Entity.Instantiate(1);
 
             //reset();
@@ -164,12 +162,6 @@ namespace Gauntlets.Simulation
 
                 World.Current.Update(delta);
                 Collider.CalculateCollisions();
-
-                if(InputManager.KeyHasBeenPressed(Keys.E))
-                {
-                    AnimatedSprite sprite = fakePlayer.GetComponent<AnimatedSprite>();
-                    sprite.SetAnimation("jump");
-                }
 
             }
             base.Update(gameTime);

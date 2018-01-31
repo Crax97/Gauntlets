@@ -7,6 +7,10 @@ using MoonSharp.Interpreter;
 
 namespace CraxAwesomeEngine.Core
 {
+
+    /// <summary>
+    /// The interactive things of a <see cref="World"/>
+    /// </summary>
     [MoonSharpUserData]
     public class Entity : ICloneable
 	{
@@ -29,11 +33,6 @@ namespace CraxAwesomeEngine.Core
             InstanceId = 0;
             Id = id;
             Name = name;
-        }
-
-        private bool IsSubClassOrSame(Type baseClass, Type derivedClass)
-        {
-            return (derivedClass.IsSubclassOf(baseClass) || baseClass == derivedClass);
         }
 
         /// <summary>
@@ -155,6 +154,58 @@ namespace CraxAwesomeEngine.Core
         }
 
         /// <summary>
+        /// Gets the componets of type typename.
+        /// If typename == "Transform", the method returns
+        /// a list with the entity's single transform.
+        /// </summary>
+        /// <returns>The requested components of type typeName, an empty list if there's none.</returns>
+        /// <typeparam name="typeName">The type requested.</typeparam>
+        public List<object> GetComponents(string typeName)
+        {
+            var type = ComponentRecord.GetAssociatedType(typeName);
+            var elems = new List<object>();
+            //If we're looking for a Transform
+            if (type == typeof(Transform))
+            {
+                elems.Add(Transform);
+                return elems;
+            }
+
+            foreach (IComponent component in components)
+            {
+
+                if (type == component.GetType())
+                    elems.Add(component );
+
+            }
+
+            return elems;
+        }
+
+        /// <summary>
+        /// Gets the first component of type typeName,
+        /// useful in lua scripts.
+        /// </summary>
+        /// <param name="typeName">The searched IComponent type name</param>
+        /// <returns>The first component found, null if none</returns>
+        public object GetComponent(string typeName)
+        {
+            var type = ComponentRecord.GetAssociatedType(typeName);
+            //If we're looking for a Transform
+            if (type == typeof(Transform))
+                return Transform;
+
+            foreach (IComponent component in components)
+            {
+
+                if (type == component.GetType())
+                    return component;
+
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Searches for the first component of type T in the Entity's components list.
         /// </summary>
         /// <typeparam name="T">The component to search for.</typeparam>
@@ -175,6 +226,13 @@ namespace CraxAwesomeEngine.Core
             return null;
         }
 
+        /// <summary>
+        /// Clones the instance identified by the id
+        /// and adds it to the current GameWorld,
+        /// throws if it can't find the entity
+        /// </summary>
+        /// <param name="id">The identifier of the entity to clone</param>
+        /// <returns>The cloned entity, throws if it can't find it</returns>
         public static Entity Instantiate(int id) {
             int i = 0;
             while(i < knownEntities.Count ) {
@@ -192,6 +250,10 @@ namespace CraxAwesomeEngine.Core
             
         }
 
+        /// <summary>
+        /// Called when the simulation of
+        /// the current GameWorld begins
+        /// </summary>
 		public virtual void OnBegin()
 		{
 			foreach (IComponent c in components)
@@ -199,6 +261,11 @@ namespace CraxAwesomeEngine.Core
 				c.Initialize(this);
 			}
 		}
+
+        /// <summary>
+        /// Called when the simulation of the current world updates,
+        /// </summary>
+        /// <param name="deltaTime">The time between the current frame and the last</param>
 		public virtual void Update(float deltaTime)
 		{
             if (Enabled)
@@ -209,6 +276,10 @@ namespace CraxAwesomeEngine.Core
                 }
             }
 		}
+
+        /// <summary>
+        /// Called when the entity is destroyed.
+        /// </summary>
 		public virtual void OnDestroy()
 		{
 			foreach (IComponent c in components)
@@ -216,7 +287,10 @@ namespace CraxAwesomeEngine.Core
 				c.Destroy();
 			}
 		}
-
+        
+        /// <summary>
+        /// Destroys the current entity.
+        /// </summary>
 		public void Destroy()
 		{
 			OnDestroy();
@@ -236,12 +310,7 @@ namespace CraxAwesomeEngine.Core
 			get { return isEnabled; }
 			set { isEnabled = value; }
 		}
-
-		private void ParseEntity(int id)
-		{
-			
-		}
-
+        
         public object Clone()
         {
             Transform t = (Transform)transform.Clone();

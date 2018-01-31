@@ -25,5 +25,10 @@ function update( delta, entity )
 		translation.Y = (speed * delta)
 	end
 
+	if(Input.KeyHasBeenPressed(Keys.E)) then
+		local sprite = entity.GetComponent("AnimatedSprite")
+		sprite.SetAnimation("jump")
+	end
+
 	entity.Transform.Translate(translation)
 end

@@ -19,13 +19,13 @@ namespace CraxAwesomeEngine.Core.Physics
     {
         private static List<Collider> colliders = new List<Collider>();
 
-        private Vector2 positionPreviousFrame;
         public Entity Owner { get; private set; } = null;
         public bool IsStatic { get; set; } = false;
-        
         public Action<Collider> OnCollision { get; set; } = null;
-
+        public bool IsColliding { get; private set; }
         public abstract List<Vector2> GetNormals();
+
+        private Vector2 positionPreviousFrame;
 
         private List<Vector2> GetAxes(Collider other)
         {
@@ -133,6 +133,9 @@ namespace CraxAwesomeEngine.Core.Physics
         public static void CalculateCollisions()
         {
             foreach (Collider collider in colliders) {
+
+                collider.IsColliding = false;
+
                 foreach (Collider other in colliders)
                 {
                     if (other != collider)
@@ -142,6 +145,7 @@ namespace CraxAwesomeEngine.Core.Physics
                         {
                             if (!collider.IsStatic) collider.Owner.Transform.Translate(pushback.Value);
                             collider.OnCollision?.Invoke(other);
+                            collider.IsColliding = true;
                         }
                     }
                 }
