@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 
+using CraxAwesomeEngine.Core.Physics;
+
 namespace CraxAwesomeEngine.Core
 {
     /// <summary>

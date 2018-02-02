@@ -4,6 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
+using CraxAwesomeEngine.Core.Scripting;
 
 namespace CraxAwesomeEngine.Core
 {
@@ -99,10 +100,16 @@ namespace CraxAwesomeEngine.Core
                             //This way the Entity doesn't get initialized when the 
                             //IComponent is first added to the knownEntities list
                             e.components.Add(component);
-                        } else 
+                        }
+                        else 
                         {
                             e.Transform.SetupFromXmlNode(componentNode, game);
                         }
+                    }
+                    if(entity.Attributes["script"] != null)
+                    {
+                        string scriptName = entity.Attributes["script"].Value;
+                        e.AddComponent(new GameScript(scriptName));
                     }
 
                     knownEntities.Add(e);
@@ -134,7 +141,7 @@ namespace CraxAwesomeEngine.Core
         /// </summary>
         /// <returns>The requested components of type T, an empty list if there's none.</returns>
         /// <typeparam name="T">The type requested.</typeparam>
-        public List<T> GetComponents<T>() where T : class, IComponent
+        public List<T> GetComponents<T>(bool allowInherited = true) where T : class, IComponent
         {
             List<T> elems = new List<T>();
             //If we're looking for a Transform
@@ -146,7 +153,7 @@ namespace CraxAwesomeEngine.Core
             foreach (IComponent component in components)
             {
 
-                if (typeof(T) == component.GetType() || component is T) elems.Add(component as T);
+                if (typeof(T) == component.GetType() || (component is T && allowInherited)) elems.Add(component as T);
 
             }
 
@@ -160,7 +167,7 @@ namespace CraxAwesomeEngine.Core
         /// </summary>
         /// <returns>The requested components of type typeName, an empty list if there's none.</returns>
         /// <typeparam name="typeName">The type requested.</typeparam>
-        public List<object> GetComponents(string typeName)
+        public List<object> GetComponents(string typeName, bool allowInherited = true)
         {
             var type = ComponentRecord.GetAssociatedType(typeName);
             var elems = new List<object>();
@@ -174,7 +181,7 @@ namespace CraxAwesomeEngine.Core
             foreach (IComponent component in components)
             {
 
-                if (type == component.GetType())
+                if (type == component.GetType() || (component.GetType().IsSubclassOf(type) && allowInherited))
                     elems.Add(component );
 
             }
@@ -188,7 +195,7 @@ namespace CraxAwesomeEngine.Core
         /// </summary>
         /// <param name="typeName">The searched IComponent type name</param>
         /// <returns>The first component found, null if none</returns>
-        public object GetComponent(string typeName)
+        public object GetComponent(string typeName, bool allowInherited = true)
         {
             var type = ComponentRecord.GetAssociatedType(typeName);
             //If we're looking for a Transform
@@ -198,7 +205,7 @@ namespace CraxAwesomeEngine.Core
             foreach (IComponent component in components)
             {
 
-                if (type == component.GetType())
+                if (type == component.GetType() || (component.GetType().IsSubclassOf(type) && allowInherited))
                     return component;
 
             }
@@ -210,7 +217,7 @@ namespace CraxAwesomeEngine.Core
         /// </summary>
         /// <typeparam name="T">The component to search for.</typeparam>
         /// <returns>The first component of type T, null if there's none</returns>
-        public T GetComponent<T>() where T : class, IComponent
+        public T GetComponent<T>(bool allowInherited = true) where T : class, IComponent
         {
 
             //If we're looking for a Transform
@@ -220,7 +227,7 @@ namespace CraxAwesomeEngine.Core
             foreach (IComponent component in components)
             {
                 
-                if (typeof(T) == component.GetType() || component is T) return component as T;
+                if (typeof(T) == component.GetType() || (component is T && allowInherited)) return component as T;
                     
             }
             return null;

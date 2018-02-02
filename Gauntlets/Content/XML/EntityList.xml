@@ -5,8 +5,9 @@
       
     </Components>
   </Entity>
-  <Entity id ="1" name="fakePlayer">
+  <Entity id ="1" name="fakePlayer" script="test.lua">
     <Components>
+      <Transform></Transform>
       <!-- <Sprite texture="player" row="0" width="full" height="full"></Sprite>-->
       <AnimatedSprite texture="spritesheet" width="64" height="64" rendering_order="1">
         <Animation name="running">
@@ -23,14 +24,18 @@
           <Frame row="1" column="1" time="0.5"></Frame>
           <Frame row="1" column="0" time="0.5"></Frame>
         </Animation>
+        <Animation name="idle">
+          <Frame row="1" column="6" time="0.1"></Frame>
+        </Animation>
       </AnimatedSprite>
-      <Script file="test.lua"></Script>
+      <AABBCollider extension="32 64"></AABBCollider>
     </Components>
   </Entity>
   <Entity id="0" name="collider">
     <Components>
       <Transform scale = "1 1" rotation="0"></Transform>
       <Sprite texture="test_1" row="0" column="0" width="full" height="full"></Sprite>
+      <AABBCollider static="true"></AABBCollider>
     </Components>
   </Entity>
 </Entities>

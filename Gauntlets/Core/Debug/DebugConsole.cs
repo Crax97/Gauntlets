@@ -23,6 +23,8 @@ namespace CraxAwesomeEngine.Core.Debugging
         private static string debugConsoleContent = "$";
         private static string consoleCommandContent = ">";
         private static Dictionary<string, Action<string[]>> commands;
+        private static Color consoleColor = new Color(40, 40, 40, 150);
+        private static Color commandColor = new Color(24, 24, 25, 150);
 
         internal static void DebugConsoleInit (Game game, GraphicsDeviceManager manager)
         {
@@ -31,6 +33,7 @@ namespace CraxAwesomeEngine.Core.Debugging
             commandOutputRectangle = new Rectangle(new Point(0, manager.PreferredBackBufferHeight / 2 - commandDistanceFromOutput), commandPosition.ToPoint());
             commands = new Dictionary<string, Action<string[]>>();
             consoleFont = game.Content.Load<SpriteFont>(Path.Combine("Fonts", "Console"));
+            commandColor.A = 150;
 
             game.Window.TextInput += KeyCharCallback;
 
@@ -100,7 +103,7 @@ namespace CraxAwesomeEngine.Core.Debugging
 
             if (Enabled)
             {
-                if (!char.IsControl(args.Character))
+                if (!char.IsControl(args.Character) && consoleFont.GetGlyphs().ContainsKey(args.Character))
                 {
                     consoleCommandContent += args.Character;
                 }
@@ -123,8 +126,8 @@ namespace CraxAwesomeEngine.Core.Debugging
         {
             if (Enabled)
             {
-                batch.Draw(Debug.SinglePointTexture, consoleOutputRectangle, null, Color.DarkGray);
-                batch.Draw(Debug.SinglePointTexture, commandOutputRectangle, null, Color.Gray);
+                batch.Draw(Debug.SinglePointTexture, consoleOutputRectangle, null, consoleColor);
+                batch.Draw(Debug.SinglePointTexture, commandOutputRectangle, null, commandColor);
 
                 batch.DrawString(consoleFont, debugConsoleContent, Vector2.Zero, Color.White);
                 batch.DrawString(consoleFont, consoleCommandContent, commandOutputRectangle.Location.ToVector2(), Color.White);

@@ -10,8 +10,9 @@ namespace CraxAwesomeEngine.Core.Physics
         private List<Vector2> vertices = null;
         private List<Vector2> normals = null;
 
-        public SATCollider(List<Vector2> vertices)
+        public SATCollider(List<Vector2> vertices) : base()
         {
+            IsStatic = true;
             this.vertices = vertices;
         }
 

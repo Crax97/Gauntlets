@@ -10,6 +10,8 @@ using CraxAwesomeEngine.Core.Physics;
 using CraxAwesomeEngine.Core.GUI;
 using CraxAwesomeEngine.Core.Scripting;
 using CraxAwesomeEngine.Core.Debugging;
+using System.ComponentModel;
+using System.Threading;
 
 /// <summary>
 /// TODO: 
@@ -32,8 +34,7 @@ namespace Gauntlets.Simulation
         Entity fakePlayer = null;
         Entity testCollider = null;
 
-        AABBCollider aa;
-        AABBCollider bb;
+        CharacterCollider playerCollider;
 
         public Game1()
         {
@@ -73,6 +74,9 @@ namespace Gauntlets.Simulation
 
             graphics.PreferredBackBufferWidth = 800;
             graphics.PreferredBackBufferHeight = 600;
+            RasterizerState customState = new RasterizerState();
+            graphics.GraphicsDevice.RasterizerState = customState;
+           
             graphics.ApplyChanges();
 
             ComponentRecord.RegisterAttribute<Sprite>("Sprite", XmlComponentsReaders.SpriteFromXmlNode);
@@ -82,8 +86,8 @@ namespace Gauntlets.Simulation
             ComponentRecord.RegisterAttribute<GUILabel>("GUILabel", XmlComponentsReaders.GUILabelFromXmlNode);
             ComponentRecord.RegisterAttribute<GUITextBox>("GUITextBox", XmlComponentsReaders.GUITextBoxFromXmlNode);
             ComponentRecord.RegisterAttribute<GUIImage>("GUIImage", XmlComponentsReaders.GUIImageFromXmlNode);
-            ComponentRecord.RegisterAttribute<GameScript>("Script", XmlComponentsReaders.GameScriptFromXmlNode);
-            ComponentRecord.RegisterAttribute<AABBCollider>("AABBCollider", null);
+            ComponentRecord.RegisterAttribute<AABBCollider>("AABBCollider", XmlComponentsReaders.CreateAABBColldierFromXMLNode);
+            ComponentRecord.RegisterAttribute<SATCollider>("SATCollider", XmlComponentsReaders.CreateSATColldierFromXMLNode);
 
             Debug.InitializeDebug(GraphicsDevice, this);
             DebugConsole.DebugConsoleInit(this, graphics);
@@ -127,17 +131,8 @@ namespace Gauntlets.Simulation
             fakePlayer = Entity.Instantiate(1);
             testCollider = Entity.Instantiate(0);
 
-            aa = new AABBCollider(fakePlayer.GetComponent<Sprite>().Size * new Vector2(0.5f, 1.0f));
-            bb = new AABBCollider(testCollider.GetComponent<Sprite>().Size);
-
-            bb.IsStatic = true;
-
-            fakePlayer.AddComponent(aa);
-            testCollider.AddComponent(bb);
 
             testCollider.Transform.Position = Transform.WindowHalfSize;
-
-            //reset();
 
         }
 
@@ -163,11 +158,12 @@ namespace Gauntlets.Simulation
 
             if (!DebugConsole.Enabled)
             {
-
+                
                 World.Current.Update(delta);
                 Collider.CalculateCollisions();
-
             }
+            
+
             base.Update(gameTime);
             InputManager.UpdateInputEnd();
             this.Window.Title = "Gauntlets - FPS " + 1.0f / delta;

@@ -132,7 +132,7 @@ namespace CraxAwesomeEngine.Core
 			while (this.rotation <= -180) this.rotation += 180;
 		}
 
-		public void SetParent(Transform otherParent)
+        public void SetParent(Transform otherParent)
 		{
 			parent = otherParent;
 			parent.childs.Add(this);
@@ -177,7 +177,7 @@ namespace CraxAwesomeEngine.Core
                 rotation = (rotationStr != null) ? (float.Parse(rotationStr)) : 0.0f;
 
                 position = XmlComponentsReaders.Vector2FromXmlAttribute(attributes["position"], Vector2.Zero);
-                scale = XmlComponentsReaders.Vector2FromXmlAttribute(attributes["position"], Vector2.One);
+                scale = XmlComponentsReaders.Vector2FromXmlAttribute(attributes["scale"], Vector2.One);
             }
         }
         

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using CraxAwesomeEngine.Core.GUI;
 using Microsoft.Xna.Framework.Input;
 using CraxAwesomeEngine.Core.Debugging;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace CraxAwesomeEngine.Core.Scripting
 {
@@ -40,6 +41,7 @@ namespace CraxAwesomeEngine.Core.Scripting
             UserData.RegisterType<Point>();
             UserData.RegisterType<Keys>();
             UserData.RegisterType<MouseKeys>(); //This should have a [MoonSharpUserData] attribute, but for consistency i register it there
+            UserData.RegisterType<SpriteEffects>();
 
             UserData.RegisterAssembly();
 
@@ -57,6 +59,7 @@ namespace CraxAwesomeEngine.Core.Scripting
             script.Globals["Keys"] = typeof(Keys);
             script.Globals["MouseKeys"] = typeof(MouseKeys);
             script.Globals["Globals"] = Globals.Instance;
+            script.Globals["RenderingEffect"] = typeof(SpriteEffects);
 
             try
             {

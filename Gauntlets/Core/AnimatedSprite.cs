@@ -60,16 +60,19 @@ namespace CraxAwesomeEngine.Core
 		}
 
         public override void Update(float delta, Entity e)
-		{
-			currentTime += delta;
-			if (currentTime > currentFrame.duration)
-			{
-				index++;
-				if (index >= currentAnimation.frames.Count) index = 0;
-				currentFrame = currentAnimation.frames[index];
-				SetSource(currentFrame.row, currentFrame.column, Width, Height);
-				currentTime = 0.0f;
-			}
+        {
+            if (currentFrame.duration != 0.0f)
+            {
+                currentTime += delta;
+                if (currentTime > currentFrame.duration)
+                {
+                    index++;
+                    if (index >= currentAnimation.frames.Count) index = 0;
+                    currentFrame = currentAnimation.frames[index];
+                    SetSource(currentFrame.row, currentFrame.column, Width, Height);
+                    currentTime = 0.0f;
+                }
+            }
 
         }
 
@@ -83,17 +86,19 @@ namespace CraxAwesomeEngine.Core
         /// <param name="animationName">Name of the animation to set</param>
         public void SetAnimation(string animationName)
         {
-            foreach(Animation anim in animations)
+            if (GetCurrentAnimationName() != animationName)
             {
-                if(anim.name == animationName)
+                foreach (Animation anim in animations)
                 {
-                    currentAnimation = anim;
-                    SetAnimationFrame(0);
-                    return;
+                    if (anim.name == animationName)
+                    {
+                        currentAnimation = anim;
+                        SetAnimationFrame(0);
+                        return;
+                    }
                 }
-            }
-
             Debug.Log("Could not find animation {0} from AnimatedSprite whose texture is {1}!", animationName, Texture.Name);
+            }
         }
 
         /// <summary>
@@ -112,6 +117,7 @@ namespace CraxAwesomeEngine.Core
             currentFrame = currentAnimation.frames[frame];
             currentTime = 0.0f;
             index = frame;
+            SetSource(currentFrame.row, currentFrame.column, Width, Height);
         }
 
         /// <summary>

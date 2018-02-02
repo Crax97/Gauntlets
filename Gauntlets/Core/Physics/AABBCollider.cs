@@ -18,21 +18,43 @@ namespace CraxAwesomeEngine.Core.Physics
         private Vector2 topLeft, topRight;
         private Vector2 bottomLeft, bottomRight;
 
-        public AABBCollider(Vector2 extension)
+        public AABBCollider(Vector2 extension) : base()
         {
+            IsStatic = true;
             this.Extension = extension;
+        }
+
+        public override void Initialize(Entity owner)
+        {
+            base.Initialize(owner);
+
+            if(Extension == Vector2.Zero)
+            {
+                //Try creating the extension from the entity's Sprite
+                Sprite sprite = owner.GetComponent<Sprite>(true);
+                if(sprite != null)
+                {
+                    Extension = sprite.Size;
+                }
+            }
+
         }
 
         public override void Update(float deltaTime, Entity parent)
         {
-            Vector2 halfExtension = Extension * 0.5f;
-
-            topLeft = parent.Transform.Position + new Vector2(-halfExtension.X, -halfExtension.Y);
-            topRight = parent.Transform.Position + new Vector2(halfExtension.X, -halfExtension.Y);
-            bottomLeft = parent.Transform.Position + new Vector2(-halfExtension.X, halfExtension.Y);
-            bottomRight = parent.Transform.Position + new Vector2(halfExtension.X, halfExtension.Y);
-
             base.Update(deltaTime, parent);
+
+            UpdateBounds(parent.Transform.Position);
+        }
+
+        public void UpdateBounds(Vector2 position)
+        {
+
+            Vector2 halfExtension = Extension * 0.5f;
+            topLeft = position + new Vector2(-halfExtension.X, -halfExtension.Y);
+            topRight = position + new Vector2(halfExtension.X, -halfExtension.Y);
+            bottomLeft = position + new Vector2(-halfExtension.X, halfExtension.Y);
+            bottomRight = position + new Vector2(halfExtension.X, halfExtension.Y);
         }
 
         public override List<Vector2> GetColliderVertices()
@@ -49,14 +71,14 @@ namespace CraxAwesomeEngine.Core.Physics
         {
             List<Vector2> axes = new List<Vector2>();
             axes.Add(new Vector2(1, 0));
-            axes.Add(new Vector2(1, 0));
+            axes.Add(new Vector2(0, 1));
             return axes;
         }
 
         public override object Clone()
         {
             AABBCollider clone = new AABBCollider(Extension);
-            clone.Initialize(Owner);
+            clone.IsStatic = this.IsStatic;
             return clone;
         }
     }

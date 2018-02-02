@@ -11,6 +11,7 @@ using CraxAwesomeEngine.Core;
 using CraxAwesomeEngine.Core.GUI;
 using static CraxAwesomeEngine.Core.AnimatedSprite;
 using CraxAwesomeEngine.Core.Scripting;
+using CraxAwesomeEngine.Core.Physics;
 
 namespace CraxAwesomeEngine.Core
 {
@@ -153,7 +154,7 @@ namespace CraxAwesomeEngine.Core
                 //All these three attributes MUST be present!
                 int row = int.Parse(collection["row"].Value);
                 int column = int.Parse(collection["column"].Value);
-                float timeBetween = float.Parse(collection["time"].Value);
+                float timeBetween = (collection["time"] != null) ? float.Parse(collection["time"].Value) : 0.0f ;
 
                 animationFrames.Add(new AnimationFrame(column, row, timeBetween));
             }
@@ -298,6 +299,31 @@ namespace CraxAwesomeEngine.Core
             string scriptFile = attributesCollection["file"].Value;
             if (string.IsNullOrEmpty(scriptFile)) throw new ArgumentException("No script file found in the <Script file=\"\"><...> tag!");
             return new GameScript(scriptFile);
+        }
+
+        public static object CreateAABBColldierFromXMLNode(XmlNode node, Game game)
+        {
+            XmlAttributeCollection attribs = node.Attributes;
+            Vector2 extension = Vector2FromXmlAttribute(attribs["extension"], Vector2.Zero);
+
+            AABBCollider collider = new AABBCollider(extension);
+            collider.IsStatic = attribs["static"] != null ? bool.Parse(attribs["static"].Value) : false;
+            return collider;
+        }
+
+        public static object CreateSATColldierFromXMLNode(XmlNode node, Game game)
+        {
+            XmlAttributeCollection attribs = node.Attributes;
+            XmlNodeList verticesNodes = node.ChildNodes;
+            List<Vector2> vertices = new List<Vector2>(verticesNodes.Count);
+            foreach (XmlNode vertexNode in verticesNodes)
+            {
+                vertices.Add(Vector2FromXmlAttribute(vertexNode.Attributes["position"], Vector2.Zero));
+            }
+
+            SATCollider collider = new SATCollider(vertices);
+            collider.IsStatic = attribs["static"] != null ? bool.Parse(attribs["static"].Value) : false;
+            return collider;
         }
 
     }

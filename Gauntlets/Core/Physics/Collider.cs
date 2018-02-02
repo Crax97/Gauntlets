@@ -17,7 +17,7 @@ namespace CraxAwesomeEngine.Core.Physics
 
     public abstract class Collider : IComponent
     {
-        private static List<Collider> colliders = new List<Collider>();
+        protected static List<Collider> colliders = new List<Collider>();
 
         public Entity Owner { get; private set; } = null;
         public bool IsStatic { get; set; } = false;
@@ -27,7 +27,8 @@ namespace CraxAwesomeEngine.Core.Physics
         public abstract List<Vector2> GetColliderVertices();
         public abstract ColliderType GetColliderType();
 
-        private Vector2 positionPreviousFrame;
+        protected Vector2 deltaPosition;
+        private Vector2 positionLastFrame;
         private List<Vector2> GetAxes(Collider other)
         {
             List<Vector2> axes = new List<Vector2>();
@@ -44,19 +45,21 @@ namespace CraxAwesomeEngine.Core.Physics
             return axes;
         }
 
+        /// <summary>
+        /// Checks collisions for objects
+        /// </summary>
         public static void CalculateCollisions()
         {
             foreach (Collider collider in colliders)
             {
+                    collider.isColliding = false;
 
-                collider.isColliding = false;
-
-                foreach (Collider other in colliders)
-                {
+                    foreach (Collider other in colliders)
+                    {
                     if (other != collider)
                     {
                         Vector2? pushback;
-                        collider.SATIsCollidingWith(other, out pushback);
+                        collider.StaticCollisionCheck(other, out pushback);
                         if (pushback != null)
                         {
                             if (!collider.IsStatic) collider.Owner.Transform.Translate(pushback.Value);
@@ -69,12 +72,12 @@ namespace CraxAwesomeEngine.Core.Physics
         }
 
         /// <summary>
-        /// Checks if two Colliders are colliding using
+        /// Checks if two shapes are colliding using
         /// the Separating Axis Theorem
         /// </summary>
         /// <param name="other"></param>
-        /// <returns></returns>
-        public bool SATIsCollidingWith(Collider other, out Vector2? MTV)
+        /// <returns>false if no collision is detected, true otherwise</returns>
+        public bool StaticCollisionCheck(Collider other, out Vector2? MTV)
         {
             List<Vector2> Axes = GetAxes(other);
 
@@ -115,7 +118,7 @@ namespace CraxAwesomeEngine.Core.Physics
                 {
                     //Find MTV (not the music channel)
                     float thisOverlap = Math.Min(myMax, otherMax) - Math.Max(myMin, otherMin);
-                    if (thisOverlap < minOverlap)
+                    if (thisOverlap <= minOverlap)
                     {
                         minOverlap = thisOverlap;
                         overlapAxis = axis;
@@ -129,8 +132,8 @@ namespace CraxAwesomeEngine.Core.Physics
 
             //Adding a small offset so the two colliders don't keep on colliding after the pushback
             //minOverlap += 0.1f;
-
-            MTV = overlapAxis * minOverlap;
+            
+            MTV = (overlapAxis * minOverlap) - deltaPosition;
 
             if (collidersDot < 0)
              {
@@ -140,8 +143,7 @@ namespace CraxAwesomeEngine.Core.Physics
             return true;
         }
 
-
-        public void Initialize(Entity owner)
+        public virtual void Initialize(Entity owner)
         {
             colliders.Add(this);
             this.Owner = owner;
@@ -150,7 +152,8 @@ namespace CraxAwesomeEngine.Core.Physics
 
         public virtual void Update(float deltaTime, Entity parent)
         {
-            positionPreviousFrame = parent.Transform.Position;
+            deltaPosition = parent.Transform.Position - positionLastFrame;
+            positionLastFrame = parent.Transform.Position;
         }
 
 

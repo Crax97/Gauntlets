@@ -12,20 +12,18 @@ namespace CraxAwesomeEngine.Core
 		{
 			if(sprite.IsVisible) 
 			{
-				batch.Draw(sprite.Texture, Vector2.Zero, null, sprite.Source, sprite.SpriteCenter, 0, Vector2.One, Color.White, SpriteEffects.None, sprite.RenderingOrder);
+				batch.Draw(sprite.Texture, Vector2.Zero, null, sprite.Source, sprite.SpriteCenter, 0, Vector2.One, Color.White, sprite.RenderingEffect, sprite.RenderingOrder);
 			}
 		}
 	}
-    
+
     public class Sprite : IComponent
-	{
-		private SpriteEffect renderingEffect;
-        private float renderingOrder;
+    {
+        public SpriteEffects RenderingEffect {get; set;} = SpriteEffects.None;
         public Texture2D Texture { get; protected set; }
         public int Width { get; protected set; }
         public int Height { get; protected set; }
         public Rectangle Source { get; private set; }
-        public SpriteEffect RenderingEffect { get; protected set; }
         public Vector2 SpriteCenter { get; set; }
         public float RenderingOrder { get; set; }
         public bool IsVisible { get; set; } = true;

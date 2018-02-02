@@ -53,6 +53,7 @@
     <Compile Include="Core\GUI\GUITextBox.cs" />
     <Compile Include="Core\Physics\Collider.cs" />
     <Compile Include="Core\Physics\SATCollider.cs" />
+    <Compile Include="Core\Physics\CharacterCollider.cs" />
     <Compile Include="Core\Scripting\GameScript.cs" />
     <Compile Include="Core\Scripting\Globals.cs" />
     <Compile Include="Core\XMLHandler.cs" />
