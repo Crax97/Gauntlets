@@ -18,17 +18,17 @@
           <Frame row="1" column="4" time="0.2"></Frame>
           <Frame row="1" column="5" time="0.2"></Frame>
         </Animation>
-        <Animation name="jump">
-          <Frame row="0" column="1" time="0.5"></Frame>
-          <Frame row="0" column="0" time="0.5"></Frame>
-          <Frame row="1" column="1" time="0.5"></Frame>
-          <Frame row="1" column="0" time="0.5"></Frame>
+        <Animation name="jump" loop = "false">
+          <Frame row="0" column="1" time="0.1"></Frame>
+          <Frame row="0" column="0" time="0.1"></Frame>
+          <Frame row="1" column="1" time="0.1"></Frame>
+          <Frame row="1" column="0" time="0.1"></Frame>
         </Animation>
         <Animation name="idle">
           <Frame row="1" column="6" time="0.1"></Frame>
         </Animation>
       </AnimatedSprite>
-      <AABBCollider extension="32 64"></AABBCollider>
+      <CharacterController/>
     </Components>
   </Entity>
   <Entity id="0" name="collider">

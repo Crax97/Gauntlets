@@ -35,12 +35,14 @@ namespace CraxAwesomeEngine.Core
         public struct Animation
         {
             public List<AnimationFrame> frames;
+            public bool canLoop;
             public string name;
-            
-            public Animation(string n)
+
+            public Animation(string n, bool l = true)
             {
                 frames = new List<AnimationFrame>();
                 name = n;
+                canLoop = l;
             }
         }
 
@@ -67,7 +69,11 @@ namespace CraxAwesomeEngine.Core
                 if (currentTime > currentFrame.duration)
                 {
                     index++;
-                    if (index >= currentAnimation.frames.Count) index = 0;
+                    if (index >= currentAnimation.frames.Count)
+                    {
+                        if (currentAnimation.canLoop) index = 0;
+                        else index = currentAnimation.frames.Count - 1;
+                    }
                     currentFrame = currentAnimation.frames[index];
                     SetSource(currentFrame.row, currentFrame.column, Width, Height);
                     currentTime = 0.0f;

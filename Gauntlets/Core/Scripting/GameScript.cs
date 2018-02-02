@@ -52,6 +52,12 @@ namespace CraxAwesomeEngine.Core.Scripting
         public GameScript(string scriptName)
         {
             ScriptFileName = scriptName;
+            InitScript(scriptName);
+            scriptList.Add(this);
+        }
+
+        private void InitScript(string scriptName)
+        {
             script = new Script();
             script.Globals["Vector2"] = typeof(Vector2);
             script.Globals["Transform"] = typeof(Transform);
@@ -71,16 +77,12 @@ namespace CraxAwesomeEngine.Core.Scripting
                 if (script.Globals["destroy"] != null)
                     scriptDestroyFunc = script.Globals.Get("destroy").Function;
 
-
-                scriptList.Add(this);
-
             }
             catch (InterpreterException ex)
             {
                 script = null;
                 Debug.Error(ex.DecoratedMessage);
             }
-            
         }
 
         public static void ResetScripts()
@@ -88,7 +90,7 @@ namespace CraxAwesomeEngine.Core.Scripting
             foreach (GameScript gameScript in scriptList)
             {
                 Debug.Log("Resetting script {0}", gameScript.ScriptFileName);
-                gameScript.script.DoFile(GetScriptFile(gameScript.ScriptFileName));
+                gameScript.InitScript(gameScript.ScriptFileName);
                 gameScript.Initialize(gameScript.owner);
             }
         }

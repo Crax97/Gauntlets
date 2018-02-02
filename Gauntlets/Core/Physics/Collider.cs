@@ -18,6 +18,7 @@ namespace CraxAwesomeEngine.Core.Physics
     public abstract class Collider : IComponent
     {
         protected static List<Collider> colliders = new List<Collider>();
+        private static uint instancesCount = 0;
 
         public Entity Owner { get; private set; } = null;
         public bool IsStatic { get; set; } = false;
@@ -28,6 +29,7 @@ namespace CraxAwesomeEngine.Core.Physics
         public abstract ColliderType GetColliderType();
 
         protected Vector2 deltaPosition;
+        private uint instanceId;
         private Vector2 positionLastFrame;
         private List<Vector2> GetAxes(Collider other)
         {
@@ -149,6 +151,16 @@ namespace CraxAwesomeEngine.Core.Physics
             this.Owner = owner;
         }
        
+        public Collider()
+        {
+            instanceId = instancesCount;
+            instancesCount++;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return (obj is Collider && (obj as Collider).instanceId == this.instanceId);
+        }
 
         public virtual void Update(float deltaTime, Entity parent)
         {
@@ -166,6 +178,14 @@ namespace CraxAwesomeEngine.Core.Physics
         {
             return isColliding;
         }
+
+        public void RemoveFromActiveColliders()
+        {
+            if(colliders.Contains(this))
+                colliders.Remove(this);
+        }
+
+        public static List<Collider> ActiveColliders() => colliders;
 
         public abstract object Clone();
     }

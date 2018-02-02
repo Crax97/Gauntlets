@@ -222,7 +222,8 @@ namespace CraxAwesomeEngine.Core
             foreach(XmlNode animationNode in animationNodes)
             {
                 string animationName = animationNode.Attributes["name"].Value;
-                Animation anim = new Animation(animationName);
+                bool loop = animationNode.Attributes["loop"] != null ? bool.Parse(animationNode.Attributes["loop"].Value) : true;
+                Animation anim = new Animation(animationName, loop);
                 anim.frames = ReadFramesFromXMLNode(animationNode);
                 animations.Add(anim);
             }
@@ -324,6 +325,11 @@ namespace CraxAwesomeEngine.Core
             SATCollider collider = new SATCollider(vertices);
             collider.IsStatic = attribs["static"] != null ? bool.Parse(attribs["static"].Value) : false;
             return collider;
+        }
+
+        public static object CharacterControllerFromXmlNode(XmlNode node, Game game)
+        {
+            return new CharacterController();
         }
 
     }

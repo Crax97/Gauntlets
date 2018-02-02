@@ -88,6 +88,7 @@ namespace Gauntlets.Simulation
             ComponentRecord.RegisterAttribute<GUIImage>("GUIImage", XmlComponentsReaders.GUIImageFromXmlNode);
             ComponentRecord.RegisterAttribute<AABBCollider>("AABBCollider", XmlComponentsReaders.CreateAABBColldierFromXMLNode);
             ComponentRecord.RegisterAttribute<SATCollider>("SATCollider", XmlComponentsReaders.CreateSATColldierFromXMLNode);
+            ComponentRecord.RegisterAttribute<CharacterController>("CharacterController", XmlComponentsReaders.CharacterControllerFromXmlNode);
 
             Debug.InitializeDebug(GraphicsDevice, this);
             DebugConsole.DebugConsoleInit(this, graphics);
@@ -133,6 +134,7 @@ namespace Gauntlets.Simulation
 
 
             testCollider.Transform.Position = Transform.WindowHalfSize;
+
 
         }
 
