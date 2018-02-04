@@ -148,7 +148,6 @@ namespace CraxAwesomeEngine.Core
         {
 
             _lastFrameKeyboardState = _actualFrameKeyboardState;
-            _lastFrameMouseState = _actualFrameMouseState;
             _lastFrameMouseState.SetState(Mouse.GetState());
         }
 

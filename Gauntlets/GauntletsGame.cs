@@ -30,11 +30,10 @@ namespace Gauntlets.Simulation
         SpriteBatch spriteBatch;
         SpriteBatch guiBatch;
 
-        World w = new World();
-        Entity fakePlayer = null;
-        Entity testCollider = null;
+        List<Vector2> vertices;
+        List<Shape> shapes;
 
-        CharacterCollider playerCollider;
+        World w = new World();
 
         public Game1()
         {
@@ -90,11 +89,15 @@ namespace Gauntlets.Simulation
             ComponentRecord.RegisterAttribute<SATCollider>("SATCollider", XmlComponentsReaders.CreateSATColldierFromXMLNode);
             ComponentRecord.RegisterAttribute<CharacterController>("CharacterController", XmlComponentsReaders.CharacterControllerFromXmlNode);
 
+            GUILabel.Initialize(this);
             Debug.InitializeDebug(GraphicsDevice, this);
             DebugConsole.DebugConsoleInit(this, graphics);
             GameScript.InitGameScript();
             Transform.UpdateGraphicsSize(graphics);
             InputManager.InitInputManager(this);
+
+            vertices = new List<Vector2>();
+            shapes = new List<Shape>();
 
             Exiting += new EventHandler<EventArgs>((object obj, EventArgs args) =>
             {
@@ -119,29 +122,17 @@ namespace Gauntlets.Simulation
         /// </summary>
         protected override void LoadContent()
         {
-            //Initialize components first!
-            GUILabel.Initialize(this);
-
-            //Then initialize entities
             Entity.InitializeEntities(Path.Combine(Content.RootDirectory, "XML", "EntityList.xml"), this);
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             guiBatch = new SpriteBatch(GraphicsDevice);
 
-            fakePlayer = Entity.Instantiate(1);
-            testCollider = Entity.Instantiate(0);
-
-
-            testCollider.Transform.Position = Transform.WindowHalfSize;
-
-
         }
 
         private void reset()
         {
             
-            fakePlayer.Transform.Position = Vector2.Zero;
             GameScript.ResetScripts();
 
             //Console.Clear();
@@ -160,11 +151,35 @@ namespace Gauntlets.Simulation
 
             if (!DebugConsole.Enabled)
             {
-                
+
+                if (InputManager.MouseKeyHasBeenPressed(MouseKeys.LEFT))
+                {
+                    vertices.Add(InputManager.MousePosition);
+                }
+
+                if (InputManager.KeyHasBeenPressed(Keys.E) && vertices.Count > 3)
+                {
+                    shapes.Clear();
+                    shapes = Shape.GenerateConvexShapesFromVertices(vertices);
+                    vertices.Clear();
+                }
+
+                if (InputManager.KeyHasBeenPressed(Keys.C))
+                {
+                    shapes.Clear();
+                    vertices.Clear();
+                }
+
                 World.Current.Update(delta);
                 Collider.CalculateCollisions();
             }
             
+            foreach(Shape shape in shapes)
+            {
+                Debug.DrawShape(shape.Vertices, Color.White);
+            }
+
+            Debug.DrawShape(vertices, Color.Red);
 
             base.Update(gameTime);
             InputManager.UpdateInputEnd();
