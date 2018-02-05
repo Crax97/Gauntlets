@@ -8,8 +8,8 @@ local jumpHeight = 20
 local translation = Vector2.Zero
 function init( entity )
 	entity.Transform.Position = Vector2.__new(400, 0)
-	controller = entity.GetComponent("CharacterController")
-	controller.Reset()
+	--controller = entity.GetComponent("CharacterController")
+	--controller.Reset()
 	sprite = entity.GetComponent("AnimatedSprite")
 end
 
@@ -29,6 +29,14 @@ function update( delta, entity )
 		sprite.RenderingEffect = RenderingEffect.FlipHorizontally;
 		translation.X = -1
 		--sprite.SetAnimation("running");
+	end	
+	
+	if (Input.KeyIsHeld(Keys.W)) then
+		translation.Y = -1
+		--sprite.SetAnimation("running");
+	elseif (Input.KeyIsHeld(Keys.S)) then
+		translation.Y = 1
+		--sprite.SetAnimation("running");
 	end
 
 	if(Input.KeyHasBeenPressed(Keys.Space)) then
@@ -36,7 +44,8 @@ function update( delta, entity )
 	end
 
 	translation = translation * speed * delta;
-	controller.Move(translation)
+	entity.Transform.Translate(translation)
+	--controller.Move(translation)
 
 
 

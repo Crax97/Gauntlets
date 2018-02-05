@@ -24,28 +24,12 @@ namespace CraxAwesomeEngine.Core.Physics
         public bool IsStatic { get; set; } = false;
         public Action<Collider> OnCollision { get; set; } = null;
         public bool isColliding = false;
-        public abstract List<Vector2> GetNormals();
-        public abstract List<Vector2> GetColliderVertices();
+        public abstract List<Shape> GetShapes();
         public abstract ColliderType GetColliderType();
 
         protected Vector2 deltaPosition;
         private uint instanceId;
         private Vector2 positionLastFrame;
-        private List<Vector2> GetAxes(Collider other)
-        {
-            List<Vector2> axes = new List<Vector2>();
-            if ((GetColliderType() == ColliderType.AABB && other.GetColliderType() == ColliderType.AABB))
-            {
-                axes.Add(new Vector2(1, 0));
-                axes.Add(new Vector2(0, 1));
-            }
-            else
-            {
-                axes.AddRange(this.GetNormals());
-                axes.AddRange(other.GetNormals());
-            }
-            return axes;
-        }
 
         /// <summary>
         /// Checks collisions for objects
@@ -54,8 +38,6 @@ namespace CraxAwesomeEngine.Core.Physics
         {
             foreach (Collider collider in colliders)
             {
-                    collider.isColliding = false;
-
                     foreach (Collider other in colliders)
                     {
                     if (other != collider)
@@ -66,7 +48,6 @@ namespace CraxAwesomeEngine.Core.Physics
                         {
                             if (!collider.IsStatic) collider.Owner.Transform.Translate(pushback.Value);
                             collider.OnCollision?.Invoke(other);
-                            collider.isColliding = true;
                         }
                     }
                 }
@@ -81,68 +62,28 @@ namespace CraxAwesomeEngine.Core.Physics
         /// <returns>false if no collision is detected, true otherwise</returns>
         public bool StaticCollisionCheck(Collider other, out Vector2? MTV)
         {
-            List<Vector2> Axes = GetAxes(other);
 
-            float minOverlap = float.MaxValue;
-            Vector2 overlapAxis = Vector2.Zero;
+            isColliding = false;
+            MTV = null;
+            List<Shape> myShapes = GetShapes();
+            List<Shape> otherShapes = other.GetShapes();
 
-            foreach(Vector2 axis in Axes)
+            foreach (Shape myShape in myShapes)
             {
-                List<Vector2> myVertices = GetColliderVertices();
-                List<Vector2> otherVertices = other.GetColliderVertices();
-
-                float myMax = float.MinValue;
-                float myMin = float.MaxValue;
-
-                float otherMax = float.MinValue;
-                float otherMin = float.MaxValue;
-
-                foreach (Vector2 vertex in myVertices)
+                foreach (Shape otherShape in otherShapes)
                 {
-                    float dot = Vector2.Dot(vertex, axis);
-                    if (dot > myMax) myMax = dot;
-                    if (dot < myMin) myMin = dot;
-                }
-
-                foreach (Vector2 vertex in otherVertices)
-                {
-                    float dot = Vector2.Dot(vertex, axis);
-                    if (dot > otherMax) otherMax = dot;
-                    if (dot < otherMin) otherMin = dot;
-                }
-
-                if (myMax < otherMin || otherMax < myMin)
-                {
-                    MTV = null;
-                    return false;
-                }
-                else
-                {
-                    //Find MTV (not the music channel)
-                    float thisOverlap = Math.Min(myMax, otherMax) - Math.Max(myMin, otherMin);
-                    if (thisOverlap <= minOverlap)
+                    Vector2? shapeTV = null;
+                    if (myShape.IsCollidingWithOtherShape(otherShape, out shapeTV, this.Owner.Transform.Position, other.Owner.Transform.Position)) 
                     {
-                        minOverlap = thisOverlap;
-                        overlapAxis = axis;
+                        if (MTV != null)
+                            MTV += shapeTV;
+                        else
+                            MTV = shapeTV;
                     }
-                }
+                }                   
 
             }
-
-            Vector2 direction = (this.Owner.Transform.Position - other.Owner.Transform.Position);
-            float collidersDot = Vector2.Dot(direction, overlapAxis);
-
-            //Adding a small offset so the two colliders don't keep on colliding after the pushback
-            //minOverlap += 0.1f;
-            
-            MTV = (overlapAxis * minOverlap) - deltaPosition;
-
-            if (collidersDot < 0)
-             {
-                 MTV = MTV * -1;
-             }
-
-            return true;
+            return MTV != null;
         }
 
         public virtual void Initialize(Entity owner)

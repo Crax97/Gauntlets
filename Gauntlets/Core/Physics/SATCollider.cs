@@ -6,31 +6,18 @@ namespace CraxAwesomeEngine.Core.Physics
 {
     class SATCollider : Collider
     {
+        
+        private List<Shape> myShapes;
 
-        private List<Vector2> vertices = null;
-        private List<Vector2> normals = null;
+        private SATCollider() : base()
+        {
+
+        }
 
         public SATCollider(List<Vector2> vertices) : base()
         {
             IsStatic = true;
-            this.vertices = vertices;
-        }
-
-        private void CalculateNormals()
-        {
-            normals = new List<Vector2>();
-            List<Vector2> myVertices = GetColliderVertices();
-
-            for (int i = 0; i < myVertices.Count; i++)
-            {
-                Vector2 a = myVertices[i];
-                Vector2 b = (i < myVertices.Count - 1) ? myVertices[i + 1] : myVertices[0];
-
-                Vector2 diff = (b - a);
-                Vector2 axis = new Vector2(diff.Y, -diff.X);
-                normals.Add(axis / axis.Length());
-            }
-            
+            myShapes = Shape.GenerateConvexShapesFromVertices(vertices);
         }
 
         public override ColliderType GetColliderType()
@@ -38,11 +25,10 @@ namespace CraxAwesomeEngine.Core.Physics
             return ColliderType.SAT;
         }
 
-        public override List<Vector2> GetNormals()
+        public override void Update(float deltaTime, Entity parent)
         {
-            if(normals == null)
-                CalculateNormals();
-            return normals;
+            base.Update(deltaTime, parent);
+
         }
 
         /// <summary>
@@ -50,22 +36,28 @@ namespace CraxAwesomeEngine.Core.Physics
         /// by the Entity position
         /// </summary>
         /// <returns></returns>
-        public override List<Vector2> GetColliderVertices()
+        public override List<Shape> GetShapes()
         {
-            List<Vector2> translatedVertices = new List<Vector2>();
-
-            foreach(Vector2 vertex in vertices)
+            List<Shape> translatedShapes = new List<Shape>(myShapes.Count);
+            foreach(Shape shape in myShapes)
             {
-                translatedVertices.Add(Owner.Transform.Position + vertex);
+                List<Vector2> translatedVertices = new List<Vector2>(shape.Vertices.Count);
+                foreach(Vector2 vertex in shape.Vertices)
+                {
+                    Vector2 translatedVertex = vertex + Owner.Transform.Position;
+                    translatedVertices.Add(translatedVertex);
+                }
+                translatedShapes.Add(new Shape(translatedVertices));
             }
 
-            return translatedVertices;
+            return translatedShapes;
         }
 
         public override object Clone()
         {
-            SATCollider clone = new SATCollider(vertices);
-            clone.Initialize(Owner);
+            SATCollider clone = new SATCollider();
+            clone.myShapes = new List<Shape>(myShapes.Count);
+            clone.myShapes.AddRange(this.myShapes);
             return clone;
         }
     }

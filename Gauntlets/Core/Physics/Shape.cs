@@ -8,14 +8,115 @@ using System.Threading.Tasks;
 
 namespace CraxAwesomeEngine.Core.Physics
 {
-    class Shape
+    public class Shape
     {
+
+        private List<Vector2> normals;
 
         public List<Vector2> Vertices { get; private set; }
         public Shape(List<Vector2> vertices)
         {
             Vertices = new List<Vector2>();
             Vertices.AddRange(vertices); //Copies the vertices;
+            CalcNormals();
+        }
+
+        /// <summary>
+        /// I think the bug happens because the dot may have a sign, but
+        /// the colliding shape may be in a position where the dot should have a different sign.
+        /// Solution: Give a shape a position
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="MTV"></param>
+        /// <param name="position"></param>
+        /// <param name="otherPosition"></param>
+        /// <returns></returns>
+        public bool IsCollidingWithOtherShape(Shape other, out Vector2? MTV, Vector2 position, Vector2 otherPosition)
+        {
+            float minOverlap = float.MaxValue;
+            Vector2 overlapAxis = Vector2.Zero;
+
+            List<Vector2> myVertices = this.Vertices;
+            List<Vector2> otherVertices = other.Vertices;
+
+
+            List<Vector2> Axes = new List<Vector2>();
+            Axes.AddRange(this.GetNormals());
+            Axes.AddRange(other.GetNormals());
+
+            Vector2 myCenter = Vector2.Zero;
+            Vector2 otherCenter = Vector2.Zero;
+
+            foreach (Vector2 axis in Axes)
+            {
+
+
+                float myMax = float.MinValue;
+                float myMin = float.MaxValue;
+
+                float otherMax = float.MinValue;
+                float otherMin = float.MaxValue;
+
+                Vector2 sum = Vector2.Zero;
+                foreach (Vector2 vertex in myVertices)
+                {
+
+                    sum += vertex;
+
+                    float dot = Vector2.Dot(vertex, axis);
+                    if (dot > myMax) myMax = dot;
+                    if (dot < myMin) myMin = dot;
+
+                }
+
+                myCenter = sum / myVertices.Count;
+
+                sum = Vector2.Zero;
+                foreach (Vector2 vertex in otherVertices)
+                {
+                    sum += vertex;
+                    float dot = Vector2.Dot(vertex, axis);
+                    if (dot > otherMax) otherMax = dot;
+                    if (dot < otherMin) otherMin = dot;
+                }
+
+                otherCenter = sum / otherVertices.Count;
+
+                Debugging.Debug.DrawPoint(myCenter, Color.White, 10.0f);
+                Debugging.Debug.DrawPoint(otherCenter, Color.Red, 10.0f);
+
+                if (myMax < otherMin || otherMax < myMin)
+                {
+                    MTV = null;
+                    return false;
+                }
+                else
+                {
+                    //Find MTV (not the music channel)
+                    float thisOverlap = Math.Min(myMax, otherMax) - Math.Max(myMin, otherMin);
+                    if (thisOverlap <= minOverlap)
+                    {
+
+                        minOverlap = thisOverlap;
+                        overlapAxis = axis;
+                    }
+                }
+            }
+
+
+            Vector2 direction = (myCenter - otherCenter);
+            float collidersDot = Vector2.Dot(direction, overlapAxis);
+
+            //Adding a small offset so the two colliders don't keep on colliding after the pushback
+            //minOverlap += 0.1f;
+
+            MTV = (overlapAxis * minOverlap);
+
+            if (collidersDot < 0)
+            {
+                MTV = MTV * -1;
+            }
+            return true;
         }
 
         //Triangulating using the Earclipping method
@@ -36,14 +137,36 @@ namespace CraxAwesomeEngine.Core.Physics
                 vertices.Add(outVertices[outIndices[i]]);
                 vertices.Add(outVertices[outIndices[i+1]]);
                 vertices.Add(outVertices[outIndices[i+2]]);
+                Shape newShape = new Shape(vertices);
 
-                shapes.Add(new Shape(vertices));
+                shapes.Add(newShape);
             }
 
             outVertices = null;
             outIndices = null;
 
             return shapes;
+        }
+
+        private void CalcNormals()
+        {
+            normals = new List<Vector2>(Vertices.Count);
+            for (int i = 0; i < Vertices.Count; i++)
+            {
+                Vector2 vertex = Vertices[i];
+                Vector2 nextVertex = (i < Vertices.Count - 1) ? Vertices[i + 1] : Vertices[0];
+
+                Vector2 edge = (nextVertex - vertex);
+                Vector2 normal = new Vector2(edge.Y, -edge.X);
+                normal.Normalize();
+
+                normals.Add(normal);
+            }
+        }
+
+        public virtual List<Vector2> GetNormals()
+        {
+            return normals;
         }
 
         public static bool ConvexityTest(Shape shape)

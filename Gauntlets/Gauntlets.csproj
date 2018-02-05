@@ -55,9 +55,9 @@
     <Compile Include="Core\GUI\GUIImage.cs" />
     <Compile Include="Core\GUI\GUILabel.cs" />
     <Compile Include="Core\GUI\GUITextBox.cs" />
+    <Compile Include="Core\Physics\QuadShape.cs" />
     <Compile Include="Core\Physics\Collider.cs" />
     <Compile Include="Core\Physics\SATCollider.cs" />
-    <Compile Include="Core\Physics\CharacterCollider.cs" />
     <Compile Include="Core\Physics\Shape.cs" />
     <Compile Include="Core\Scripting\GameScript.cs" />
     <Compile Include="Core\Scripting\Globals.cs" />

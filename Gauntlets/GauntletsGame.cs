@@ -30,6 +30,8 @@ namespace Gauntlets.Simulation
         SpriteBatch spriteBatch;
         SpriteBatch guiBatch;
 
+        Entity SATCollider;
+        Entity player;
         List<Vector2> vertices;
         List<Shape> shapes;
 
@@ -128,11 +130,17 @@ namespace Gauntlets.Simulation
             spriteBatch = new SpriteBatch(GraphicsDevice);
             guiBatch = new SpriteBatch(GraphicsDevice);
 
+            player = Entity.Instantiate(1);
+            SATCollider = Entity.Instantiate(2);
+            SATCollider.Transform.Position = new Vector2(0, 900);
+            SATCollider.GetComponent<SATCollider>().IsStatic = true;
+
         }
 
         private void reset()
         {
-            
+            player.Transform.Position = new Vector2(0, 0);
+            SATCollider.Transform.Position = new Vector2(0, 900);
             GameScript.ResetScripts();
 
             //Console.Clear();
@@ -151,30 +159,18 @@ namespace Gauntlets.Simulation
 
             if (!DebugConsole.Enabled)
             {
-
-                if (InputManager.MouseKeyHasBeenPressed(MouseKeys.LEFT))
-                {
-                    vertices.Add(InputManager.MousePosition);
-                }
-
-                if (InputManager.KeyHasBeenPressed(Keys.E) && vertices.Count > 3)
-                {
-                    shapes.Clear();
-                    shapes = Shape.GenerateConvexShapesFromVertices(vertices);
-                    vertices.Clear();
-                }
-
-                if (InputManager.KeyHasBeenPressed(Keys.C))
-                {
-                    shapes.Clear();
-                    vertices.Clear();
-                }
-
                 World.Current.Update(delta);
                 Collider.CalculateCollisions();
             }
-            
-            foreach(Shape shape in shapes)
+
+            if(InputManager.MouseKeyHasBeenPressed(MouseKeys.LEFT))
+            {
+                SATCollider.Transform.Position = InputManager.MousePosition - Transform.WindowHalfSize;
+            }
+
+            shapes = SATCollider.GetComponent<SATCollider>().GetShapes();
+
+            foreach (Shape shape in shapes)
             {
                 Debug.DrawShape(shape.Vertices, Color.White);
             }

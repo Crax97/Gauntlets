@@ -57,22 +57,25 @@ namespace CraxAwesomeEngine.Core.Physics
             bottomRight = position + new Vector2(halfExtension.X, halfExtension.Y);
         }
 
-        public override List<Vector2> GetColliderVertices()
+        public override List<Shape> GetShapes()
         {
-            return new List<Vector2> { topLeft, topRight, bottomLeft, bottomRight };
+
+            List<Shape> quadShapeList = new List<Shape>();
+            List<Vector2> quad = new List<Vector2>();
+            quad.Add(topLeft);
+            quad.Add(topRight);
+            quad.Add(bottomRight);
+            quad.Add(bottomLeft);
+            QuadShape quadShape = new QuadShape(quad);
+
+            quadShapeList.Add(quadShape);
+            return quadShapeList;
+
         }
 
         public override ColliderType GetColliderType()
         {
             return ColliderType.AABB;
-        }
-
-        public override List<Vector2> GetNormals()
-        {
-            List<Vector2> axes = new List<Vector2>();
-            axes.Add(new Vector2(1, 0));
-            axes.Add(new Vector2(0, 1));
-            return axes;
         }
 
         public override object Clone()
