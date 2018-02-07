@@ -22,16 +22,12 @@ namespace CraxAwesomeEngine.Core.Physics
         }
 
         /// <summary>
-        /// I think the bug happens because the dot may have a sign, but
-        /// the colliding shape may be in a position where the dot should have a different sign.
-        /// Solution: Give a shape a position
+        /// Checks if a shape is colliding with another.
         /// </summary>
         /// <param name="other"></param>
         /// <param name="MTV"></param>
-        /// <param name="position"></param>
-        /// <param name="otherPosition"></param>
         /// <returns></returns>
-        public bool IsCollidingWithOtherShape(Shape other, out Vector2? MTV, Vector2 position, Vector2 otherPosition)
+        public bool IsCollidingWithOtherShape(Shape other, out Vector2? MTV)
         {
             float minOverlap = float.MaxValue;
             Vector2 overlapAxis = Vector2.Zero;

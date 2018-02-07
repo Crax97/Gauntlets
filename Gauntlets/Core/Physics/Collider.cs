@@ -73,7 +73,7 @@ namespace CraxAwesomeEngine.Core.Physics
                 foreach (Shape otherShape in otherShapes)
                 {
                     Vector2? shapeTV = null;
-                    if (myShape.IsCollidingWithOtherShape(otherShape, out shapeTV, this.Owner.Transform.Position, other.Owner.Transform.Position)) 
+                    if (myShape.IsCollidingWithOtherShape(otherShape, out shapeTV)) 
                     {
                         if (MTV != null)
                             MTV += shapeTV;
