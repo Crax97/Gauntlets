@@ -30,13 +30,10 @@ namespace Gauntlets.Simulation
         SpriteBatch spriteBatch;
         SpriteBatch guiBatch;
 
-        Entity SATCollider;
-        Entity player;
-        List<Vector2> vertices;
-        List<Shape> shapes;
-
         World w = new World();
-
+        Entity fakePlayer = null;
+        Entity testCollider = null;
+  
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -45,24 +42,6 @@ namespace Gauntlets.Simulation
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
 
         }
-
-        void HandleButtonCallback()
-        {
-
-            Console.WriteLine("Click!");
-
-        }
-
-        void HandleButtonCallback1()
-        {
-            Console.WriteLine("Release!");
-        }
-
-        void HandleButtonCallback2()
-        {
-            Console.WriteLine("Double click!");
-        }
-
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -77,7 +56,7 @@ namespace Gauntlets.Simulation
             graphics.PreferredBackBufferHeight = 600;
             RasterizerState customState = new RasterizerState();
             graphics.GraphicsDevice.RasterizerState = customState;
-           
+
             graphics.ApplyChanges();
 
             ComponentRecord.RegisterAttribute<Sprite>("Sprite", XmlComponentsReaders.SpriteFromXmlNode);
@@ -91,15 +70,11 @@ namespace Gauntlets.Simulation
             ComponentRecord.RegisterAttribute<SATCollider>("SATCollider", XmlComponentsReaders.CreateSATColldierFromXMLNode);
             ComponentRecord.RegisterAttribute<CharacterController>("CharacterController", XmlComponentsReaders.CharacterControllerFromXmlNode);
 
-            GUILabel.Initialize(this);
             Debug.InitializeDebug(GraphicsDevice, this);
             DebugConsole.DebugConsoleInit(this, graphics);
             GameScript.InitGameScript();
             Transform.UpdateGraphicsSize(graphics);
             InputManager.InitInputManager(this);
-
-            vertices = new List<Vector2>();
-            shapes = new List<Shape>();
 
             Exiting += new EventHandler<EventArgs>((object obj, EventArgs args) =>
             {
@@ -124,23 +99,29 @@ namespace Gauntlets.Simulation
         /// </summary>
         protected override void LoadContent()
         {
+            //Initialize components first!
+            GUILabel.Initialize(this);
+
+            //Then initialize entities
             Entity.InitializeEntities(Path.Combine(Content.RootDirectory, "XML", "EntityList.xml"), this);
 
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             guiBatch = new SpriteBatch(GraphicsDevice);
 
-            player = Entity.Instantiate(1);
-            SATCollider = Entity.Instantiate(2);
-            SATCollider.Transform.Position = new Vector2(0, 900);
-            SATCollider.GetComponent<SATCollider>().IsStatic = true;
+            fakePlayer = Entity.Instantiate(1);
+            testCollider = Entity.Instantiate(0);
+
+
+            testCollider.Transform.Position = Transform.WindowHalfSize;
+
 
         }
 
         private void reset()
         {
-            player.Transform.Position = new Vector2(0, 0);
-            SATCollider.Transform.Position = new Vector2(0, 900);
+
+            fakePlayer.Transform.Position = Vector2.Zero;
             GameScript.ResetScripts();
 
             //Console.Clear();
@@ -159,23 +140,11 @@ namespace Gauntlets.Simulation
 
             if (!DebugConsole.Enabled)
             {
+
                 World.Current.Update(delta);
                 Collider.CalculateCollisions();
             }
 
-            if(InputManager.MouseKeyHasBeenPressed(MouseKeys.LEFT))
-            {
-                SATCollider.Transform.Position = InputManager.MousePosition - Transform.WindowHalfSize;
-            }
-
-            shapes = SATCollider.GetComponent<SATCollider>().GetShapes();
-
-            foreach (Shape shape in shapes)
-            {
-                Debug.DrawShape(shape.Vertices, Color.White);
-            }
-
-            Debug.DrawShape(vertices, Color.Red);
 
             base.Update(gameTime);
             InputManager.UpdateInputEnd();

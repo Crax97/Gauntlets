@@ -8,8 +8,8 @@ local jumpHeight = 20
 local translation = Vector2.Zero
 function init( entity )
 	entity.Transform.Position = Vector2.__new(400, 0)
-	--controller = entity.GetComponent("CharacterController")
-	--controller.Reset()
+	controller = entity.GetComponent("CharacterController")
+	controller.Reset()
 	sprite = entity.GetComponent("AnimatedSprite")
 end
 
@@ -45,7 +45,7 @@ function update( delta, entity )
 
 	translation = translation * speed * delta;
 	entity.Transform.Translate(translation)
-	--controller.Move(translation)
+	controller.Move(translation)
 
 
 

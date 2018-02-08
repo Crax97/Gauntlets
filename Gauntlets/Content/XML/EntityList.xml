@@ -2,7 +2,7 @@
 <Entities>
   <Entity id="-1" name="Empty">
     <Components>
-      
+
     </Components>
   </Entity>
   <Entity id="0" name="collider">
@@ -35,7 +35,7 @@
           <Frame row="1" column="6" time="0.1"></Frame>
         </Animation>
       </AnimatedSprite>
-      <AABBCollider />
+      <CharacterController/>
     </Components>
   </Entity>
   <Entity id="2" name="complexCollider">
