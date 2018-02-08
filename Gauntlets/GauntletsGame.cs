@@ -31,6 +31,7 @@ namespace Gauntlets.Simulation
         SpriteBatch guiBatch;
 
         World w = new World();
+        Camera firstCamera = null;
         Entity fakePlayer = null;
         Entity testCollider = null;
   
@@ -75,6 +76,7 @@ namespace Gauntlets.Simulation
             GameScript.InitGameScript();
             Transform.UpdateGraphicsSize(graphics);
             InputManager.InitInputManager(this);
+            Camera.InitCamera(graphics);
 
             Exiting += new EventHandler<EventArgs>((object obj, EventArgs args) =>
             {
@@ -112,6 +114,7 @@ namespace Gauntlets.Simulation
             fakePlayer = Entity.Instantiate(1);
             testCollider = Entity.Instantiate(0);
 
+            firstCamera = new Camera();
 
             testCollider.Transform.Position = Transform.WindowHalfSize;
 
@@ -141,6 +144,13 @@ namespace Gauntlets.Simulation
             if (!DebugConsole.Enabled)
             {
 
+                if (InputManager.ScrollWheel != 0.0f)
+                {
+                    Camera.Main.Zoom += InputManager.ScrollWheel * delta;
+                }
+
+                Camera.Main.Transform.Position = fakePlayer.Transform.Position;
+
                 World.Current.Update(delta);
                 Collider.CalculateCollisions();
             }
@@ -158,9 +168,9 @@ namespace Gauntlets.Simulation
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            spriteBatch.Begin();
+            graphics.GraphicsDevice.Clear(Camera.Main.BackgroundColor);
+            Matrix viewMatrix = Camera.Main.GetMatrix();
+            spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, viewMatrix);
             guiBatch.Begin();
 
             World.Current.DrawSprites(spriteBatch, gameTime);

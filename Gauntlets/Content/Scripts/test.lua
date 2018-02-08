@@ -30,14 +30,6 @@ function update( delta, entity )
 		translation.X = -1
 		--sprite.SetAnimation("running");
 	end	
-	
-	if (Input.KeyIsHeld(Keys.W)) then
-		translation.Y = -1
-		--sprite.SetAnimation("running");
-	elseif (Input.KeyIsHeld(Keys.S)) then
-		translation.Y = 1
-		--sprite.SetAnimation("running");
-	end
 
 	if(Input.KeyHasBeenPressed(Keys.Space)) then
 		controller.Jump(jumpHeight)

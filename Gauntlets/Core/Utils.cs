@@ -47,5 +47,15 @@ namespace CraxAwesomeEngine.Core
 
         }
 
+        public static float Deg2Rad(float angle)
+        {
+            return angle * 0.0174533f;
+        }
+
+        public static float Rad2Deg(float angle)
+        {
+            return angle * 57.29580406904963f;
+        }
+
     }
 }

@@ -141,7 +141,7 @@ namespace CraxAwesomeEngine.Core.Debugging
         {
             //if (drawQueue.Count != 0 && DebugEnabled)
             //{
-                debugBatch.Begin();
+                debugBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, Camera.Main.GetMatrix());
 
                 while (drawQueue.Count > 0)
                 {
@@ -149,6 +149,9 @@ namespace CraxAwesomeEngine.Core.Debugging
                     currentDraw();
                 }
 
+                debugBatch.End();
+
+                debugBatch.Begin();
                 DebugConsole.Draw(debugBatch);
                 debugBatch.End();
             //}

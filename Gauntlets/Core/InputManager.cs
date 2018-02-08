@@ -137,7 +137,7 @@ namespace CraxAwesomeEngine.Core
 
         public static float ScrollWheel
         {
-            get => _actualFrameMouseState.ScrollWheel;
+            get => (_actualFrameMouseState.ScrollWheel - _lastFrameMouseState.ScrollWheel) / 120.0f;
         }
         public static Vector2 MousePosition
         {
