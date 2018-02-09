@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Linq;
 using CraxAwesomeEngine.Core.GUI;
+using System.Runtime.CompilerServices;
 
 namespace CraxAwesomeEngine.Core { 
 

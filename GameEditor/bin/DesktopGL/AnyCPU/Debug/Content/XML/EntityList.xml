@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Entities>
+  <Entity id="-1" name="Empty">
+    <Components>
+
+    </Components>
+  </Entity>
+  <Entity id="0" name="collider">
+    <Components>
+      <Transform scale = "1 1" rotation="0"></Transform>
+      <Sprite texture="test_1" row="0" column="0" width="full" height="full"></Sprite>
+      <AABBCollider static="true"></AABBCollider>
+    </Components>
+  </Entity>
+  <Entity id ="1" name="fakePlayer" script="test.lua">
+    <Components>
+      <Transform></Transform>
+      <!-- <Sprite texture="player" row="0" width="full" height="full"></Sprite>-->
+      <AnimatedSprite texture="spritesheet" width="64" height="64" rendering_order="1">
+        <Animation name="running">
+          <Frame row="1" column="0" time="0.2"></Frame>
+          <Frame row="1" column="1" time="0.2"></Frame>
+          <Frame row="1" column="2" time="0.2"></Frame>
+          <Frame row="1" column="3" time="0.2"></Frame>
+          <Frame row="1" column="4" time="0.2"></Frame>
+          <Frame row="1" column="5" time="0.2"></Frame>
+        </Animation>
+        <Animation name="jump" loop = "false">
+          <Frame row="0" column="1" time="0.1"></Frame>
+          <Frame row="0" column="0" time="0.1"></Frame>
+          <Frame row="1" column="1" time="0.1"></Frame>
+          <Frame row="1" column="0" time="0.1"></Frame>
+        </Animation>
+        <Animation name="idle">
+          <Frame row="1" column="6" time="0.1"></Frame>
+        </Animation>
+      </AnimatedSprite>
+      <CharacterController/>
+    </Components>
+  </Entity>
+  <Entity id="2" name="complexCollider">
+    <Components>
+      <SATCollider>
+        <Vertex position = "74 85"/>
+        <Vertex position = "193 139"/>
+        <Vertex position = "200 411"/>
+        <Vertex position = "329 425"/>
+        <Vertex position = "491 356"/>
+        <Vertex position = "594 424"/>
+        <Vertex position = "617 90"/>
+        <Vertex position = "737 74"/>
+        <Vertex position = "755 572"/>
+        <Vertex position = "35 572"/>
+      </SATCollider>
+    </Components>
+  </Entity>
+</Entities>

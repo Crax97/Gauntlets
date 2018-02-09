@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
 using CraxAwesomeEngine.Core.Scripting;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Gauntlets.Editor.EntityEditor")]
 namespace CraxAwesomeEngine.Core
 {
 
@@ -22,7 +24,7 @@ namespace CraxAwesomeEngine.Core
         public int Id { get; private set; }
         public string Name { get; set; }
 
-        private static List<Entity> knownEntities;
+        internal static List<Entity> knownEntities;
 		List<IComponent> components;
 
         protected Entity() : this(new Transform())

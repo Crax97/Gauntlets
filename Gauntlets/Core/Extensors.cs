@@ -18,7 +18,7 @@ namespace CraxAwesomeEngine.Core
                 {
                     if (sprite.IsVisible)
                         batch.Draw(sprite.Texture, entity.Transform.Position,
-                                   sprite.Source, Color.White, entity.Transform.Rotation, sprite.SpriteCenter,
+                                   sprite.Source, Color.White, Utils.Deg2Rad(entity.Transform.Rotation), sprite.SpriteCenter,
                                     entity.Transform.LocalScale, sprite.RenderingEffect, sprite.RenderingOrder);
                 }
             }

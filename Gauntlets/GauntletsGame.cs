@@ -12,6 +12,8 @@ using CraxAwesomeEngine.Core.Scripting;
 using CraxAwesomeEngine.Core.Debugging;
 using System.ComponentModel;
 using System.Threading;
+using Gauntlets.Editor;
+using Eto;
 
 /// <summary>
 /// TODO: 
@@ -30,10 +32,9 @@ namespace Gauntlets.Simulation
         SpriteBatch spriteBatch;
         SpriteBatch guiBatch;
 
+        EditorWindowManager manager;
         World w;
         Camera firstCamera = null;
-        Entity fakePlayer = null;
-        Entity testCollider = null;
   
         public Game1()
         {
@@ -42,6 +43,11 @@ namespace Gauntlets.Simulation
 
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
 
+            Eto.Platform.Initialize(Eto.Platform.Detect);
+            Platform platform = Platform.Detect;
+
+            manager = new EditorWindowManager(platform);
+            
         }
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -106,24 +112,19 @@ namespace Gauntlets.Simulation
 
             //Then initialize entities
             Entity.InitializeEntities();
+            EntityEditor editor = manager.GetEntityEditor();
+            editor.PopulateEntityList();
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             guiBatch = new SpriteBatch(GraphicsDevice);
-
-            fakePlayer = Entity.Instantiate(1);
-            testCollider = Entity.Instantiate(0);
-
             firstCamera = new Camera();
-
-            testCollider.Transform.Position = Transform.WindowHalfSize;
             
             World.Current.BeginSimulation();
         }
 
         private void reset()
         {
-
-            fakePlayer.Transform.Position = Vector2.Zero;
+            
             GameScript.ResetScripts();
 
             //Console.Clear();
@@ -147,8 +148,11 @@ namespace Gauntlets.Simulation
                 {
                     Camera.Main.Zoom += InputManager.ScrollWheel * delta;
                 }
-
-                Camera.Main.Transform.Position = fakePlayer.Transform.Position;
+                
+                if(InputManager.MouseKeyHasBeenPressed(MouseKeys.LEFT) && InputManager.KeyIsHeld(Keys.LeftShift))
+                {
+                    manager.GetEntityEditor().InstantiateSelectedEntity(InputManager.MousePosition);
+                }
 
                 World.Current.Update(delta);
                 Collider.CalculateCollisions();
@@ -157,7 +161,7 @@ namespace Gauntlets.Simulation
 
             base.Update(gameTime);
             InputManager.UpdateInputEnd();
-            this.Window.Title = "Gauntlets - FPS " + 1.0f / delta;
+            this.Window.Title = "Gauntlets Level Editor - FPS " + 1.0f / delta;
 
         }
 

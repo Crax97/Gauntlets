@@ -11,7 +11,7 @@ namespace CraxAwesomeEngine.Core.Debugging
     /// <summary>
     /// A Debug class
     /// </summary>
-    static class Debug
+    public static class Debug
     {
         public static Texture2D SinglePointTexture { get; private set; } = null;
         private static Game runningGame = null;

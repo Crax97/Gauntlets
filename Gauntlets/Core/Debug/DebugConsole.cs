@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CraxAwesomeEngine.Core.Debugging
 {
-    static class DebugConsole
+    public static class DebugConsole
     {
 
         public static bool Enabled { get; private set; } = false;
