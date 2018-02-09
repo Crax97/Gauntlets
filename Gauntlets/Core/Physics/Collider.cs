@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace CraxAwesomeEngine.Core.Physics
 {
 
+    [Serializable]
     public enum ColliderType
     {
         AABB,
@@ -15,6 +16,7 @@ namespace CraxAwesomeEngine.Core.Physics
         SAT
     }
 
+    [Serializable]
     public abstract class Collider : IComponent
     {
         protected static List<Collider> colliders = new List<Collider>();

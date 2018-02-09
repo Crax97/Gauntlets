@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace CraxAwesomeEngine.Core.Physics
 {
+    [Serializable]
     class QuadShape : Shape
     {
         public QuadShape(List<Vector2> vertices) : base(vertices)

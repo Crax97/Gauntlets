@@ -47,9 +47,6 @@
 /processorParam:TextureFormat=Color
 /build:touch.png
 
-#begin XML/EntityList.xml
-/copy:XML/EntityList.xml
-
 #begin TextBoxTest.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -101,4 +98,7 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:spritesheet.png
+
+#begin Data/Entities.data
+/copy:Data/Entities.data
 

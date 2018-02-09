@@ -13,6 +13,7 @@ namespace CraxAwesomeEngine.Core
     /// The interactive things of a <see cref="World"/>
     /// </summary>
     [MoonSharpUserData]
+    [Serializable]
     public class Entity : ICloneable
 	{
 		private Transform transform;
@@ -63,60 +64,10 @@ namespace CraxAwesomeEngine.Core
             return Name.GetHashCode();
         }
 
-        public static void InitializeEntities(string EntitiesFile, Game game)
+        public static void InitializeEntities()
 		{
 
-            using (FileStream file = File.Open(EntitiesFile, FileMode.Open))
-            {
-
-                XmlReaderSettings settings = new XmlReaderSettings();
-                settings.IgnoreWhitespace = true;
-                settings.IgnoreComments = true;
-                XmlReader reader = XmlReader.Create(file, settings);
-                XmlDocument doc = new XmlDocument();
-                doc.Load(reader);
-
-                XmlNodeList entities = doc["Entities"].ChildNodes;
-
-                knownEntities = new List<Entity>(entities.Count);
-
-                foreach(XmlNode entity in entities){
-                    int id = int.Parse(entity.Attributes["id"].Value);
-                    string name = entity.Attributes["name"].Value;
-
-                    Entity e = new Entity();
-                    e.Id = id;
-                    e.Name = name;
-
-                    XmlNodeList components = entity["Components"].ChildNodes;
-
-                    foreach(XmlNode componentNode in components) {
-                        string componentType = componentNode.LocalName;
-
-                        //Transform doesn't count, as every entity has one
-                        if (componentType != "Transform")
-                        {
-                            IComponent component = ComponentRecord.CreateInstance(componentType, componentNode, game);
-                            //This way the Entity doesn't get initialized when the 
-                            //IComponent is first added to the knownEntities list
-                            e.components.Add(component);
-                        }
-                        else 
-                        {
-                            e.Transform.SetupFromXmlNode(componentNode, game);
-                        }
-                    }
-                    if(entity.Attributes["script"] != null)
-                    {
-                        string scriptName = entity.Attributes["script"].Value;
-                        e.AddComponent(new GameScript(scriptName));
-                    }
-
-                    knownEntities.Add(e);
-                }
-
-
-            }
+            GameSerializer.DeserializeEntities(out knownEntities);
 
 		}
 

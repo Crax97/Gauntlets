@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace CraxAwesomeEngine.Core
 {
+    [Serializable]
     class Camera : Entity
     {
         private static GraphicsDeviceManager GDeviceManager;

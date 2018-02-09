@@ -11,7 +11,8 @@ namespace CraxAwesomeEngine.Core.GUI
     /// a center and a rendering depth.
     /// </summary>
     /// 
-    
+
+    [Serializable]
     public class GUILabel : GUIElement, ICloneable
     {
 

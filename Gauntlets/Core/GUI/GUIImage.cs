@@ -6,6 +6,7 @@ using System.Xml;
 
 namespace CraxAwesomeEngine.Core.GUI
 {
+    [Serializable]
     class GUIImage : GUIElement, ICloneable
     {
 

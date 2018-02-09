@@ -78,15 +78,13 @@
     <Compile Include="Core\Extensors.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\Data\Entities.data" />
     <None Include="Content\Fonts\Console.spritefont" />
     <None Include="Content\Fonts\DefaultFont.spritefont" />
     <None Include="Content\Fonts\DejaVuSansMono.ttf" />
     <None Include="Content\Fonts\Oswald.ttf" />
     <None Include="Content\Scripts\test.lua" />
     <None Include="Icon.png" />
-    <None Include="Content\XML\EntityList.xml">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

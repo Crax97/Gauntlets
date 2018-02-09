@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace CraxAwesomeEngine.Core.Physics
 {
+
+    [Serializable]
     public class Shape
     {
 

@@ -17,7 +17,6 @@ namespace CraxAwesomeEngine.Core
         private struct ComponentTypeAndInitializer
         {
             public Type t { get; internal set; }
-            public Func<XmlNode, Game, object> initializer { get; internal set; }
         }
 
         private static Dictionary<string, ComponentTypeAndInitializer> knownTypes = new Dictionary<string, ComponentTypeAndInitializer>();
@@ -27,15 +26,10 @@ namespace CraxAwesomeEngine.Core
             return knownTypes[type].t;
         }
 
-        public static IComponent CreateInstance(string which, XmlNode node, Game game) {
-            return (IComponent)knownTypes[which].initializer(node, game);
-        }
-
-        public static void RegisterAttribute<T>(string name, Func<XmlNode, Game, object> initializerFunction) where T: IComponent
+        public static void RegisterAttribute<T>(string name) where T: IComponent
         {
             ComponentTypeAndInitializer typeAndInitializer = new ComponentTypeAndInitializer();
             typeAndInitializer.t = typeof(T);
-            typeAndInitializer.initializer = initializerFunction;
             knownTypes.Add(name, typeAndInitializer);
             UserData.RegisterType<T>();
         }

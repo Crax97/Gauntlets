@@ -11,6 +11,7 @@ namespace CraxAwesomeEngine.Core.Physics
     /// <summary>
     /// A Collider based on <see cref="Microsoft.Xna.Framework.Rectangle"/>
     /// </summary>
+    [Serializable]
     public class AABBCollider : Collider
     {
 

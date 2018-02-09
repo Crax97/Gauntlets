@@ -17,6 +17,11 @@ namespace CraxAwesomeEngine.Core {
 		{
 			entities = new List<Entity>(0);
             if (Current == null) Current = this;
+            Debugging.DebugConsole.RegisterCommand("save", (string[] commands) =>
+            {
+                GameSerializer.SerializeEntities(entities);
+            });
+
 		}
 
         /// <summary>

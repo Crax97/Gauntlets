@@ -1,336 +1,162 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using CraxAwesomeEngine.Core;
-using CraxAwesomeEngine.Core.GUI;
-using static CraxAwesomeEngine.Core.AnimatedSprite;
 using CraxAwesomeEngine.Core.Scripting;
-using CraxAwesomeEngine.Core.Physics;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 
 namespace CraxAwesomeEngine.Core
 {
-    static class XmlComponentsReaders
+    public static class GameSerializer
     {
-        public static object ColorFromXmlAttribute(XmlAttribute attribute)
-        {
-            Color color = Color.White;
-            if (attribute != null)
-            {
-                string[] vals = attribute.Value.Split(' ');
-                color.R = byte.Parse(vals[0]);
-                color.G = byte.Parse(vals[1]);
-                color.B = byte.Parse(vals[2]);
-                color.A = (vals[3] != null) ? byte.Parse(vals[3]) : (byte)255;
-            }
-            return color;
-        }
-        public static Vector2 Vector2FromXmlAttribute(XmlAttribute attribute, Vector2 defaultValue)
-        {
+        private static Game serializedGame;
 
-            if (attribute != null)
-            {
-
-                string[] vals = attribute.Value.Split(' ');
-                float X = float.Parse(vals[0]);
-                float Y = float.Parse(vals[1]);
-                return new Vector2(X, Y);
-            }
-            else
-            {
-                return defaultValue;
-            }
+        public static void Init(Game game)
+        {
+            serializedGame = game;
         }
 
-        public static object TransformFromXmlNode(XmlNode node,Game game)
+        sealed class Vector2SerializatorSurrogate : ISerializationSurrogate
         {
-            if (node != null)
+            public void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
             {
-                XmlAttributeCollection attributes = node.Attributes;
-
-                string rotationStr = (attributes["rotation"] != null) ? attributes["rotation"].Value : null;
-                float rotation = (rotationStr != null) ? (float.Parse(rotationStr)) : 0.0f;
-
-                Vector2 position = Vector2FromXmlAttribute(attributes["position"], Vector2.Zero);
-                Vector2 scale = Vector2FromXmlAttribute(attributes["position"], Vector2.One);
-                return new Transform(position, scale, rotation);
+                Vector2 vector = (Vector2)obj;
+                info.AddValue("X", vector.X);
+                info.AddValue("Y", vector.Y);
             }
-            return new Transform();
+
+            public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
+            {
+                Vector2 vector = (Vector2)obj;
+                vector.X = info.GetSingle("X");
+                vector.Y = info.GetSingle("Y");
+                return vector;
+            }
+        }
+        sealed class ColorSerializer : ISerializationSurrogate
+        {
+            public void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
+            {
+                Color color = (Color)obj;
+                info.AddValue("r", color.R);
+                info.AddValue("g", color.G);
+                info.AddValue("b", color.B);
+                info.AddValue("a", color.A);
+            }
+
+            public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
+            {
+                Color color = (Color)obj;
+                color.R = info.GetByte("r");
+                color.G = info.GetByte("g");
+                color.B = info.GetByte("b");
+                color.A = info.GetByte("a");
+                return color;
+            }
+        }
+        
+        sealed class TextureSerializer : ISerializationSurrogate
+        {
+            public void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
+            {
+                Texture2D texture = obj as Texture2D;
+                info.AddValue("texture", texture.Name);
+            }
+
+            public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
+            {
+                return serializedGame.Content.Load<Texture2D>(info.GetString("texture"));
+            }
+        }
+        sealed class SpriteFontSurrogate : ISerializationSurrogate
+        {
+            public void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
+            {
+                SpriteFont font = obj as SpriteFont;
+                info.AddValue("font", font.Texture.Name);
+            }
+
+            public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
+            {
+                return serializedGame.Content.Load<SpriteFont>(info.GetString("font"));
+            }
+        }
+        sealed class RectangleSurrogate : ISerializationSurrogate
+        {
+            public void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
+            {
+                Rectangle rect = (Rectangle)obj;
+                info.AddValue("width", rect.Width);
+                info.AddValue("height", rect.Height);
+                info.AddValue("X", rect.Center.X);
+                info.AddValue("Y", rect.Center.Y);
+            }
+
+            public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
+            {
+                return new Rectangle(info.GetInt32("X"), info.GetInt32("Y"), info.GetInt32("width"), info.GetInt32("height"));
+            }
+        }
+        sealed class GameScriptSurrogate : ISerializationSurrogate
+        {
+            public void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
+            {
+                GameScript script = (GameScript)obj;
+                info.AddValue("file", script.ScriptFileName);
+            }
+
+            public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
+            {
+                return new GameScript(info.GetString("file"));
+            }
         }
 
 
-        public static object SpriteFromXmlNode(XmlNode node, Game game)
+
+        public static void SerializeEntities(List<Entity> entites)
         {
-            XmlAttributeCollection attrib = node.Attributes;
+            SurrogateSelector selector = new SurrogateSelector();
+            StreamingContext context = new StreamingContext(StreamingContextStates.All);
+            selector.AddSurrogate(typeof(Vector2), context, new Vector2SerializatorSurrogate());
+            selector.AddSurrogate(typeof(Color), context, new ColorSerializer());
+            selector.AddSurrogate(typeof(Texture2D), context, new TextureSerializer());
+            selector.AddSurrogate(typeof(SpriteFont), context, new SpriteFontSurrogate());
+            selector.AddSurrogate(typeof(Rectangle), context, new RectangleSurrogate());
+            selector.AddSurrogate(typeof(GameScript), context, new GameScriptSurrogate());
 
-            string textureName = attrib["texture"].Value;
-            if (textureName == null) throw new ArgumentNullException("<Sprite ...></Sprite> must have at least a texture name!");
-
-            Texture2D Texture = game.Content.Load<Texture2D>(textureName);
-
-            string widthStr = (attrib["width"] != null) ? attrib["width"].Value : null;
-            string heightStr = (attrib["height"] != null) ? attrib["height"].Value : null;
-            int width, height;
-
-            //Schema: width [height] =
-            //"full" => Texture.Width [Height]
-            //"half" => Texture.Width/2 [Height]/2
-            //"/n" => Texture.Width / n [Height / n]
-            //"n" => n
-            //nothing => full
-
-
-            if (widthStr != null)
+            using (FileStream entitiesFile = File.Open(Path.Combine("Content", "Data", "Entities.data"), FileMode.OpenOrCreate))
             {
-                if (widthStr == "full")
-                    width = Texture.Width;
-                else if (widthStr == "half")
-                    width = Texture.Width / 2;
-                else if (widthStr[0] == '/')
-                    width = Texture.Width / int.Parse(widthStr.Substring(1));
-                else
-                    width = int.Parse(widthStr);
-            }
-            else
-            {
-                width = Texture.Width;
-            }
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.SurrogateSelector = selector;
+                formatter.Serialize(entitiesFile, entites);
 
-            if (heightStr != null)
-            {
-                if (heightStr == "full")
-                    height = Texture.Height;
-                else if (heightStr == "half")
-                    height = Texture.Height / 2;
-                else if (heightStr[0] == '/')
-                    height = Texture.Height / int.Parse(heightStr.Substring(1));
-                else
-                    height = int.Parse(heightStr);
             }
-            else
-            {
-                height = Texture.Height;
-            }
-            int row = 0, column = 0;
-            string rowStr = (attrib["row"] != null) ? attrib["row"].Value : null;
-            if (rowStr != null)
-            {
-                row = int.Parse(rowStr);
-            }
-            else
-            {
-                row = 0;
-            }
-
-            string colStr = (attrib["column"] != null) ? attrib["column"].Value : null;
-            if (colStr != null)
-            {
-                column = int.Parse(colStr);
-            }
-
-            float renderingOrder = 0.0f;
-            string roStr = (attrib["renderng_order"] != null) ? attrib["renderng_order"].Value : null;
-            if (roStr != null)
-            {
-                renderingOrder = float.Parse(roStr);
-            }
-
-            return new Sprite(Texture, row, column, width, height, renderingOrder);
         }
-
-        public static List<AnimationFrame> ReadFramesFromXMLNode(XmlNode node)
+        public static void DeserializeEntities(out List<Entity> entities)
         {
-            List<AnimationFrame> animationFrames = new List<AnimationFrame>();
-            XmlNodeList frameNodes = node.ChildNodes;
-            foreach(XmlNode frame in frameNodes)
+            entities = new List<Entity>();
+            SurrogateSelector selector = new SurrogateSelector();
+            StreamingContext context = new StreamingContext(StreamingContextStates.All);
+            selector.AddSurrogate(typeof(Vector2), context, new Vector2SerializatorSurrogate());
+            selector.AddSurrogate(typeof(Color), context, new ColorSerializer());
+            selector.AddSurrogate(typeof(Texture2D), context, new TextureSerializer());
+            selector.AddSurrogate(typeof(SpriteFont), context, new SpriteFontSurrogate());
+            selector.AddSurrogate(typeof(Rectangle), context, new RectangleSurrogate());
+            selector.AddSurrogate(typeof(GameScript), context, new GameScriptSurrogate());
+
+            using (FileStream entitiesFile = File.Open(Path.Combine("Content", "Data", "Entities.data"), FileMode.OpenOrCreate))
             {
-                XmlAttributeCollection collection = frame.Attributes;
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.SurrogateSelector = selector;
 
-                //All these three attributes MUST be present!
-                int row = int.Parse(collection["row"].Value);
-                int column = int.Parse(collection["column"].Value);
-                float timeBetween = (collection["time"] != null) ? float.Parse(collection["time"].Value) : 0.0f ;
+                while(entitiesFile.Position < entitiesFile.Length)
+                {
+                    Entity actual = formatter.Deserialize(entitiesFile) as Entity;
+                    entities.Add(actual);
+                }
 
-                animationFrames.Add(new AnimationFrame(column, row, timeBetween));
             }
-
-            return animationFrames;
         }
-
-        public static object AnimatedSpriteFromXmlNode(XmlNode node, Game game)
-        {
-
-            XmlAttributeCollection attrib = node.Attributes;
-
-            string textureName = attrib["texture"].Value;
-            if (textureName == null) throw new ArgumentNullException("<AnimatedSprite ...></AnimatedSprite> must have at least a texture name!");
-
-            Texture2D Texture = game.Content.Load<Texture2D>(textureName);
-
-            string widthStr = (attrib["width"] != null) ? attrib["width"].Value : null;
-            string heightStr = (attrib["height"] != null) ? attrib["height"].Value : null;
-            int width, height;
-            if (widthStr != null)
-            {
-                if (widthStr == "full")
-                    width = Texture.Width;
-                else if (widthStr == "half")
-                    width = Texture.Width / 2;
-                else if (widthStr[0] == '/')
-                    width = Texture.Width / int.Parse(widthStr.Substring(1));
-                else
-                    width = int.Parse(widthStr);
-            }
-            else
-            {
-                width = Texture.Width;
-            }
-
-            if (heightStr != null)
-            {
-                if (heightStr == "full")
-                    height = Texture.Height;
-                else if (heightStr == "half")
-                    height = Texture.Height / 2;
-                else if (heightStr[0] == '/')
-                    height = Texture.Height / int.Parse(heightStr.Substring(1));
-                else
-                    height = int.Parse(heightStr);
-            }
-            else
-            {
-                height = Texture.Height;
-            }
-
-            uint renderingOrder = 0;
-            string roStr = (attrib["renderng_order"] != null) ? attrib["renderng_order"].Value : null;
-            if (roStr != null)
-            {
-                renderingOrder = uint.Parse(roStr);
-            }
-
-            //Parsing frames
-            XmlNodeList animationNodes = node.ChildNodes;
-            if (animationNodes.Count == 0) throw new ArgumentException("An animated frame must have at least one <Frame...></Frame> element!");
-
-            List<Animation> animations = new List<Animation>(animationNodes.Count);
-            foreach(XmlNode animationNode in animationNodes)
-            {
-                string animationName = animationNode.Attributes["name"].Value;
-                bool loop = animationNode.Attributes["loop"] != null ? bool.Parse(animationNode.Attributes["loop"].Value) : true;
-                Animation anim = new Animation(animationName, loop);
-                anim.frames = ReadFramesFromXMLNode(animationNode);
-                animations.Add(anim);
-            }
-
-            return new AnimatedSprite(Texture, animations, width, height, renderingOrder);
-        }
-
-        public static object GUILabelFromXmlNode(XmlNode node, Game game)
-        {
-
-            XmlAttributeCollection attributes = node.Attributes;
-            string labelText = (attributes["label"] != null) ? attributes["label"].Value.Replace("\\n", "\n") : "";
-            SpriteFont font = (attributes["font"] != null && attributes["font"].Value != "default") ? game.Content.Load<SpriteFont>(attributes["font"].Value) : GUILabel.DefaultSpriteFont;
-            float depth = (attributes["rendering_depth"] != null) ? float.Parse(attributes["rendering_depth"].Value) : 0.0f;
-            Color color = (Color)ColorFromXmlAttribute(attributes["color"]);
-            Vector2 Center = Vector2FromXmlAttribute(attributes["center"], Vector2.Zero);
-
-            GUILabel Label = new GUILabel(labelText, depth, font, (Transform)TransformFromXmlNode(node.ChildNodes[0], game) );
-            return Label;
-
-        }
-
-        /// <summary>
-        /// Setups this component from an XML node.
-        /// Schema:
-        /// [texture="texture name"]    | Setups the GUITextBox's sprite component with this sprite.
-        /// [label="string"]            | Setups this GUITextBox's label. If none is present, the default "Text!" string is used.
-        /// [offset="n n"]              | Setups this GUITextBox's label offset. If none is present, the default Vector2.Zero value is used.
-        /// [font="font name"]          | Setups this GUITextBox's <see cref="SpriteFont"/>. If not present, GUILabel.DefaultSpriteFont will be used.
-        /// If a <see cref="Transform"/> child node is present, the Transform property of this component will be setup accordingly
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="game"></param>
-        public static object GUITextBoxFromXmlNode(XmlNode node, Game game)
-        {
-            XmlAttributeCollection attributes = node.Attributes;
-            Texture2D texture = game.Content.Load<Texture2D>(attributes["texture"].Value);
-            Sprite sprite = new Sprite(texture, 0, 0, texture.Width, texture.Height, 0.0f);
-            SpriteFont font = (attributes["font"] != null) ? game.Content.Load<SpriteFont>(Path.Combine("Fonts", attributes["font"].Value)) : GUILabel.DefaultSpriteFont;
-
-            Vector2 Offset = Vector2FromXmlAttribute(attributes["offset"], Vector2.Zero);
-            Transform transform = (Transform)TransformFromXmlNode(node.ChildNodes[0], game);
-            string labelText = (attributes["label"] != null) ? attributes["label"].Value : "Text!";
-            GUITextBox result = new GUITextBox(texture, labelText, transform);
-            result.SetFont(font);
-            return result;
-        }
-
-        public static object GUIButtonFromXmlNode(XmlNode node, Game game)
-        {
-            XmlAttributeCollection attributes = node.Attributes;
-            string textureName = attributes["texture"].Value;
-            if (textureName == null) throw new ArgumentException("<GUIButton ...></GUIButton> must have at least a texture name!");
-            Texture2D theTexture = game.Content.Load<Texture2D>(textureName);
-
-            GUIButton button = new GUIButton(theTexture);
-            button.Sprite.RenderingOrder = (attributes["rendering_order"] != null) ? float.Parse(attributes["rendering_order"].Value) : 0;
-            button.Extension = button.Sprite.Size;
-            return button;
-        }
-
-        public static object GUIImageFromXmlNode(XmlNode node, Game game)
-        {
-            XmlAttributeCollection attribs = node.Attributes;
-            string textureName = (attribs["texture"] != null) ? attribs["texture"].Value : throw new ArgumentNullException("<GUIImage ...></GUIImage> must have a texture attribute!");
-            Texture2D spriteTexture = game.Content.Load<Texture2D>(textureName);
-            return new GUIImage(spriteTexture);
-
-        }
-
-        public static object GameScriptFromXmlNode(XmlNode node, Game game)
-        {
-            XmlAttributeCollection attributesCollection = node.Attributes;
-            string scriptFile = attributesCollection["file"].Value;
-            if (string.IsNullOrEmpty(scriptFile)) throw new ArgumentException("No script file found in the <Script file=\"\"><...> tag!");
-            return new GameScript(scriptFile);
-        }
-
-        public static object CreateAABBColldierFromXMLNode(XmlNode node, Game game)
-        {
-            XmlAttributeCollection attribs = node.Attributes;
-            Vector2 extension = Vector2FromXmlAttribute(attribs["extension"], Vector2.Zero);
-
-            AABBCollider collider = new AABBCollider(extension);
-            collider.IsStatic = attribs["static"] != null ? bool.Parse(attribs["static"].Value) : false;
-            return collider;
-        }
-
-        public static object CreateSATColldierFromXMLNode(XmlNode node, Game game)
-        {
-            XmlAttributeCollection attribs = node.Attributes;
-            XmlNodeList verticesNodes = node.ChildNodes;
-            List<Vector2> vertices = new List<Vector2>(verticesNodes.Count);
-            foreach (XmlNode vertexNode in verticesNodes)
-            {
-                vertices.Add(Vector2FromXmlAttribute(vertexNode.Attributes["position"], Vector2.Zero));
-            }
-
-            SATCollider collider = new SATCollider(vertices);
-            collider.IsStatic = attribs["static"] != null ? bool.Parse(attribs["static"].Value) : false;
-            return collider;
-        }
-
-        public static object CharacterControllerFromXmlNode(XmlNode node, Game game)
-        {
-            return new CharacterController();
-        }
-
     }
 }

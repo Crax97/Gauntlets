@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
+using System;
 using System.Collections.Generic;
 using System.Xml;
 namespace CraxAwesomeEngine.Core
 {
     
     [MoonSharpUserData]
+    [Serializable]
     public class Transform : IComponent
 	{
 
@@ -166,20 +168,5 @@ namespace CraxAwesomeEngine.Core
             return t;
 
         }
-
-        public void SetupFromXmlNode(XmlNode node, Game game)
-        {
-            if (node != null)
-            {
-                XmlAttributeCollection attributes = node.Attributes;
-
-                string rotationStr = (attributes["rotation"] != null) ? attributes["rotation"].Value : null;
-                rotation = (rotationStr != null) ? (float.Parse(rotationStr)) : 0.0f;
-
-                position = XmlComponentsReaders.Vector2FromXmlAttribute(attributes["position"], Vector2.Zero);
-                scale = XmlComponentsReaders.Vector2FromXmlAttribute(attributes["scale"], Vector2.One);
-            }
-        }
-        
     }
 }

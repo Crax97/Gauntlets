@@ -17,6 +17,7 @@ namespace CraxAwesomeEngine.Core
 		}
 	}
 
+    [Serializable]
     public class Sprite : IComponent
     {
         public SpriteEffects RenderingEffect {get; set;} = SpriteEffects.None;

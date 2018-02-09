@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace CraxAwesomeEngine.Core
 {
+
+    [Serializable]
     class CharacterController : IComponent
     {
 
@@ -62,6 +64,7 @@ namespace CraxAwesomeEngine.Core
         public void Move(Vector2 translation)
         {
 
+            playerCollider.UpdateBounds(owner.Transform.Position);
             AccountForGravity(ref translation);
             AccountForHorizontalVelocity(ref translation);
             AccountForVerticalVelocity(ref translation);
@@ -112,15 +115,16 @@ namespace CraxAwesomeEngine.Core
                 if (playerCollider.StaticCollisionCheck(collider, out pushback) && !collider.Equals(playerCollider))
                 {
                     translation += pushback.Value;
-                    if(translation.Y > 0)
+                    if(translation.Y <= 0)
                     {
                         canJump = true;
+                        translation.Y = 0;
                     }
                     velocity.Y = 0;
                 }
             }
 
-            playerCollider.UpdateBounds(owner.Transform.Position - yTranslation);
+            playerCollider.UpdateBounds(owner.Transform.Position);
         }
 
         public void Jump(float height)

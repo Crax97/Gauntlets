@@ -15,10 +15,12 @@ namespace CraxAwesomeEngine.Core
     /// An animated sprite, based on <see cref="Sprite"/>,
     /// it can be attached to an Entity since it's an <see cref="IComponent"></see>
     /// </summary>
+    [Serializable]
     public class AnimatedSprite : Sprite, IComponent
 	{
 
-		public struct AnimationFrame
+        [Serializable]
+        public struct AnimationFrame
 		{
 			public int column;
 			public int row;
@@ -32,6 +34,7 @@ namespace CraxAwesomeEngine.Core
 			}
 		}
 
+        [Serializable]
         public struct Animation
         {
             public List<AnimationFrame> frames;

@@ -30,7 +30,7 @@ namespace Gauntlets.Simulation
         SpriteBatch spriteBatch;
         SpriteBatch guiBatch;
 
-        World w = new World();
+        World w;
         Camera firstCamera = null;
         Entity fakePlayer = null;
         Entity testCollider = null;
@@ -60,23 +60,25 @@ namespace Gauntlets.Simulation
 
             graphics.ApplyChanges();
 
-            ComponentRecord.RegisterAttribute<Sprite>("Sprite", XmlComponentsReaders.SpriteFromXmlNode);
-            ComponentRecord.RegisterAttribute<AnimatedSprite>("AnimatedSprite", XmlComponentsReaders.AnimatedSpriteFromXmlNode);
-            ComponentRecord.RegisterAttribute<Transform>("Transform", XmlComponentsReaders.TransformFromXmlNode);
-            ComponentRecord.RegisterAttribute<GUIButton>("GUIButton", XmlComponentsReaders.GUIButtonFromXmlNode);
-            ComponentRecord.RegisterAttribute<GUILabel>("GUILabel", XmlComponentsReaders.GUILabelFromXmlNode);
-            ComponentRecord.RegisterAttribute<GUITextBox>("GUITextBox", XmlComponentsReaders.GUITextBoxFromXmlNode);
-            ComponentRecord.RegisterAttribute<GUIImage>("GUIImage", XmlComponentsReaders.GUIImageFromXmlNode);
-            ComponentRecord.RegisterAttribute<AABBCollider>("AABBCollider", XmlComponentsReaders.CreateAABBColldierFromXMLNode);
-            ComponentRecord.RegisterAttribute<SATCollider>("SATCollider", XmlComponentsReaders.CreateSATColldierFromXMLNode);
-            ComponentRecord.RegisterAttribute<CharacterController>("CharacterController", XmlComponentsReaders.CharacterControllerFromXmlNode);
+            ComponentRecord.RegisterAttribute<Sprite>("Sprite");
+            ComponentRecord.RegisterAttribute<AnimatedSprite>("AnimatedSprite");
+            ComponentRecord.RegisterAttribute<Transform>("Transform");
+            ComponentRecord.RegisterAttribute<GUIButton>("GUIButton");
+            ComponentRecord.RegisterAttribute<GUILabel>("GUILabel");
+            ComponentRecord.RegisterAttribute<GUITextBox>("GUITextBox");
+            ComponentRecord.RegisterAttribute<GUIImage>("GUIImage");
+            ComponentRecord.RegisterAttribute<AABBCollider>("AABBCollider");
+            ComponentRecord.RegisterAttribute<SATCollider>("SATCollider");
+            ComponentRecord.RegisterAttribute<CharacterController>("CharacterController");
 
             Debug.InitializeDebug(GraphicsDevice, this);
             DebugConsole.DebugConsoleInit(this, graphics);
+            GameSerializer.Init(this);
             GameScript.InitGameScript();
             Transform.UpdateGraphicsSize(graphics);
             InputManager.InitInputManager(this);
             Camera.InitCamera(graphics);
+            GUILabel.Initialize(this);
 
             Exiting += new EventHandler<EventArgs>((object obj, EventArgs args) =>
             {
@@ -88,9 +90,9 @@ namespace Gauntlets.Simulation
                 reset();
             });
 
-            this.IsMouseVisible = true;
+            w = new World();
 
-            World.Current.BeginSimulation();
+            this.IsMouseVisible = true;
 
             base.Initialize();
         }
@@ -101,12 +103,9 @@ namespace Gauntlets.Simulation
         /// </summary>
         protected override void LoadContent()
         {
-            //Initialize components first!
-            GUILabel.Initialize(this);
 
             //Then initialize entities
-            Entity.InitializeEntities(Path.Combine(Content.RootDirectory, "XML", "EntityList.xml"), this);
-
+            Entity.InitializeEntities();
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             guiBatch = new SpriteBatch(GraphicsDevice);
@@ -117,8 +116,8 @@ namespace Gauntlets.Simulation
             firstCamera = new Camera();
 
             testCollider.Transform.Position = Transform.WindowHalfSize;
-
-
+            
+            World.Current.BeginSimulation();
         }
 
         private void reset()

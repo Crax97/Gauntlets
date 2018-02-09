@@ -18,6 +18,7 @@ namespace CraxAwesomeEngine.Core.Scripting
     /// Write documentation
     /// Implement XML reader for this class
     /// </summary>
+    [Serializable]
     class GameScript : IComponent
     {
         private static List<GameScript> scriptList = null;
